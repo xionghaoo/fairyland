@@ -1,21 +1,37 @@
 {
   "name": "fairyland",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
+  "main": "main.js",
+  "authors": "xionghao",
+  "description": "幻境项目",
   "scripts": {
+    "start": "vue-cli-service build && electron-forge start",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "electron-squirrel-startup": "^1.0.0",
+    "lottie-web": "^5.9.4",
+    "vue": "^2.6.11",
+    "vue-resource": "^1.5.3"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.63",
+    "@electron-forge/maker-deb": "^6.0.0-beta.63",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
+    "@electron-forge/maker-zip": "^6.0.0-beta.63",
     "@vue/cli-plugin-babel": "~4.5.17",
     "@vue/cli-plugin-eslint": "~4.5.17",
     "@vue/cli-service": "~4.5.17",
     "babel-eslint": "^10.1.0",
+    "electron": "^18.2.3",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11"
@@ -38,5 +54,32 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "desktop_test"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
 }
