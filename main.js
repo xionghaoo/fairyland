@@ -1,5 +1,7 @@
 const {app, BrowserWindow, screen, globalShortcut} = require('electron')
 const path = require('path')
+const noble = require('noble');
+
 // const url = require("url");
 
 require('@electron/remote/main').initialize()
@@ -44,6 +46,10 @@ ipc.on('stopContent', function (e, args) {
     for (let i = 0; i < windowList.length; i++) {
         windowList[i].webContents.postMessage('onStopContent', args, [])
     }
+})
+
+ipc.on('startScan', function () {
+    noble.startScanning();
 })
 
 const createMultiWindow = () => {
@@ -97,6 +103,7 @@ const createMultiWindow = () => {
         }
     }
 
+    // 对屏幕进行排序
     screenIndexes.sort((a, b) => {
         return a.index - b.index;
     })
@@ -114,13 +121,12 @@ const createMultiWindow = () => {
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
-                preload: path.join(__dirname, `preload${i}.js`)
+                preload: path.join(__dirname, `preload/page${i}.js`)
             }
         })
-        win.currentIndex = i
-        win.setFullScreen(true)
-        win.loadFile('./dist/index.html')
         windowList.push(win);
+        // win.setFullScreen(true)
+        win.loadFile('./dist/index.html')
     }
 }
 
