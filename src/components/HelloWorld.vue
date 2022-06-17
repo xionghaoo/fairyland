@@ -18,7 +18,7 @@ export default {
       console.log("startScan");
       const ipc = this.window.require('electron').ipcRenderer
       ipc.send('startScan');
-    }
+    },
   }
 }
 </script>

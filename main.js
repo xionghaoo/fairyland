@@ -1,6 +1,5 @@
 const {app, BrowserWindow, screen, globalShortcut} = require('electron')
 const path = require('path')
-const noble = require('noble');
 
 // const url = require("url");
 
@@ -46,10 +45,6 @@ ipc.on('stopContent', function (e, args) {
     for (let i = 0; i < windowList.length; i++) {
         windowList[i].webContents.postMessage('onStopContent', args, [])
     }
-})
-
-ipc.on('startScan', function () {
-    noble.startScanning();
 })
 
 const createMultiWindow = () => {
