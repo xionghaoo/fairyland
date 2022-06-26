@@ -31,7 +31,7 @@ const Config = (() => {
     // ajax_http请求url
     api: {
       /*-- 基础信息 --*/
-      qiniuUploadToken: apiCommon + '/qiniu/upload_token',//七牛token
+      versionUpdate: apiCommon + '/fairyland/update',//七牛token
 
     },
     urlOrigin: url, // 当前url

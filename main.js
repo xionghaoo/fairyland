@@ -1,4 +1,4 @@
-const {app, BrowserWindow, screen, globalShortcut} = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog} = require('electron')
 const path = require('path')
 
 // const url = require("url");
@@ -6,7 +6,6 @@ const path = require('path')
 require('@electron/remote/main').initialize()
 
 const ipc = require('electron').ipcMain
-const dialog = require('electron').dialog
 
 let windowList = [];
 // let currentType = '';
@@ -45,6 +44,57 @@ ipc.on('stopContent', function (e, args) {
     for (let i = 0; i < windowList.length; i++) {
         windowList[i].webContents.postMessage('onStopContent', args, [])
     }
+})
+
+ipc.on('downloadResource', function (e, url) {
+    let win = windowList[0]
+    win.webContents.session.on('will-download', (e, item) => {
+        const filePath = path.join('D:\\Projects\\web\\fairyland\\assets', item.getFilename());
+        console.log('download file path: ' + filePath)
+        item.setSavePath(filePath)
+        let value = 0
+        item.on('updated', (evt, state) => {
+            console.log('update state: ' + state)
+            if ('progressing' === state) {
+                if (item.isPaused()) {
+                    console.log('Download is paused')
+                } else {
+                    //此处  用接收到的字节数和总字节数求一个比例  就是进度百分比
+                    if (item.getReceivedBytes() && item.getTotalBytes()) {
+                        value = parseInt(100 * (item.getReceivedBytes() / item.getTotalBytes()))
+                    }
+                    // 把百分比发给渲染进程进行展示
+                    win.webContents.send('onDownloadProgress', value);
+                    // mac 程序坞、windows 任务栏显示进度
+                    win.setProgressBar(value);
+                }
+            }
+            if (state === 'interrupted') {
+                console.log('Download is interrupted but can be resumed')
+            }
+        })
+
+        //监听下载结束事件
+        item.on('done', (e, state) => {
+            console.log('done: ' + state)
+            //如果窗口还在的话，去掉进度条
+            if (!win.isDestroyed()) {
+                win.setProgressBar(-1);
+            }
+            //下载被取消或中断了
+            if (state === 'interrupted') {
+                dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 因为某些原因被中断下载`);
+            }
+            // 下载成功后打开文件所在文件夹
+            if (state === 'completed') {
+                console.log('资源下载成功')
+                // setTimeout(() => {
+                //     shell.showItemInFolder(filePath)
+                // }, 1000);
+            }
+        });
+    })
+    win.webContents.downloadURL(url)
 })
 
 const createMultiWindow = () => {

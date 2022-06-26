@@ -10,6 +10,8 @@ import Page from "@/components/Page";
 import WebSocketManager from "@/utils/ws";
 import Camera from "@/utils/camera";
 import IPC from "@/utils/ipc";
+import request from "@/utils/request";
+import Config from "@/utils/config";
 
 export default {
   name: 'App',
@@ -36,8 +38,15 @@ export default {
     this.camera.open(() => {
       this.startScan();
     })
+
+    this.checkVersionUpdate()
   },
   methods: {
+    checkVersionUpdate() {
+      request.requestGet(Config.api.versionUpdate, {version: 1}).then((res) => {
+        console.log(res.data)
+      })
+    },
     startScan() {
       console.log("开始扫描")
       let _this = this;
