@@ -46,7 +46,8 @@ export default {
               // console.log("play mp4: " + this.content_url)
               let source = document.createElement('source');
               video.pause();
-              source.setAttribute('src', "require(`@/assets/${video_uri}`)");
+              let v = require(`@/assets/${file_uri}`)
+              source.setAttribute('src', v);
               source.setAttribute('type', 'video/mp4');
               video.load();
               video.play();
