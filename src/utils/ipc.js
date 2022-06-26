@@ -13,6 +13,12 @@ class IPC {
             content: content
         });
     }
+    onShowContent(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onShowContent', (e, args) => {
+           callback(args)
+        })
+    }
 }
 
 export default IPC
