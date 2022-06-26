@@ -1,13 +1,21 @@
 <template>
   <div class="page">
-    <el-progress :percentage="50"></el-progress>
+    <el-progress :percentage="progress"></el-progress>
   </div>
 </template>
 
 <script>
 
 export default {
-  name: "Update"
+  name: "Update",
+  props: {
+    'value': Number
+  },
+  computed: {
+    progress() {
+      return this.$props.value
+    }
+  }
 }
 </script>
 

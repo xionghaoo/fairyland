@@ -1,5 +1,6 @@
 const {app, BrowserWindow, screen, globalShortcut, dialog} = require('electron')
 const path = require('path')
+const StreamZip = require("node-stream-zip");
 
 // const url = require("url");
 
@@ -49,7 +50,7 @@ ipc.on('stopContent', function (e, args) {
 ipc.on('downloadResource', function (e, url) {
     let win = windowList[0]
     win.webContents.session.on('will-download', (e, item) => {
-        const filePath = path.join('D:\\Projects\\web\\fairyland\\assets', item.getFilename());
+        const filePath = path.join('assets', item.getFilename());
         console.log('download file path: ' + filePath)
         item.setSavePath(filePath)
         let value = 0
@@ -88,9 +89,21 @@ ipc.on('downloadResource', function (e, url) {
             // 下载成功后打开文件所在文件夹
             if (state === 'completed') {
                 console.log('资源下载成功')
-                // setTimeout(() => {
-                //     shell.showItemInFolder(filePath)
-                // }, 1000);
+
+                // 解压资源文件
+                const zip = new StreamZip({
+                    file: filePath,
+                    storeEntries: true
+                });
+                zip.on('ready', () => {
+                    zip.extract(null, 'src/assets', (err, count) => {
+                        console.log(err ? 'Extract error' : `Extracted ${count} entries`);
+                        if (!err) {
+                            win.webContents.send('onResourceUpdated');
+                        }
+                        zip.close();
+                    });
+                });
             }
         });
     })

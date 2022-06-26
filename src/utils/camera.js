@@ -25,8 +25,8 @@ class Camera {
                 console.log(err);
             });
 
-        let width = _this.width;
-        _this.camera.addEventListener('canplay', () => {
+        let width = this.width;
+        this.camera.addEventListener('canplay', () => {
             if (!_this.streaming) {
                 let height = _this.camera.videoHeight / (_this.camera.videoWidth / width);
                 _this.height = height;

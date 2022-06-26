@@ -1,11 +1,7 @@
 class IPC {
-    playContent(display, type, content) {
+    playContent(data) {
         const ipc = window.require('electron').ipcRenderer
-        ipc.send('showContent', {
-            display: display,
-            type: type,
-            content: content
-        });
+        ipc.send('showContent', data);
     }
     stopContent(content) {
         const ipc = window.require('electron').ipcRenderer
@@ -19,8 +15,8 @@ class IPC {
            callback(args)
         })
     }
-    downloadResource() {
-        let url = 'https://dl-tc.coolapkmarket.com/down/apk_upload/2020/1101/IDM_-v12.3_signed-162932-o_1em0thqn3jhj1akloa0qnd1lrgr-uid-456271.apk?t=1656220581&sign=0c7f339d43cdde9174550401e39838a0'
+    downloadResource(url) {
+        // let url = 'https://dl-tc.coolapkmarket.com/down/apk_upload/2020/1101/IDM_-v12.3_signed-162932-o_1em0thqn3jhj1akloa0qnd1lrgr-uid-456271.apk?t=1656220581&sign=0c7f339d43cdde9174550401e39838a0'
         const ipc = window.require('electron').ipcRenderer
         ipc.send('downloadResource', url)
     }
@@ -28,6 +24,12 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('onDownloadProgress', (e, progress) => {
             callback(progress)
+        })
+    }
+    onResourceUpdated(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onResourceUpdated', () => {
+            callback()
         })
     }
 }
