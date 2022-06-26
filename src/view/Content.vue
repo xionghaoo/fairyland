@@ -3,6 +3,7 @@
     <img v-if="file_type === 0" :src="require(`@/assets/${img_uri}`)" width="100%" height="100%">
     <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
       <source :src="require(`@/assets/${video_uri}`)" type="video/mp4">
+<!--      <source src="file:///assets/ubtech_3.mov" type="video/mp4">-->
       Your browser does not support the video tag.
     </video>
   </div>
@@ -47,6 +48,7 @@ export default {
               let source = document.createElement('source');
               video.pause();
               let v = require(`@/assets/${file_uri}`)
+              // let v = "file:///assets/ubtech_3.mov"
               source.setAttribute('src', v);
               source.setAttribute('type', 'video/mp4');
               video.load();
