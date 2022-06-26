@@ -1,10 +1,13 @@
 <template>
-  <div id="app" v-if="!hasUpdate">
-    <my-content :index="window.currentIndex"/>
-    <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
+  <div v-if="isInit" id="app">
+    幻境
+  </div>
+  <div v-else-if="hasUpdate" id="app">
+    <my-update :value="progress"></my-update>
   </div>
   <div v-else id="app">
-    <my-update :value="progress"></my-update>
+    <my-content :index="window.currentIndex"/>
+    <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
   </div>
 </template>
 
@@ -30,7 +33,8 @@ export default {
       camera: null,
       ipc: null,
       progress: 0,
-      hasUpdate: true,
+      hasUpdate: false,
+      isInit: true,
       sections: []
     }
   },
@@ -48,41 +52,48 @@ export default {
   methods: {
     checkVersionUpdate() {
       let _this = this;
-      Request.requestGet(Config.api.versionUpdate, {version: 1}).then((res) => {
+      let local_version = localStorage.getItem('version') ?? 0
+      Request.requestGet(Config.api.versionUpdate, {version: local_version}).then((res) => {
         console.log(res.data)
-        _this.hasUpdate = res.code === 0
-        if (_this.hasUpdate) {
-          let rd = res.data
-          // 有新的版本
-          let resourceUrl = Config.host + rd.resource_uri
-          let sections = JSON.stringify(rd.sections)
-          console.log('资源下载路径：' + resourceUrl)
-          _this.ipc.onDownloadProgress((progress) => {
-            console.log('download progress: ' + progress)
-            _this.progress = progress
-          })
-          _this.ipc.onResourceUpdated(() => {
-            // 资源更新完成
-            localStorage.setItem('sections', sections)
-            this.sections = rd.sections
-            _this.hasUpdate = false
-
-            setTimeout(() => {
+        _this.isInit = false
+        setTimeout(() => {
+          _this.hasUpdate = res.code === 0
+          if (_this.hasUpdate) {
+            let rd = res.data
+            // 有新的版本
+            let resourceUrl = Config.host + rd.resource_uri
+            let sections = JSON.stringify(rd.sections)
+            console.log('资源下载路径：' + resourceUrl)
+            _this.ipc.onDownloadProgress((progress) => {
+              console.log('download progress: ' + progress)
+              _this.progress = progress
+            })
+            _this.ipc.onResourceUpdated(() => {
+              // 资源更新完成
+              localStorage.setItem('sections', sections)
+              this.sections = rd.sections
+              // 保存资源版本号
+              localStorage.setItem('version', rd.version_code)
               _this.startTextRecognize()
-            }, 100)
-          })
-          _this.ipc.downloadResource(resourceUrl)
-        } else {
-          // 没有发现新版本
-          _this.startTextRecognize()
-        }
+            })
+            _this.ipc.downloadResource(resourceUrl)
+          } else {
+            // 没有发现新版本
+            _this.startTextRecognize()
+          }
+        }, 50)
       })
     },
     startTextRecognize() {
-      this.camera = new Camera(document.getElementById("video"))
-      this.camera.open(() => {
-        this.startScan();
-      })
+      let _this = this;
+      this.hasUpdate = false
+
+      setTimeout(() => {
+        _this.camera = new Camera(document.getElementById("video"))
+        _this.camera.open(() => {
+          _this.startScan();
+        })
+      }, 100)
     },
     startScan() {
       console.log("开始扫描")
@@ -107,34 +118,12 @@ export default {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
               console.log('section', section);
-              if (section.card_name === /*res[i].txt*/"文字1") {
+              if (section.card_name === /*res[i].txt*/"华师") {
                 console.log("识别到文字")
                 // 匹配到卡片
                 this.ipc.playContent(section.screens);
               }
             }
-            // switch (res[i].txt) {
-            //   case 'A':
-            //     console.log("识别到文字： A");
-            //     this.ipc.playContent(0, "production",1);
-            //     success = true;
-            //     break;
-            //     // case 'B':
-            //     //   console.log("识别到文字： B");
-            //     //   this.playContent(1, "production",1);
-            //     //   success = true;
-            //     //   break;
-            //     // case 'C':
-            //     //   console.log("识别到文字： C");
-            //     //   this.playContent(2, "production",1);
-            //     //   success = true;
-            //     //   break;
-            //     // case 'D':
-            //     //   console.log("识别到文字： D");
-            //     //   this.playContent(3, "production",1);
-            //     //   success = true;
-            //     //   break;
-            // }
           }
           this.hasText = success;
         }
