@@ -132,7 +132,7 @@ export default {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
               console.log('section', section);
-              if (section.card_name === res[i].txt) {
+              if (section.card_name.includes(res[i].txt)) {
                 console.log("识别到文字")
                 // 匹配到卡片
                 this.ipc.playContent(section.screens);
