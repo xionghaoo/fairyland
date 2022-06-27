@@ -117,7 +117,7 @@ export default {
         if (imgData) {
           _this.ws.send('chinese_ocr', imgData)
         }
-      }, 10000);
+      }, Config.recognizeInterval);
     },
     handleResult(obj) {
       let sections = this.sections

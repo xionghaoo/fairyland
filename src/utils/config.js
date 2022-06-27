@@ -30,6 +30,7 @@ const Config = (() => {
       versionUpdate: api + '/fairyland/update',//七牛token
 
     },
+    recognizeInterval: 1000
   }
 })();
 
