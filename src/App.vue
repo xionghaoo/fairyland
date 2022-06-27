@@ -49,8 +49,15 @@ export default {
     })
 
     if (window.currentIndex === 0) {
+      // 在第一个屏幕检查更新
       this.checkVersionUpdate()
     }
+    this.ipc.onInitChange((status) => {
+      _this.isInit = status
+    })
+    this.ipc.onUpdateChange((status) => {
+      _this.hasUpdate = status
+    })
   },
   methods: {
     checkVersionUpdate() {
@@ -58,10 +65,13 @@ export default {
       let local_version = localStorage.getItem('version') ?? 0
       Request.requestGet(Config.api.versionUpdate, {version: local_version}).then((res) => {
         console.log(res.data)
-        _this.isInit = false
+        // _this.isInit = false
+        _this.ipc.setInitStatus(false)
         setTimeout(() => {
-          _this.hasUpdate = res.code === 0
-          if (_this.hasUpdate) {
+          let hasUpdate = res.code === 0
+          _this.ipc.setUpdateStatus(hasUpdate)
+          // 检查是否有更新
+          if (hasUpdate) {
             let rd = res.data
             // 有新的版本
             let resourceUrl = Config.host + rd.resource_uri
@@ -89,7 +99,8 @@ export default {
     },
     startTextRecognize() {
       let _this = this;
-      this.hasUpdate = false
+      // this.hasUpdate = false
+      _this.ipc.setUpdateStatus(false)
 
       setTimeout(() => {
         _this.camera = new Camera(document.getElementById("video"))

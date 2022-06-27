@@ -33,6 +33,7 @@ export default {
         let s = screens[i]
         // 屏幕匹配
         if (s.index === _this.index + 1) {
+          console.log(`匹配到屏幕: ${_this.index + 1}`)
           this.file_type = s.file_type
           let file_uri = s.item_uri.replace('/static/', '')
           switch (s.file_type) {

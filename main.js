@@ -9,13 +9,22 @@ require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
 
 let windowList = [];
-// let currentType = '';
 
 ipc.on('show-message-dialog', function (e, msg) {
     dialog.showMessageBox({message: msg})
 })
 ipc.on('show-open-dialog', function () {
     dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']})
+})
+ipc.on('setInitStatus', function (e, args) {
+    for (let i = 0; i < windowList.length; i++) {
+        windowList[i].webContents.postMessage('onInitChange', args, [])
+    }
+})
+ipc.on('setUpdateStatus', function (e, args) {
+    for (let i = 0; i < windowList.length; i++) {
+        windowList[i].webContents.postMessage('onUpdateChange', args, [])
+    }
 })
 ipc.on('showContent', function (e, args) {
     // let index = args.display;

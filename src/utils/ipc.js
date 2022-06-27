@@ -32,6 +32,26 @@ class IPC {
             callback()
         })
     }
+    setInitStatus(status) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.send('setInitStatus', status)
+    }
+    onInitChange(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onInitChange', (e, args) => {
+            callback(args)
+        })
+    }
+    setUpdateStatus(status) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.send('setUpdateStatus', status)
+    }
+    onUpdateChange(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onUpdateChange', (e, args) => {
+            callback(args)
+        })
+    }
 }
 
 export default IPC
