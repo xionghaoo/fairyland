@@ -50,7 +50,8 @@ ipc.on('stopContent', function (e, args) {
 ipc.on('downloadResource', function (e, url) {
     let win = windowList[0]
     win.webContents.session.on('will-download', (e, item) => {
-        const filePath = path.join('assets', item.getFilename());
+        // const filePath = path.join('assets', item.getFilename());
+        const filePath = "assets\\" + item.getFilename();
         console.log('download file path: ' + filePath)
         item.setSavePath(filePath)
         let value = 0
@@ -96,7 +97,7 @@ ipc.on('downloadResource', function (e, url) {
                     storeEntries: true
                 });
                 zip.on('ready', () => {
-                    zip.extract(null, 'src/assets', (err, count) => {
+                    zip.extract(null, 'src\\assets', (err, count) => {
                         console.log(err ? 'Extract error' : `Extracted ${count} entries`);
                         if (!err) {
                             win.webContents.send('onResourceUpdated');
