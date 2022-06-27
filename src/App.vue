@@ -3,7 +3,8 @@
     幻境
   </div>
   <div v-else-if="hasUpdate" id="app">
-    <my-update :value="progress"></my-update>
+    <my-update v-if="window.currentIndex === 0" :value="progress"/>
+    <div v-else>等待更新</div>
   </div>
   <div v-else id="app">
     <my-content :index="window.currentIndex"/>
@@ -47,7 +48,9 @@ export default {
       _this.handleResult(data)
     })
 
-    this.checkVersionUpdate()
+    if (window.currentIndex === 0) {
+      this.checkVersionUpdate()
+    }
   },
   methods: {
     checkVersionUpdate() {
