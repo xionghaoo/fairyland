@@ -59,8 +59,8 @@ ipc.on('stopContent', function (e, args) {
 ipc.on('downloadResource', function (e, url) {
     let win = windowList[0]
     win.webContents.session.on('will-download', (e, item) => {
-        // const filePath = path.join('assets', item.getFilename());
-        const filePath = "assets\\" + item.getFilename();
+        const filePath = path.join(app.getAppPath(), 'assets', item.getFilename());
+        // const filePath = "assets\\" + item.getFilename();
         console.log('download file path: ' + filePath)
         item.setSavePath(filePath)
         let value = 0
@@ -105,8 +105,9 @@ ipc.on('downloadResource', function (e, url) {
                     file: filePath,
                     storeEntries: true
                 });
+                let outPath = path.join('src', 'assets')
                 zip.on('ready', () => {
-                    zip.extract(null, 'src\\assets', (err, count) => {
+                    zip.extract(null, outPath, (err, count) => {
                         console.log(err ? 'Extract error' : `Extracted ${count} entries`);
                         if (!err) {
                             win.webContents.send('onResourceUpdated');
@@ -201,6 +202,13 @@ const createMultiWindow = () => {
 app.whenReady().then(() => {
     // createWindow()
     createMultiWindow()
+
+    // 文件路径测试
+    console.log('app path: ' + app.getAppPath())
+    const filePath = path.join(app.getAppPath(), 'assets', "test.file");
+    console.log('filePath: ' + filePath)
+    const outPath = path.join('src', 'assets')
+    console.log('out path: ' + outPath)
     // createOtherWindow()
 
     app.on('activate', () => {
