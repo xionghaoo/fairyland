@@ -1,4 +1,8 @@
 class IPC {
+    getAppPath() {
+        const ipc = window.require('electron').ipcRenderer
+        return ipc.sendSync('getAppPath');
+    }
     playContent(data) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('showContent', data);

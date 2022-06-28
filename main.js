@@ -10,6 +10,9 @@ const ipc = require('electron').ipcMain
 
 let windowList = [];
 
+ipc.on('getAppPath', function (e) {
+    e.returnValue = app.getAppPath()
+})
 ipc.on('show-message-dialog', function (e, msg) {
     dialog.showMessageBox({message: msg})
 })
