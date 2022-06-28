@@ -188,10 +188,12 @@ const createMultiWindow = () => {
             frame: false,
             titleBarStyle: 'hidden',
             webPreferences: {
+                // 设置安全参数
+                webSecurity: false, // false 之后就可以访问 本地资源文件了
                 nodeIntegration: true,
                 contextIsolation: false,
                 preload: path.join(__dirname, `preload/page${i}.js`)
-            }
+            },
         })
         windowList.push(win);
         win.setFullScreen(true)
