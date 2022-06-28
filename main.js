@@ -196,7 +196,7 @@ const createMultiWindow = () => {
             },
         })
         windowList.push(win);
-        win.setFullScreen(true)
+        // win.setFullScreen(true)
         win.loadFile('./dist/index.html')
     }
 }

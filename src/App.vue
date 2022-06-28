@@ -51,7 +51,9 @@ export default {
 
     if (window.currentIndex === 0) {
       // 在第一个屏幕检查更新
-      this.checkVersionUpdate()
+      // this.checkVersionUpdate()
+      _this.ipc.setInitStatus(false)
+      _this.ipc.setUpdateStatus(true)
     }
     this.ipc.onInitChange((status) => {
       _this.isInit = status
