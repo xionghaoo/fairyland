@@ -38,11 +38,31 @@ export default {
       next_video_uri: '',
       isShowNext: false,
       last_res_url: null,
-      file_type: 0
+      file_type: 0,
     }
   },
   created() {
     let _this = this;
+
+    switch (_this.$props.index) {
+      case 0:
+        this.img_uri = 'cover_left_top.png';
+        this.next_img_uri = 'cover_left_top.png';
+        break;
+      case 1:
+        this.img_uri = 'cover_right_top.png';
+        this.next_img_uri = 'cover_right_top.png';
+        break;
+      case 2:
+        this.img_uri = 'cover_left_bottom.png';
+        this.next_img_uri = 'cover_left_bottom.png';
+        break;
+      case 3:
+        this.img_uri = 'cover_right_bottom.png';
+        this.next_img_uri = 'cover_right_bottom.png';
+        break;
+    }
+
     this.ipc = new IPC();
     this.ipc.onShowContent((screens) => {
       for (let i = 0; i < screens.length; i++) {
