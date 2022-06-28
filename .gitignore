@@ -21,3 +21,11 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+assets/fairyland
+assets/huashi
+assets/ubtech
+assets/yelang
+assets/huazhong
+assets/resource.zip
+assets/ubtech_3.mov
