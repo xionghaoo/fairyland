@@ -30,7 +30,7 @@ const Config = (() => {
       versionUpdate: api + '/fairyland/update',//七牛token
 
     },
-    recognizeInterval: 1000,
+    recognizeInterval: 4000,
     recognizeApi: "ws://120.76.175.224:9002"
   }
 })();

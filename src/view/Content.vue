@@ -1,23 +1,21 @@
 <template>
   <div>
-    <transition name="el-fade-in-linear">
-      <div v-show="!isShowNext">
-        <img v-if="file_type === 0" :src="require(`@/assets/${img_uri}`)" width="100%" height="100%">
-        <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
-          <source :src="require(`@/assets/${video_uri}`)" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      </div>
-    </transition>
-    <transition name="el-fade-in-linear">
-      <div v-show="isShowNext">
-        <img v-if="file_type === 0" :src="require(`@/assets/${next_img_uri}`)" width="100%" height="100%">
-        <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
-          <source :src="require(`@/assets/${next_video_uri}`)" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      </div>
-    </transition>
+    <div v-if="file_type === 0">
+      <transition name="el-fade-in-linear">
+        <div v-show="!isShowNext">
+          <img :src="require(`@/assets/${img_uri}`)" width="100%" height="100%">
+        </div>
+      </transition>
+      <transition name="el-fade-in-linear">
+        <div v-show="isShowNext">
+          <img :src="require(`@/assets/${next_img_uri}`)" width="100%" height="100%">
+        </div>
+      </transition>
+    </div>
+    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
+      <source :src="require(`@/assets/${video_uri}`)" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 </template>
 
@@ -46,6 +44,7 @@ export default {
     this.showDefaultContent()
     this.ipc = new IPC();
     this.ipc.onShowContent((screens) => {
+      console.log("last uri: " + this.last_res_url)
       if (screens.length > 0) {
         for (let i = 0; i < screens.length; i++) {
           let s = screens[i]
@@ -58,12 +57,15 @@ export default {
               let needNext = !this.isShowNext
               this.showContent(s.file_type, file_uri, needNext)
               this.isShowNext = needNext
+              console.log("给文件uri赋值: " + file_uri)
               this.last_res_url = file_uri
             }
           }
         }
       } else {
         if (this.last_res_url != null) {
+          console.log("显示默认内容")
+          this.file_type = 0
           _this.showDefaultContent();
           this.isShowNext = !this.isShowNext
           this.last_res_url = null
@@ -104,21 +106,17 @@ export default {
           break;
         case 1: {
           // 视频
-          if (!isNext) {
-            this.video_uri = uri
-          } else {
-            this.next_video_uri = uri
-          }
+          this.video_uri = uri
           let video = document.getElementById("content_video");
-          // console.log("play mp4: " + this.content_url)
           let source = document.createElement('source');
-          video.pause();
-          let v = require(`@/assets/${uri}`)
-          // let v = "file:///assets/ubtech_3.mov"
-          source.setAttribute('src', v);
-          source.setAttribute('type', 'video/mp4');
-          video.load();
-          video.play();
+          if (video) {
+            video.pause();
+            let v = require(`@/assets/${uri}`)
+            source.setAttribute('src', v);
+            source.setAttribute('type', 'video/mp4');
+            video.load();
+            video.play();
+          }
           break;
         }
       }

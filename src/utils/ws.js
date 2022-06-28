@@ -27,7 +27,7 @@ class WebSocketManager {
         this.ws.onmessage = (event) => {
             this.hasReceivedResponse = true
             let data = event.data;
-            console.log(data);
+            // console.log(data);
             // 处理数据
             let obj = JSON.parse(data);
             onMessage(obj)
