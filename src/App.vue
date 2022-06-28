@@ -131,7 +131,7 @@ export default {
           for (let i = 0; i < res.length; i++) {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
-              if (res[i].txt.includes(section.card_name)) {
+              if (res[i].txt.toLowerCase().includes(section.card_name.toLowerCase())) {
                 console.log("识别到文字")
                 // 匹配到卡片
                 success = true;
