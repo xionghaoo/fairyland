@@ -44,7 +44,7 @@ export default {
     let _this = this;
     this.ipc = new IPC();
     this.sections = JSON.parse(localStorage.getItem('sections'))
-    this.ws = new WebSocketManager("ws://120.76.175.224:9002", (data) => {
+    this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
       // 收到websocket消息
       _this.handleResult(data)
     })
@@ -95,7 +95,7 @@ export default {
             // 没有发现新版本
             _this.startTextRecognize()
           }
-        }, 50)
+        }, 100)
       })
     },
     startTextRecognize() {
@@ -111,7 +111,7 @@ export default {
       }, 100)
     },
     startScan() {
-      console.log("开始扫描")
+      console.log("开始识别")
       let _this = this;
       setInterval(() => {
         let imgData = _this.camera.capture();
@@ -124,16 +124,14 @@ export default {
       let sections = this.sections
       let model = obj.model;
       let res = obj.result;
-      // this.hasText = false;
       if (res) {
         if (model === 'chinese_ocr') {
-          console.log("接收到数据，处理文字结果")
           let success = false;
           // 文字识别
           for (let i = 0; i < res.length; i++) {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
-              if (section.card_name.includes(res[i].txt)) {
+              if (res[i].txt.includes(section.card_name)) {
                 console.log("识别到文字")
                 // 匹配到卡片
                 success = true;
@@ -152,11 +150,10 @@ export default {
               this.successCount = 0;
             }
           }
-          console.log("success count: " + this.successCount)
+          console.log("识别成功次数: " + this.successCount)
           if (this.successCount === 0) {
             this.ipc.playContent([]);
           }
-          // this.hasText = success;
         }
       }
     }
