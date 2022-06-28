@@ -36,7 +36,8 @@ export default {
       progress: 0,
       hasUpdate: false,
       isInit: true,
-      sections: []
+      sections: [],
+      successCount: 0
     }
   },
   mounted() {
@@ -123,6 +124,7 @@ export default {
       let sections = this.sections
       let model = obj.model;
       let res = obj.result;
+      // this.hasText = false;
       if (res) {
         if (model === 'chinese_ocr') {
           console.log("接收到数据，处理文字结果")
@@ -131,15 +133,30 @@ export default {
           for (let i = 0; i < res.length; i++) {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
-              console.log('section', section);
               if (section.card_name.includes(res[i].txt)) {
                 console.log("识别到文字")
                 // 匹配到卡片
+                success = true;
                 this.ipc.playContent(section.screens);
               }
             }
           }
-          this.hasText = success;
+          if (success) {
+            this.successCount ++;
+            if (this.successCount >= 3) {
+              this.successCount = 3;
+            }
+          } else {
+            this.successCount --;
+            if (this.successCount <= 0) {
+              this.successCount = 0;
+            }
+          }
+          console.log("success count: " + this.successCount)
+          if (this.successCount === 0) {
+            this.ipc.playContent([]);
+          }
+          // this.hasText = success;
         }
       }
     }

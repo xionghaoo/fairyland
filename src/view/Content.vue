@@ -43,47 +43,56 @@ export default {
   },
   created() {
     let _this = this;
-
-    switch (_this.$props.index) {
-      case 0:
-        this.img_uri = 'cover_left_top.png';
-        this.next_img_uri = 'cover_left_top.png';
-        break;
-      case 1:
-        this.img_uri = 'cover_right_top.png';
-        this.next_img_uri = 'cover_right_top.png';
-        break;
-      case 2:
-        this.img_uri = 'cover_left_bottom.png';
-        this.next_img_uri = 'cover_left_bottom.png';
-        break;
-      case 3:
-        this.img_uri = 'cover_right_bottom.png';
-        this.next_img_uri = 'cover_right_bottom.png';
-        break;
-    }
-
+    this.showDefaultContent()
     this.ipc = new IPC();
     this.ipc.onShowContent((screens) => {
-      for (let i = 0; i < screens.length; i++) {
-        let s = screens[i]
-        if (s.index === _this.index + 1) {
-          // 匹配到屏幕，获取文件uri
-          this.file_type = s.file_type
-          let file_uri = s.item_uri.replace('/static/', '')
-          console.log(`匹配到屏幕: ${_this.index + 1}`)
-          // 把uri赋值给组件
-          if (this.last_res_url !== file_uri) {
-            let needNext = !this.isShowNext
-            this.showContent(s.file_type, file_uri, needNext)
-            this.isShowNext = needNext
-            this.last_res_url = file_uri
+      if (screens.length > 0) {
+        for (let i = 0; i < screens.length; i++) {
+          let s = screens[i]
+          if (s.index === _this.index + 1) {
+            // 匹配到屏幕，获取文件uri
+            this.file_type = s.file_type
+            let file_uri = s.item_uri.replace('/static/', '')
+            console.log(`匹配到屏幕: ${_this.index + 1}`)
+            // 把uri赋值给组件
+            if (this.last_res_url !== file_uri) {
+              let needNext = !this.isShowNext
+              this.showContent(s.file_type, file_uri, needNext)
+              this.isShowNext = needNext
+              this.last_res_url = file_uri
+            }
           }
+        }
+      } else {
+        if (this.last_res_url != null) {
+          _this.showDefaultContent();
+          this.isShowNext = !this.isShowNext
+          this.last_res_url = null
         }
       }
     })
   },
   methods: {
+    showDefaultContent() {
+      switch (this.$props.index) {
+        case 0:
+          this.img_uri = 'cover_left_top.png';
+          this.next_img_uri = 'cover_left_top.png';
+          break;
+        case 1:
+          this.img_uri = 'cover_right_top.png';
+          this.next_img_uri = 'cover_right_top.png';
+          break;
+        case 2:
+          this.img_uri = 'cover_left_bottom.png';
+          this.next_img_uri = 'cover_left_bottom.png';
+          break;
+        case 3:
+          this.img_uri = 'cover_right_bottom.png';
+          this.next_img_uri = 'cover_right_bottom.png';
+          break;
+      }
+    },
     showContent(fileType, uri, isNext=false) {
       switch (fileType) {
         case 0:
