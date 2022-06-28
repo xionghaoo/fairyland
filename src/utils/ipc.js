@@ -32,6 +32,12 @@ class IPC {
             callback()
         })
     }
+    onDownloadCompleted(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onDownloadCompleted', () => {
+            callback()
+        })
+    }
     setInitStatus(status) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('setInitStatus', status)

@@ -96,10 +96,9 @@ ipc.on('downloadResource', function (e, url) {
             if (state === 'interrupted') {
                 dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 因为某些原因被中断下载`);
             }
-            // 下载成功后打开文件所在文件夹
             if (state === 'completed') {
                 console.log('资源下载成功')
-
+                win.webContents.send('onDownloadCompleted');
                 // 解压资源文件
                 const zip = new StreamZip({
                     file: filePath,

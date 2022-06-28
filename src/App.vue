@@ -1,10 +1,12 @@
 <template>
   <div v-if="isInit" id="app">
-    幻境
+    <p>幻境Splash</p>
   </div>
   <div v-else-if="hasUpdate" id="app">
     <my-update v-if="window.currentIndex === 0" :value="progress"/>
-    <div v-else>等待更新</div>
+    <div v-else style="width: 100%; height: 100%">
+      <h3 style="display: block;margin: auto">等待更新</h3>
+    </div>
   </div>
   <div v-else id="app">
     <my-content :index="window.currentIndex"/>
@@ -82,9 +84,14 @@ export default {
             console.log('资源下载路径：' + resourceUrl)
             _this.ipc.onDownloadProgress((progress) => {
               console.log('download progress: ' + progress)
-              _this.progress = progress
+              _this.progress = progress * 0.75
+            })
+            _this.ipc.onDownloadCompleted(() => {
+              // 下载完成
+
             })
             _this.ipc.onResourceUpdated(() => {
+              _this.progress = 100
               // 资源更新完成
               localStorage.setItem('sections', sections)
               this.sections = rd.sections
@@ -103,7 +110,7 @@ export default {
     startTextRecognize() {
       let _this = this;
       // this.hasUpdate = false
-      _this.ipc.setUpdateStatus(false)
+      // _this.ipc.setUpdateStatus(false)
 
       setTimeout(() => {
         _this.camera = new Camera(document.getElementById("video"))
@@ -115,14 +122,20 @@ export default {
     startScan() {
       console.log("开始识别")
       let _this = this;
-      setInterval(() => {
-        let imgData = _this.camera.capture();
-        if (imgData) {
-          _this.ws.send('chinese_ocr', imgData)
-        }
-      }, Config.recognizeInterval);
+      // setInterval(() => {
+      //   let imgData = _this.camera.capture();
+      //   if (imgData) {
+      //     _this.ws.send('chinese_ocr', imgData)
+      //   }
+      // }, Config.recognizeInterval);
+
+      let imgData = _this.camera.capture();
+      if (imgData) {
+        _this.ws.send('chinese_ocr', imgData)
+      }
     },
     handleResult(obj) {
+      let _this = this;
       let sections = this.sections
       let model = obj.model;
       let res = obj.result;
@@ -137,6 +150,8 @@ export default {
                 console.log("识别到文字")
                 // 匹配到卡片
                 success = true;
+                // 匹配到直接把容忍值加满
+                this.successCount = 3;
                 this.ipc.playContent(section.screens);
               }
             }
@@ -158,6 +173,10 @@ export default {
           }
         }
       }
+
+      setTimeout(() => {
+        _this.startScan();
+      }, 50)
     }
   }
 }

@@ -1,6 +1,9 @@
 <template>
   <div class="page">
-    <el-progress class="progress" type="circle" :percentage="progressValue"></el-progress>
+    <div class="center">
+      <h3 style="display: block; padding-left: 20px">正在更新资源。。。</h3>
+      <el-progress style="margin-top: 10px" type="circle" :percentage="progressValue"/>
+    </div>
   </div>
 </template>
 
@@ -31,8 +34,10 @@ export default {
   justify-items: center;
   align-items: center;
 }
-.progress {
+.center {
   display: flex;
+  align-items: center;
+  flex-direction: column;
   margin: auto;
 }
 </style>
