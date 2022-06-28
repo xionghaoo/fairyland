@@ -22,10 +22,10 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-assets/fairyland
-assets/huashi
-assets/ubtech
-assets/yelang
-assets/huazhong
-assets/resource.zip
+/src/assets/fairyland/
+/src/assets/huashi/
+/src/assets/ubtech/
+/src/assets/yelang/
+/src/assets/huazhong/
+/assets/resource.zip
 assets/ubtech_3.mov
