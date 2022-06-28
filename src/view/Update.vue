@@ -33,5 +33,6 @@ export default {
 }
 .progress {
   display: flex;
+  margin: auto;
 }
 </style>
