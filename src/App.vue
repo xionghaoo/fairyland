@@ -147,6 +147,11 @@ export default {
           for (let i = 0; i < res.length; i++) {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
+              if (section.card_name === '0'
+                  || section.card_name === '1'
+                  || section.card_name === '6') {
+                continue
+              }
               if (res[i].txt.toLowerCase().includes(section.card_name.toLowerCase())) {
                 console.log("识别到文字：" + section.card_name)
                 // 匹配到卡片
