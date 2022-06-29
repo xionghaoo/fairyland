@@ -135,7 +135,7 @@ export default {
       // }
     },
     handleResult(obj) {
-      console.log("处理识别结果")
+      console.log("处理识别结果", obj)
       // let _this = this;
       let sections = this.sections
       let model = obj.model;
@@ -148,7 +148,7 @@ export default {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
               if (res[i].txt.toLowerCase().includes(section.card_name.toLowerCase())) {
-                console.log("识别到文字")
+                console.log("识别到文字：" + section.card_name)
                 // 匹配到卡片
                 success = true;
                 // 匹配到直接把容忍值加满
