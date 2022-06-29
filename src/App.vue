@@ -53,9 +53,9 @@ export default {
 
     if (window.currentIndex === 0) {
       // 在第一个屏幕检查更新
-      // this.checkVersionUpdate()
-      _this.ipc.setInitStatus(false)
-      _this.ipc.setUpdateStatus(true)
+      this.checkVersionUpdate()
+      // _this.ipc.setInitStatus(false)
+      // _this.ipc.setUpdateStatus(true)
     }
     this.ipc.onInitChange((status) => {
       _this.isInit = status
@@ -110,7 +110,7 @@ export default {
     startTextRecognize() {
       let _this = this;
       // this.hasUpdate = false
-      // _this.ipc.setUpdateStatus(false)
+      _this.ipc.setUpdateStatus(false)
 
       setTimeout(() => {
         _this.camera = new Camera(document.getElementById("video"))
@@ -122,20 +122,21 @@ export default {
     startScan() {
       console.log("开始识别")
       let _this = this;
-      // setInterval(() => {
-      //   let imgData = _this.camera.capture();
-      //   if (imgData) {
-      //     _this.ws.send('chinese_ocr', imgData)
-      //   }
-      // }, Config.recognizeInterval);
+      setInterval(() => {
+        let imgData = _this.camera.capture();
+        if (imgData) {
+          _this.ws.send('chinese_ocr', imgData)
+        }
+      }, Config.recognizeInterval);
 
-      let imgData = _this.camera.capture();
-      if (imgData) {
-        _this.ws.send('chinese_ocr', imgData)
-      }
+      // let imgData = _this.camera.capture();
+      // if (imgData) {
+      //   _this.ws.send('chinese_ocr', imgData)
+      // }
     },
     handleResult(obj) {
-      let _this = this;
+      console.log("处理识别结果")
+      // let _this = this;
       let sections = this.sections
       let model = obj.model;
       let res = obj.result;
@@ -174,9 +175,9 @@ export default {
         }
       }
 
-      setTimeout(() => {
-        _this.startScan();
-      }, 50)
+      // setTimeout(() => {
+      //   _this.startScan();
+      // }, 50)
     }
   }
 }

@@ -1,8 +1,9 @@
 <template>
   <div class="page">
     <div class="center">
-      <h3 style="display: block; padding-left: 20px">正在更新资源。。。</h3>
+      <h3 style="display: block">发现新的资源包</h3>
       <el-progress style="margin-top: 10px" type="circle" :percentage="progressValue"/>
+      <p>{{ progressValue >= 75 ? '解压中。。。' : '正在下载。。。'}}</p>
     </div>
   </div>
 </template>

@@ -107,7 +107,7 @@ ipc.on('downloadResource', function (e, url) {
                     file: filePath,
                     storeEntries: true
                 });
-                let outPath = path.join('src', 'assets')
+                let outPath = path.join(app.getAppPath(), 'assets')
                 zip.on('ready', () => {
                     zip.extract(null, outPath, (err, count) => {
                         console.log(err ? 'Extract error' : `Extracted ${count} entries`);

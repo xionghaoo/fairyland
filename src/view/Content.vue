@@ -3,17 +3,17 @@
     <div v-if="file_type === 0">
       <transition name="el-fade-in-linear">
         <div v-show="!isShowNext">
-          <img :src="require(`@/assets/${img_uri}`)" width="100%" height="100%">
+          <img :src="img_uri" width="100%" height="100%">
         </div>
       </transition>
       <transition name="el-fade-in-linear">
         <div v-show="isShowNext">
-          <img :src="require(`@/assets/${next_img_uri}`)" width="100%" height="100%">
+          <img :src="next_img_uri" width="100%" height="100%">
         </div>
       </transition>
     </div>
     <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
-      <source :src="require(`@/assets/${video_uri}`)" type="video/mp4">
+      <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
@@ -21,6 +21,10 @@
 
 <script>
 import IPC from "@/utils/ipc";
+import img1 from "@/assets/cover_left_top.png"
+import img2 from "@/assets/cover_right_top.png"
+import img3 from "@/assets/cover_left_bottom.png"
+import img4 from "@/assets/cover_right_bottom.png"
 
 export default {
   name: "Content",
@@ -36,6 +40,7 @@ export default {
       next_video_uri: '',
       isShowNext: false,
       last_res_url: null,
+      file_prefix: '',
       file_type: 0,
     }
   },
@@ -43,6 +48,8 @@ export default {
     let _this = this;
     this.showDefaultContent()
     this.ipc = new IPC();
+    let path = this.ipc.getAppPath();
+    this.file_prefix = `file:///${path}/assets`
     this.ipc.onShowContent((screens) => {
       console.log("last uri: " + this.last_res_url)
       if (screens.length > 0) {
@@ -77,20 +84,20 @@ export default {
     showDefaultContent() {
       switch (this.$props.index) {
         case 0:
-          this.img_uri = 'cover_left_top.png';
-          this.next_img_uri = 'cover_left_top.png';
+          this.img_uri = img1;
+          this.next_img_uri = img1;
           break;
         case 1:
-          this.img_uri = 'cover_right_top.png';
-          this.next_img_uri = 'cover_right_top.png';
+          this.img_uri = img2;
+          this.next_img_uri = img2;
           break;
         case 2:
-          this.img_uri = 'cover_left_bottom.png';
-          this.next_img_uri = 'cover_left_bottom.png';
+          this.img_uri = img3;
+          this.next_img_uri = img3;
           break;
         case 3:
-          this.img_uri = 'cover_right_bottom.png';
-          this.next_img_uri = 'cover_right_bottom.png';
+          this.img_uri = img4;
+          this.next_img_uri = img4;
           break;
       }
     },
@@ -99,20 +106,20 @@ export default {
         case 0:
           // 图片
           if (!isNext) {
-            this.img_uri = uri
+            this.img_uri = `${this.file_prefix}/${uri}`
           } else {
-            this.next_img_uri = uri
+            this.next_img_uri = `${this.file_prefix}/${uri}`
           }
           break;
         case 1: {
           // 视频
-          this.video_uri = uri
+          this.video_uri = `${this.file_prefix}/${uri}`
           let video = document.getElementById("content_video");
           let source = document.createElement('source');
           if (video) {
             video.pause();
-            let v = require(`@/assets/${uri}`)
-            source.setAttribute('src', v);
+            // let v = `${this.file_prefix}/${uri}`
+            source.setAttribute('src', this.video_uri);
             source.setAttribute('type', 'video/mp4');
             video.load();
             video.play();

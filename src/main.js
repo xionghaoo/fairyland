@@ -3,8 +3,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueResource from 'vue-resource';
 import router from './routers';
-// import App from './App.vue'
-import Test from './Test.vue'
+import App from './App.vue'
+// import Test from './Test.vue'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
@@ -12,5 +12,5 @@ Vue.use(VueResource);
 
 new Vue({
   router,
-  render: h => h(Test),
+  render: h => h(App),
 }).$mount('#app')
