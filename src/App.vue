@@ -5,7 +5,7 @@
   <div v-else-if="hasUpdate" id="app">
     <my-update v-if="window.currentIndex === 0" :value="progress"/>
     <div v-else style="width: 100%; height: 100%">
-      <h3 style="display: block;margin: auto">等待更新</h3>
+      <div style="display: block;margin: auto;font-size: 20px">等待更新</div>
     </div>
   </div>
   <div v-else id="app">
