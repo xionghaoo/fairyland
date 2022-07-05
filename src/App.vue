@@ -147,13 +147,9 @@ export default {
           for (let i = 0; i < res.length; i++) {
             for (let j = 0; j < sections.length; j++) {
               let section = sections[j];
-              if (section.card_name === '0'
-                  || section.card_name === '1'
-                  || section.card_name === '6') {
-                continue
-              }
-              if (res[i].txt.toLowerCase().includes(section.card_name.toLowerCase())) {
-                console.log("识别到文字：" + section.card_name)
+              if (section.recognize_type === 0
+                  && res[i].txt.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
+                console.log("识别到文字：" + section.recognize_txt)
                 // 匹配到卡片
                 success = true;
                 // 匹配到直接把容忍值加满

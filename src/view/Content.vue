@@ -58,7 +58,7 @@ export default {
           if (s.index === _this.index + 1) {
             // 匹配到屏幕，获取文件uri
             this.file_type = s.file_type
-            let file_uri = s.item_uri.replace('/static/', '')
+            let file_uri = s.item_uri.replace('/static/resources/', '')
             // 把uri赋值给组件
             if (this.last_res_url !== file_uri) {
               let needNext = !this.isShowNext
