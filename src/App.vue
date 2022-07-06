@@ -88,7 +88,6 @@ export default {
             })
             _this.ipc.onDownloadCompleted(() => {
               // 下载完成
-
             })
             _this.ipc.onResourceUpdated(() => {
               _this.progress = 100
@@ -97,6 +96,9 @@ export default {
               this.sections = rd.sections
               // 保存资源版本号
               localStorage.setItem('version', rd.version_code)
+
+              // TODO 删除多余资源
+
               _this.startTextRecognize()
             })
             _this.ipc.downloadResource(resourceUrl)
@@ -123,16 +125,24 @@ export default {
       console.log("开始识别")
       let _this = this;
       setInterval(() => {
+        // let sections = this.sections
+        // if (sections.length > 0) {
+        //   let imgData = _this.camera.capture();
+        //   let model = 'chinese_ocr'
+        //   if (imgData) {
+        //     switch (sections[0].recognize_type) {
+        //       case 0:
+        //         model = 'chinese_ocr'
+        //         break;
+        //       case 1:
+        //         model = 'aruco'
+        //         break;
+        //     }
+        //   }
+        // }
         let imgData = _this.camera.capture();
-        if (imgData) {
-          _this.ws.send('chinese_ocr', imgData)
-        }
+        _this.ws.send("chinese_ocr", imgData)
       }, Config.recognizeInterval);
-
-      // let imgData = _this.camera.capture();
-      // if (imgData) {
-      //   _this.ws.send('chinese_ocr', imgData)
-      // }
     },
     handleResult(obj) {
       console.log("处理识别结果", obj)
@@ -141,44 +151,75 @@ export default {
       let model = obj.model;
       let res = obj.result;
       if (res) {
-        if (model === 'chinese_ocr') {
-          let success = false;
-          // 文字识别
-          for (let i = 0; i < res.length; i++) {
-            for (let j = 0; j < sections.length; j++) {
-              let section = sections[j];
-              if (section.recognize_type === 0
-                  && res[i].txt.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
-                console.log("识别到文字：" + section.recognize_txt)
-                // 匹配到卡片
-                success = true;
-                // 匹配到直接把容忍值加满
-                this.successCount = 3;
-                this.ipc.playContent(section.screens);
-              }
-            }
-          }
-          if (success) {
-            this.successCount ++;
-            if (this.successCount >= 3) {
-              this.successCount = 3;
-            }
-          } else {
-            this.successCount --;
-            if (this.successCount <= 0) {
-              this.successCount = 0;
-            }
-          }
-          console.log("识别成功次数: " + this.successCount)
-          if (this.successCount === 0) {
-            this.ipc.playContent([]);
-          }
+        // if (model === 'chinese_ocr') {
+        //   let success = false;
+        //   // 文字识别
+        //   for (let i = 0; i < res.length; i++) {
+        //     for (let j = 0; j < sections.length; j++) {
+        //       let section = sections[j];
+        //       if (section.recognize_type === 0
+        //           && res[i].txt.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
+        //         console.log("识别到文字：" + section.recognize_txt)
+        //         // 匹配到卡片
+        //         success = true;
+        //         // 匹配到直接把容忍值加满
+        //         this.successCount = 3;
+        //         this.ipc.playContent(section.screens);
+        //       }
+        //     }
+        //   }
+        //   if (success) {
+        //     this.successCount ++;
+        //     if (this.successCount >= 3) {
+        //       this.successCount = 3;
+        //     }
+        //   } else {
+        //     this.successCount --;
+        //     if (this.successCount <= 0) {
+        //       this.successCount = 0;
+        //     }
+        //   }
+        //   console.log("识别成功次数: " + this.successCount)
+        // }
+        this.handleTextRecognize(model, res, sections)
+
+        if (this.successCount === 0) {
+          this.ipc.playContent([]);
         }
       }
-
-      // setTimeout(() => {
-      //   _this.startScan();
-      // }, 50)
+    },
+    // 文字识别
+    handleTextRecognize(model, res, sections) {
+      if (model === 'chinese_ocr') {
+        let success = false;
+        // 文字识别
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < sections.length; j++) {
+            let section = sections[j];
+            if (section.recognize_type === 0
+                && res[i].txt.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
+              console.log("识别到文字：" + section.recognize_txt)
+              // 匹配到卡片
+              success = true;
+              // 匹配到直接把容忍值加满
+              this.successCount = 3;
+              this.ipc.playContent(section.screens);
+            }
+          }
+        }
+        if (success) {
+          this.successCount ++;
+          if (this.successCount >= 3) {
+            this.successCount = 3;
+          }
+        } else {
+          this.successCount --;
+          if (this.successCount <= 0) {
+            this.successCount = 0;
+          }
+        }
+        console.log("识别成功次数: " + this.successCount)
+      }
     }
   }
 }

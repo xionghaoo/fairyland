@@ -1,8 +1,7 @@
 const {app, BrowserWindow, screen, globalShortcut, dialog} = require('electron')
 const path = require('path')
 const StreamZip = require("node-stream-zip");
-
-// const url = require("url");
+const fs = require("fs");
 
 require('@electron/remote/main').initialize()
 
@@ -56,6 +55,23 @@ ipc.on('stopContent', function (e, args) {
     // 给渲染窗口发送消息
     for (let i = 0; i < windowList.length; i++) {
         windowList[i].webContents.postMessage('onStopContent', args, [])
+    }
+})
+
+ipc.on('deleteFiles', function (e, args) {
+    let assets_dir = path.join(app.getAppPath(), 'assets')
+    let files = fs.readdirSync(assets_dir)
+    for(var i=0; i < files.length; i++){
+
+        // let newPath = path.join(dir,files[i]);
+        // let stat = fs.statSync(newPath)
+        // if(stat.isDirectory()){
+        //     //如果是文件夹就递归下去
+        //     removeDir(newPath);
+        // }else {
+        //     //删除文件
+        //     fs.unlinkSync(newPath);
+        // }
     }
 })
 
@@ -240,6 +256,11 @@ app.whenReady().then(() => {
     if (!ret) {
         console.log('registration failed')
     }
+
+    // 注册一个'CommandOrControl+M' 快捷键监听器
+    // globalShortcut.register('CommandOrControl+M', () => {
+    //
+    // })
 })
 
 

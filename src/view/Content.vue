@@ -25,6 +25,7 @@ import img1 from "@/assets/cover_left_top.png"
 import img2 from "@/assets/cover_right_top.png"
 import img3 from "@/assets/cover_left_bottom.png"
 import img4 from "@/assets/cover_right_bottom.png"
+import Constant from "@/utils/constant";
 
 export default {
   name: "Content",
@@ -51,14 +52,14 @@ export default {
     let path = this.ipc.getAppPath();
     this.file_prefix = `file:///${path}/assets`
     this.ipc.onShowContent((screens) => {
-      console.log("last uri: " + this.last_res_url)
       if (screens.length > 0) {
         for (let i = 0; i < screens.length; i++) {
           let s = screens[i]
           if (s.index === _this.index + 1) {
             // 匹配到屏幕，获取文件uri
             this.file_type = s.file_type
-            let file_uri = s.item_uri.replace('/static/resources/', '')
+            let file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
+            console.log("文件 uri: " + file_uri)
             // 把uri赋值给组件
             if (this.last_res_url !== file_uri) {
               let needNext = !this.isShowNext
