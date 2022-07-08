@@ -200,6 +200,8 @@ const createMultiWindow = () => {
         for (let i = 0; i < xArr.length; i++) {
             // 再遍历列
             for (let j = 0; j < yArr.length; j++) {
+                console.log(`x = ${x}, y = ${y}`)
+                console.log(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
                 if (x === xArr[i] && y === yArr[j]) {
                     // 找到对应的原点坐标
                     screenIndexes.push({
