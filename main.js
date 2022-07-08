@@ -1,4 +1,4 @@
-const {app, BrowserWindow, screen, globalShortcut, dialog } = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
 const path = require('path')
 const StreamZip = require("node-stream-zip");
 const fs = require("fs");
@@ -40,6 +40,9 @@ ipc.on('stopContent', function (e, args) {
     for (let i = 0; i < windowList.length; i++) {
         windowList[i].webContents.postMessage('onStopContent', args, [])
     }
+})
+ipc.on('showNotify', function (e, args) {
+    new Notification({ title: args.title, body: args.message }).show()
 })
 
 ipc.on('deleteFiles', function (e, sections) {
@@ -214,51 +217,6 @@ const createMultiWindow = () => {
             }
         }
     }
-
-    // 根据坐标寻找屏幕
-    // for (let i = 0; i < displays.length; i++) {
-    //     let display = displays[i];
-    //
-    //     let x = display.bounds.x;
-    //     let y = display.bounds.y;
-    //
-    //     let w = 1910;
-    //     let h = 1070
-    //     let threshold = 20;
-    //     let start = -10;
-    //     if (x >= start && x <= threshold && y >= start && y <= threshold) {
-    //         // 第一块屏幕
-    //         screenIndexes.push({
-    //             x: x,
-    //             y: y,
-    //             index: 0
-    //         });
-    //     }
-    //     if (x >= w && x <= w + threshold && y >= start && y <= threshold) {
-    //         // 第二块屏幕
-    //         screenIndexes.push({
-    //             x: x,
-    //             y: y,
-    //             index: 1
-    //         });
-    //     }
-    //     if (x >= start && x <= threshold && y >= h && y <= h + threshold) {
-    //         // 第三块屏幕
-    //         screenIndexes.push({
-    //             x: x,
-    //             y: y,
-    //             index: 2
-    //         });
-    //     }
-    //     if (x >= w && x <= w + threshold && y >= h && y <= h + threshold) {
-    //         // 第四块屏幕
-    //         screenIndexes.push({
-    //             x: x,
-    //             y: y,
-    //             index: 3
-    //         });
-    //     }
-    // }
 
     console.log('找到屏幕：', screenIndexes)
 

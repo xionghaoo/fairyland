@@ -1,5 +1,8 @@
+import IPC from "@/utils/ipc";
+
 class Camera {
     constructor(element) {
+        this.ipc = new IPC()
         this.width = 320
         this.camera = element
     }
@@ -22,6 +25,10 @@ class Camera {
                 };
             })
             .catch(err => {
+                _this.ipc.showNotify({
+                    title: "提示",
+                    message: "摄像头连接失败"
+                })
                 console.log(err);
             });
 
