@@ -176,8 +176,17 @@ const createMultiWindow = () => {
 
     // 0, 1920
     let xArr = Array.from(xSet)
+    xArr.sort((a, b) => {
+        return a.index - b.index;
+    })
     // 0, 1080
     let yArr = Array.from(ySet)
+    yArr.sort((a, b) => {
+        return a.index - b.index;
+    })
+
+    console.log('xArr', xArr)
+    console.log('yArr', yArr)
 
     let s_index = 0
     for (let si = 0; si < displays.length; si++) {
@@ -185,7 +194,7 @@ const createMultiWindow = () => {
         let x = display.bounds.x;
         let y = display.bounds.y;
 
-        // (0, 0) (0, 1) (1, 0) (1, 0)
+        // (0, 0) (0, 1) (1, 0) (1, 1)
         // (0, 0) (0, 1) (0, 2) (1, ) (1, 0)
         // 先遍历行
         for (let i = 0; i < xArr.length; i++) {
