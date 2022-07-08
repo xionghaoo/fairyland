@@ -28,26 +28,12 @@ ipc.on('setUpdateStatus', function (e, args) {
         windowList[i].webContents.postMessage('onUpdateChange', args, [])
     }
 })
+// 显示屏幕内容
 ipc.on('showContent', function (e, args) {
-    // let index = args.display;
-    // if (windowList[index]) {
-    //     windowList[index].webContents.postMessage('onShowContent', args, [])
-    // }
-    // if (currentType !== args.type) {
-    //     // 给渲染窗口发送消息
-    //     for (let i = 0; i < windowList.length; i++) {
-    //         if (index !== i) {
-    //             windowList[i].webContents.postMessage('onShowContent', {
-    //                 display: i,
-    //                 type: args.type,
-    //                 content: 2
-    //             }, [])
-    //         }
-    //     }
-    //     currentType = args.type;
-    // }
-
     for (let i = 0; i < windowList.length; i++) {
+        // setTimeout(() => {
+        //
+        // })
         windowList[i].webContents.postMessage('onShowContent', args, [])
     }
 })
@@ -58,22 +44,55 @@ ipc.on('stopContent', function (e, args) {
     }
 })
 
-ipc.on('deleteFiles', function (e, args) {
+ipc.on('deleteFiles', function (e, sections) {
+    console.log('delete files: ' + sections)
     let assets_dir = path.join(app.getAppPath(), 'assets')
     let files = fs.readdirSync(assets_dir)
-    for(var i=0; i < files.length; i++){
-
-        // let newPath = path.join(dir,files[i]);
-        // let stat = fs.statSync(newPath)
-        // if(stat.isDirectory()){
-        //     //如果是文件夹就递归下去
-        //     removeDir(newPath);
-        // }else {
-        //     //删除文件
-        //     fs.unlinkSync(newPath);
-        // }
+    let screens = new Set()
+    for (let i = 0; i < sections.length; i++) {
+        let section = sections[i];
+        for (let j = 0; j < section.screens.length; j++) {
+            let screen = section.screens[j];
+            let name = screen.item_uri.replace("/static/resources/", '')
+            let folder = name.split('/')[0]
+            screens.add(folder)
+        }
+    }
+    console.log('screens', screens)
+    for(let i = 0; i < files.length; i++){
+        console.log(files[i])
+        let f = files[i]
+        let realFile = path.join(assets_dir, f)
+        let stat = fs.lstatSync(realFile)
+        // 删除多余的文件夹
+        if (stat.isDirectory()) {
+            if (!screens.has(f)) {
+                console.log('delete file: ' + f)
+                removeDir(realFile)
+            }
+        }
+        // 删除资源压缩包
+        if (f === 'resource.zip') {
+            fs.unlinkSync(realFile)
+        }
     }
 })
+
+function removeDir(dir) {
+    let files = fs.readdirSync(dir)
+    for(let i = 0;i < files.length; i++){
+        let newPath = path.join(dir, files[i]);
+        let stat = fs.statSync(newPath)
+        if(stat.isDirectory()){
+            //如果是文件夹就递归下去
+            removeDir(newPath);
+        }else {
+            //删除文件
+            fs.unlinkSync(newPath);
+        }
+    }
+    fs.rmdirSync(dir)//如果文件夹是空的，就将自己删除掉
+}
 
 ipc.on('downloadResource', function (e, url) {
     let win = windowList[0]

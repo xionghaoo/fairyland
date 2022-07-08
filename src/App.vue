@@ -54,8 +54,6 @@ export default {
     if (window.currentIndex === 0) {
       // 在第一个屏幕检查更新
       this.checkVersionUpdate()
-      // _this.ipc.setInitStatus(false)
-      // _this.ipc.setUpdateStatus(true)
     }
     this.ipc.onInitChange((status) => {
       _this.isInit = status
@@ -93,11 +91,12 @@ export default {
               _this.progress = 100
               // 资源更新完成
               localStorage.setItem('sections', sections)
-              this.sections = rd.sections
+              _this.sections = rd.sections
               // 保存资源版本号
               localStorage.setItem('version', rd.version_code)
 
-              // TODO 删除多余资源
+              // 删除多余资源
+              _this.ipc.deleteFiles(_this.sections)
 
               _this.startTextRecognize()
             })
@@ -107,6 +106,9 @@ export default {
             _this.startTextRecognize()
           }
         }, 100)
+      }).catch((e) => {
+        console.log(e)
+        _this.startTextRecognize()
       })
     },
     startTextRecognize() {

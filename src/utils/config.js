@@ -14,8 +14,9 @@ const Config = (() => {
   let isDev = url.indexOf('dev') >= 0 || url.indexOf('test') >= 0;//是否是测试环境
 
   let baseUrl = isLocalhost || isDev ? RequestHttpDev : RequestHttpPro
-  baseUrl = 'http://192.168.3.34'
-  let api = baseUrl + ':5001'
+  // baseUrl = 'http://192.168.3.34'
+  baseUrl = 'http://119.23.154.148:5007'
+  let api = baseUrl + '/api'
   return {
     // 是否是开发环境
     isLocalhost: isLocalhost,
