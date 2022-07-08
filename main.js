@@ -189,20 +189,20 @@ const createMultiWindow = () => {
     console.log('yArr', yArr)
 
     let s_index = 0
-    for (let si = 0; si < displays.length; si++) {
-        let display = displays[si];
-        let x = display.bounds.x;
-        let y = display.bounds.y;
 
-        // (0, 0) (0, 1) (1, 0) (1, 1)
-        // (0, 0) (0, 1) (0, 2) (1, ) (1, 0)
-        // 先遍历行
-        for (let i = 0; i < xArr.length; i++) {
-            // 再遍历列
-            for (let j = 0; j < yArr.length; j++) {
-                console.log(`x = ${x}, y = ${y}`)
-                console.log(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
+    // (0, 0) (0, 1) (1, 0) (1, 1)
+    // (0, 0) (0, 1) (0, 2) (1, ) (1, 0)
+    // 先遍历行
+    for (let i = 0; i < xArr.length; i++) {
+        // 再遍历列
+        for (let j = 0; j < yArr.length; j++) {
+            for (let si = 0; si < displays.length; si++) {
+                let display = displays[si];
+                let x = display.bounds.x;
+                let y = display.bounds.y;
                 if (x === xArr[i] && y === yArr[j]) {
+                    console.log(`x = ${x}, y = ${y}`)
+                    console.log(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
                     // 找到对应的原点坐标
                     screenIndexes.push({
                         x: x,
