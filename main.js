@@ -1,4 +1,4 @@
-const {app, BrowserWindow, screen, globalShortcut, dialog} = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
 const path = require('path')
 const StreamZip = require("node-stream-zip");
 const fs = require("fs");
@@ -165,49 +165,89 @@ const createMultiWindow = () => {
     })
     windowList = []
     let screenIndexes = [];
+
+    let xSet = new Set();
+    let ySet = new Set();
     for (let i = 0; i < displays.length; i++) {
         let display = displays[i];
+        let x = display.bounds.x;
+        let y = display.bounds.y;
+        xSet.add(x)
+        ySet.add(y)
+    }
 
+    let xArr = Array.from(xSet)
+    let yArr = Array.from(ySet)
+
+    let s_index = 0
+    for (let si = 0; si < displays.length; si++) {
+        let display = displays[si];
         let x = display.bounds.x;
         let y = display.bounds.y;
 
-        let w = 1910;
-        let h = 1070
-        let threshold = 20;
-        let start = -10;
-        if (x >= start && x <= threshold && y >= start && y <= threshold) {
-            // 第一块屏幕
-            screenIndexes.push({
-                x: x,
-                y: y,
-                index: 0
-            });
-        }
-        if (x >= w && x <= w + threshold && y >= start && y <= threshold) {
-            // 第二块屏幕
-            screenIndexes.push({
-                x: x,
-                y: y,
-                index: 1
-            });
-        }
-        if (x >= start && x <= threshold && y >= h && y <= h + threshold) {
-            // 第三块屏幕
-            screenIndexes.push({
-                x: x,
-                y: y,
-                index: 2
-            });
-        }
-        if (x >= w && x <= w + threshold && y >= h && y <= h + threshold) {
-            // 第四块屏幕
-            screenIndexes.push({
-                x: x,
-                y: y,
-                index: 3
-            });
+        // 先遍历行
+        for (let i = 0; i < yArr.length; i++) {
+            // 再遍历列
+            for (let j = 0; j < xArr.length; j++) {
+                if (y === yArr[i] && x === xArr[j]) {
+                    // 找到对应的原点坐标
+                    screenIndexes.push({
+                        x: x,
+                        y: y,
+                        index: s_index
+                    });
+                    s_index++;
+                }
+            }
         }
     }
+
+    // 根据坐标寻找屏幕
+    // for (let i = 0; i < displays.length; i++) {
+    //     let display = displays[i];
+    //
+    //     let x = display.bounds.x;
+    //     let y = display.bounds.y;
+    //
+    //     let w = 1910;
+    //     let h = 1070
+    //     let threshold = 20;
+    //     let start = -10;
+    //     if (x >= start && x <= threshold && y >= start && y <= threshold) {
+    //         // 第一块屏幕
+    //         screenIndexes.push({
+    //             x: x,
+    //             y: y,
+    //             index: 0
+    //         });
+    //     }
+    //     if (x >= w && x <= w + threshold && y >= start && y <= threshold) {
+    //         // 第二块屏幕
+    //         screenIndexes.push({
+    //             x: x,
+    //             y: y,
+    //             index: 1
+    //         });
+    //     }
+    //     if (x >= start && x <= threshold && y >= h && y <= h + threshold) {
+    //         // 第三块屏幕
+    //         screenIndexes.push({
+    //             x: x,
+    //             y: y,
+    //             index: 2
+    //         });
+    //     }
+    //     if (x >= w && x <= w + threshold && y >= h && y <= h + threshold) {
+    //         // 第四块屏幕
+    //         screenIndexes.push({
+    //             x: x,
+    //             y: y,
+    //             index: 3
+    //         });
+    //     }
+    // }
+
+    console.log('找到屏幕：', screenIndexes)
 
     // 对屏幕进行排序
     screenIndexes.sort((a, b) => {
@@ -280,6 +320,8 @@ app.whenReady().then(() => {
     // globalShortcut.register('CommandOrControl+M', () => {
     //
     // })
+}).then(() => {
+    new Notification({ title: "标题", body: "应用启动完成" }).show()
 })
 
 
