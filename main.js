@@ -2,9 +2,7 @@ const {app, BrowserWindow, screen, globalShortcut, dialog } = require('electron'
 const path = require('path')
 const StreamZip = require("node-stream-zip");
 const fs = require("fs");
-
 require('@electron/remote/main').initialize()
-
 const ipc = require('electron').ipcMain
 
 let windowList = [];
@@ -176,7 +174,9 @@ const createMultiWindow = () => {
         ySet.add(y)
     }
 
+    // 0, 1920
     let xArr = Array.from(xSet)
+    // 0, 1080
     let yArr = Array.from(ySet)
 
     let s_index = 0
@@ -185,11 +185,13 @@ const createMultiWindow = () => {
         let x = display.bounds.x;
         let y = display.bounds.y;
 
+        // (0, 0) (0, 1) (1, 0) (1, 0)
+        // (0, 0) (0, 1) (0, 2) (1, ) (1, 0)
         // 先遍历行
-        for (let i = 0; i < yArr.length; i++) {
+        for (let i = 0; i < xArr.length; i++) {
             // 再遍历列
-            for (let j = 0; j < xArr.length; j++) {
-                if (y === yArr[i] && x === xArr[j]) {
+            for (let j = 0; j < yArr.length; j++) {
+                if (x === xArr[i] && y === yArr[j]) {
                     // 找到对应的原点坐标
                     screenIndexes.push({
                         x: x,
