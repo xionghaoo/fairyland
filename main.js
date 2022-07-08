@@ -1,4 +1,4 @@
-const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog } = require('electron')
 const path = require('path')
 const StreamZip = require("node-stream-zip");
 const fs = require("fs");
@@ -320,8 +320,6 @@ app.whenReady().then(() => {
     // globalShortcut.register('CommandOrControl+M', () => {
     //
     // })
-}).then(() => {
-    new Notification({ title: "标题", body: "应用启动完成" }).show()
 })
 
 
