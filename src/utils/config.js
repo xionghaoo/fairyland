@@ -26,6 +26,7 @@ const Config = (() => {
     isPrintLog: isLocalhost,
     // ajax_http请求url
     host: api,
+    resourceHost: baseUrl + '/img',
     api: {
       /*-- 基础信息 --*/
       versionUpdate: api + '/fairyland/update',//七牛token

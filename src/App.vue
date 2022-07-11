@@ -77,7 +77,7 @@ export default {
           if (hasUpdate) {
             let rd = res.data
             // 有新的版本
-            let resourceUrl = Config.host + rd.resource_uri
+            let resourceUrl = Config.resourceHost + rd.resource_uri
             let sections = JSON.stringify(rd.sections)
             console.log('资源下载路径：' + resourceUrl)
             _this.ipc.onDownloadProgress((progress) => {
