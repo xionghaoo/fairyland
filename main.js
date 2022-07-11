@@ -183,12 +183,12 @@ const createMultiWindow = () => {
     // 0, 1920
     let xArr = Array.from(xSet)
     xArr.sort((a, b) => {
-        return a.index - b.index;
+        return a - b;
     })
     // 0, 1080
     let yArr = Array.from(ySet)
     yArr.sort((a, b) => {
-        return a.index - b.index;
+        return a - b;
     })
 
     console.log('xArr', xArr)
