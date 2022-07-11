@@ -96,7 +96,7 @@ export default {
               localStorage.setItem('version', rd.version_code)
 
               // 删除多余资源
-              _this.ipc.deleteFiles(_this.sections)
+              // _this.ipc.deleteFiles(_this.sections)
 
               _this.startTextRecognize()
             })
