@@ -3,6 +3,10 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         return ipc.sendSync('getAppPath');
     }
+    getScreenNum() {
+        const ipc = window.require('electron').ipcRenderer
+        return ipc.sendSync('getScreenNum');
+    }
     playContent(data) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('showContent', data);

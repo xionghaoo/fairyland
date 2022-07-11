@@ -10,6 +10,9 @@ let windowList = [];
 ipc.on('getAppPath', function (e) {
     e.returnValue = app.getAppPath()
 })
+ipc.on('getScreenNum', function (e) {
+    e.returnValue = windowList.length
+})
 ipc.on('show-message-dialog', function (e, msg) {
     dialog.showMessageBox({message: msg})
 })
