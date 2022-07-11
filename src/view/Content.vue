@@ -53,9 +53,9 @@ export default {
     }
   },
   created() {
+    this.ipc = new IPC();
     let _this = this;
     this.showDefaultContent()
-    this.ipc = new IPC();
     let path = this.ipc.getAppPath();
     this.file_prefix = `file:///${path}/assets`
     this.ipc.onShowContent((screens) => {
