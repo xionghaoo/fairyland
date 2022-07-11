@@ -25,6 +25,13 @@ import img1 from "@/assets/cover_left_top.png"
 import img2 from "@/assets/cover_right_top.png"
 import img3 from "@/assets/cover_left_bottom.png"
 import img4 from "@/assets/cover_right_bottom.png"
+import cover_7_1 from "@/assets/cover_7_1.jpg"
+import cover_7_2 from "@/assets/cover_7_2.jpg"
+import cover_7_3 from "@/assets/cover_7_3.jpg"
+import cover_7_4 from "@/assets/cover_7_4.jpg"
+import cover_7_5 from "@/assets/cover_7_5.jpg"
+import cover_7_6 from "@/assets/cover_7_6.jpg"
+import cover_7_7 from "@/assets/cover_7_7.jpg"
 import Constant from "@/utils/constant";
 
 export default {
@@ -83,6 +90,15 @@ export default {
   },
   methods: {
     showDefaultContent() {
+      if (this.ipc.getScreenNum() === 4) {
+        this.fourScreenCover()
+      } else if (this.ipc.getScreenNum() === 7) {
+        this.sevenScreenCover()
+      } else {
+        this.fourScreenCover()
+      }
+    },
+    fourScreenCover() {
       switch (this.$props.index) {
         case 0:
           this.img_uri = img1;
@@ -99,6 +115,38 @@ export default {
         case 3:
           this.img_uri = img4;
           this.next_img_uri = img4;
+          break;
+      }
+    },
+    sevenScreenCover() {
+      switch (this.$props.index) {
+        case 0:
+          this.img_uri = cover_7_1;
+          this.next_img_uri = cover_7_1;
+          break;
+        case 1:
+          this.img_uri = cover_7_2;
+          this.next_img_uri = cover_7_2;
+          break;
+        case 2:
+          this.img_uri = cover_7_3;
+          this.next_img_uri = cover_7_3;
+          break;
+        case 3:
+          this.img_uri = cover_7_4;
+          this.next_img_uri = cover_7_4;
+          break;
+        case 4:
+          this.img_uri = cover_7_5;
+          this.next_img_uri = cover_7_5;
+          break;
+        case 5:
+          this.img_uri = cover_7_6;
+          this.next_img_uri = cover_7_6;
+          break;
+        case 7:
+          this.img_uri = cover_7_7;
+          this.next_img_uri = cover_7_7;
           break;
       }
     },
