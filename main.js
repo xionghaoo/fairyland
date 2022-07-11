@@ -290,10 +290,15 @@ app.whenReady().then(() => {
         console.log('registration failed')
     }
 
-    // 注册一个'CommandOrControl+M' 快捷键监听器
-    // globalShortcut.register('CommandOrControl+M', () => {
-    //
-    // })
+    // 清除本地缓存
+    globalShortcut.register('CommandOrCtrl+Shift+Delete', () => {
+        const clearObj = {
+            storages: ['appcache', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage'],
+        };
+        for (let i = 0; i < windowList.length; i++) {
+            windowList[i].webContents.session.clearStorageData(clearObj)
+        }
+    })
 })
 
 

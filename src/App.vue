@@ -67,7 +67,7 @@ export default {
       let _this = this;
       let local_version = localStorage.getItem('version') ?? 0
       Request.requestGet(Config.api.versionUpdate, {version: local_version}).then((res) => {
-        console.log(res.data)
+        console.log('请求更新', res.data)
         // _this.isInit = false
         _this.ipc.setInitStatus(false)
         setTimeout(() => {
