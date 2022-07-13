@@ -143,6 +143,7 @@ export default {
         //   }
         // }
         let imgData = _this.camera.capture();
+        // console.log(imgData)
         _this.ws.send("chinese_ocr", imgData)
       }, Config.recognizeInterval);
     },

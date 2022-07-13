@@ -57,7 +57,7 @@ class Camera {
             canvas.height = height;
             console.log(`拍照: width: ${width} x ${height}`)
             ctx.drawImage(this.camera, 0, 0, width, height);
-            return canvas.toDataURL("image/jpeg")
+            return canvas.toDataURL("image/jpeg").replace('data:image/jpeg;base64,', '')
         }
         return null
     }
