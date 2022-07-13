@@ -11,7 +11,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "vue-cli-service build && electron-forge make"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",
