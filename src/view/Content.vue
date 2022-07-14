@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       ipc: null,
-      img_uri: 'logo.png',
+      img_uri: '',
       video_uri: '',
       next_img_uri: '',
       next_video_uri: '',
@@ -144,7 +144,7 @@ export default {
           this.img_uri = cover_7_6;
           this.next_img_uri = cover_7_6;
           break;
-        case 7:
+        case 6:
           this.img_uri = cover_7_7;
           this.next_img_uri = cover_7_7;
           break;
