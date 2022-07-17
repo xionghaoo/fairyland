@@ -36,6 +36,22 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('downloadResource', url)
     }
+    downloadMultiFile(urls) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.send('downloadMultiFile', urls)
+    }
+    onDownloadSingleProgress(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onDownloadSingleProgress', (e, index, progress) => {
+            callback(index, progress)
+        })
+    }
+    onDownloadMultiFileCompleted(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onDownloadMultiFileCompleted', () => {
+            callback()
+        })
+    }
     onDownloadProgress(callback) {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('onDownloadProgress', (e, progress) => {

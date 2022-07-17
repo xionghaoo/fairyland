@@ -15,7 +15,8 @@ const Config = (() => {
 
   let baseUrl = isLocalhost || isDev ? RequestHttpDev : RequestHttpPro
   // baseUrl = 'http://192.168.3.34'
-  baseUrl = 'http://119.23.154.148:5007'
+  // baseUrl = 'http://119.23.154.148:5007'
+  baseUrl = 'http://192.168.8.103:5001'
   let api = baseUrl + '/api'
   return {
     // 是否是开发环境
@@ -33,7 +34,8 @@ const Config = (() => {
 
     },
     recognizeInterval: 1000,
-    recognizeApi: "ws://120.76.175.224:9001"
+    recognizeApi: "ws://120.76.175.224:9001",
+    ossHost: 'https://roboland-deliv.ubtrobot.com/',
     // recognizeApi: "ws://119.23.154.148:9006"
   }
 })();

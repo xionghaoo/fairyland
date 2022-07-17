@@ -66,7 +66,13 @@ export default {
     checkVersionUpdate() {
       let _this = this;
       let local_version = localStorage.getItem('version') ?? 0
-      Request.requestGet(Config.api.versionUpdate, {version: local_version}).then((res) => {
+      Request.requestGet(
+          Config.api.versionUpdate,
+          {
+            version: local_version,
+            device_uuid: 'sz001'
+          }
+      ).then((res) => {
         console.log('请求更新', res.data)
         // _this.isInit = false
         _this.ipc.setInitStatus(false)
@@ -76,18 +82,24 @@ export default {
           // 检查是否有更新
           if (hasUpdate) {
             let rd = res.data
-            // 有新的版本
-            let resourceUrl = Config.resourceHost + rd.resource_uri
             let sections = JSON.stringify(rd.sections)
-            console.log('资源下载路径：' + resourceUrl)
-            _this.ipc.onDownloadProgress((progress) => {
-              console.log('download progress: ' + progress)
-              _this.progress = progress * 0.75
+            // 下载多个资源文件
+            const urls = []
+            for (let i = 0; i < rd.sections.length; i++) {
+              let screens = rd.sections[i].screens;
+              for (let j = 0; j < screens.length; j++) {
+                if (screens[j].file_type < 1000) {
+                  urls.push(Config.ossHost + screens[j].item_uri)
+                } else {
+                  urls.push(screens[j].item_uri)
+                }
+              }
+            }
+            _this.ipc.onDownloadSingleProgress((index, progress) => {
+              console.log(`index: ${index}, progress: ${progress}`)
+              _this.progress = index / progress
             })
-            _this.ipc.onDownloadCompleted(() => {
-              // 下载完成
-            })
-            _this.ipc.onResourceUpdated(() => {
+            _this.ipc.onDownloadMultiFileCompleted(() => {
               _this.progress = 100
               // 资源更新完成
               localStorage.setItem('sections', sections)
@@ -100,7 +112,33 @@ export default {
 
               _this.startTextRecognize()
             })
-            _this.ipc.downloadResource(resourceUrl)
+            _this.ipc.downloadMultiFile(urls)
+
+            // 有新的版本
+            // let resourceUrl = Config.resourceHost + rd.resource_uri
+            // let sections = JSON.stringify(rd.sections)
+            // console.log('资源下载路径：' + resourceUrl)
+            // _this.ipc.onDownloadProgress((progress) => {
+            //   console.log('download progress: ' + progress)
+            //   _this.progress = progress * 0.75
+            // })
+            // _this.ipc.onDownloadCompleted(() => {
+            //   // 下载完成
+            // })
+            // _this.ipc.onResourceUpdated(() => {
+            //   _this.progress = 100
+            //   // 资源更新完成
+            //   localStorage.setItem('sections', sections)
+            //   _this.sections = rd.sections
+            //   // 保存资源版本号
+            //   localStorage.setItem('version', rd.version_code)
+            //
+            //   // 删除多余资源
+            //   // _this.ipc.deleteFiles(_this.sections)
+            //
+            //   _this.startTextRecognize()
+            // })
+            // _this.ipc.downloadResource(resourceUrl)
           } else {
             // 没有发现新版本
             _this.startTextRecognize()
@@ -202,7 +240,7 @@ export default {
             // 检查识别类型
             if (section.recognize_type === 0
                 // 检查屏幕数量是否相等
-                && this.ipc.getScreenNum() === section.screens.length
+                // && this.ipc.getScreenNum() === section.screens.length
                 // 检查识别结果
                 && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
               console.log("识别到文字：" + section.recognize_txt)

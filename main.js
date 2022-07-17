@@ -161,6 +161,71 @@ ipc.on('downloadResource', function (e, url) {
     })
     win.webContents.downloadURL(url)
 })
+/**
+ * 按顺序下载多文件
+ */
+ipc.on('downloadMultiFile', function (e, urls) {
+    let win = windowList[0]
+    downloadSingleFile(win, urls, 0)
+})
+const downloadSingleFile = (win, urls, index) => {
+    if (index === 0) {
+        win.webContents.session.on('will-download', (e, item) => {
+            const folder = path.join(app.getAppPath(), 'assets', 'contents')
+            if (!fs.existsSync(folder)) {
+                fs.mkdirSync(folder)
+            }
+            const filePath = path.join(folder, item.getFilename());
+            console.log('download file path: ' + filePath)
+            item.setSavePath(filePath)
+            let value = 0
+            item.on('updated', (evt, state) => {
+                console.log('update state: ' + state)
+                if ('progressing' === state) {
+                    if (item.isPaused()) {
+                        console.log('Download is paused')
+                    } else {
+                        //此处  用接收到的字节数和总字节数求一个比例  就是进度百分比
+                        if (item.getReceivedBytes() && item.getTotalBytes()) {
+                            value = 100 * (item.getReceivedBytes() / item.getTotalBytes())
+                        }
+                        // 把百分比发给渲染进程进行展示
+                        win.webContents.send('onDownloadSingleProgress', index, value);
+                        // mac 程序坞、windows 任务栏显示进度
+                        win.setProgressBar(value);
+                    }
+                }
+                if (state === 'interrupted') {
+                    console.log('Download is interrupted but can be resumed')
+                }
+            })
+
+            //监听下载结束事件
+            item.on('done', (e, state) => {
+                console.log('done: ' + state)
+                //如果窗口还在的话，去掉进度条
+                if (!win.isDestroyed()) {
+                    win.setProgressBar(-1);
+                }
+                //下载被取消或中断了
+                if (state === 'interrupted') {
+                    dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 被中断下载`);
+                }
+                if (state === 'completed') {
+                    console.log('资源下载成功: ' + index + ', urls length: ' + urls.length)
+                    if (index < urls.length - 1) {
+                        downloadSingleFile(win, urls, ++index)
+                    } else {
+                        win.webContents.send('onDownloadMultiFileCompleted');
+                    }
+                }
+            });
+        })
+    }
+    console.log(`下载资源: ${urls[index]}`)
+    win.webContents.downloadURL(urls[index])
+}
+
 
 const createMultiWindow = () => {
     let displays = screen.getAllDisplays()

@@ -57,20 +57,27 @@ export default {
     let _this = this;
     this.showDefaultContent()
     let path = this.ipc.getAppPath();
-    this.file_prefix = `file:///${path}/assets`
+    this.file_prefix = `file:///${path}/assets/contents`
     this.ipc.onShowContent((screens) => {
       if (screens.length > 0) {
         for (let i = 0; i < screens.length; i++) {
           let s = screens[i]
           if (s.index === _this.index + 1) {
+            let file_uri = ''
             // 匹配到屏幕，获取文件uri
-            this.file_type = s.file_type
-            let file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
+            if (s.file_type < 1000) {
+              this.file_type = s.file_type
+              file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
+            } else {
+              this.file_type = s.file_type - 1000
+              file_uri = s.item_uri.split('/').at(-1)
+            }
             console.log("文件 uri: " + file_uri)
+            console.log("file_type: " + this.file_type)
             // 把uri赋值给组件
             if (this.last_res_url !== file_uri) {
               let needNext = !this.isShowNext
-              this.showContent(s.file_type, file_uri, needNext)
+              this.showContent(this.file_type, file_uri, needNext)
               this.isShowNext = needNext
               console.log("给文件uri赋值: " + file_uri)
               this.last_res_url = file_uri
