@@ -209,7 +209,13 @@ const downloadSingleFile = (win, urls, index) => {
                 }
                 //下载被取消或中断了
                 if (state === 'interrupted') {
-                    dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 被中断下载`);
+                    if (index < urls.length - 1) {
+                        downloadSingleFile(win, urls, ++index)
+                    } else {
+                        win.webContents.send('onDownloadMultiFileCompleted');
+                    }
+                    new Notification({ title: '下载失败', body: '文件 ${item.getFilename()} 被中断下载' }).show()
+                    // dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 被中断下载`);
                 }
                 if (state === 'completed') {
                     console.log('资源下载成功: ' + index + ', urls length: ' + urls.length)

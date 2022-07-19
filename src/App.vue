@@ -3,7 +3,7 @@
     <p>幻境Splash</p>
   </div>
   <div v-else-if="hasUpdate" id="app">
-    <my-update v-if="window.currentIndex === 0" :value="progress"/>
+    <my-update v-if="window.currentIndex === 0" :value="progress" :total="totalDownload" :index="downloadIndex"/>
     <div v-else style="width: 100%; height: 100%">
       <div style="display: block;margin: auto;font-size: 20px">等待更新</div>
     </div>
@@ -36,6 +36,8 @@ export default {
       camera: null,
       ipc: null,
       progress: 0,
+      totalDownload: 0,
+      downloadIndex: 0,
       hasUpdate: false,
       isInit: true,
       sections: [],
@@ -95,9 +97,11 @@ export default {
                 }
               }
             }
+            _this.totalDownload = urls.length
             _this.ipc.onDownloadSingleProgress((index, progress) => {
               console.log(`index: ${index}, progress: ${progress}`)
-              _this.progress = index / progress
+              _this.progress = progress.toFixed(0)
+              _this.downloadIndex = index
             })
             _this.ipc.onDownloadMultiFileCompleted(() => {
               _this.progress = 100
@@ -192,36 +196,6 @@ export default {
       let model = obj.model;
       let res = obj.result;
       if (res) {
-        // if (model === 'chinese_ocr') {
-        //   let success = false;
-        //   // 文字识别
-        //   for (let i = 0; i < res.length; i++) {
-        //     for (let j = 0; j < sections.length; j++) {
-        //       let section = sections[j];
-        //       if (section.recognize_type === 0
-        //           && res[i].txt.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
-        //         console.log("识别到文字：" + section.recognize_txt)
-        //         // 匹配到卡片
-        //         success = true;
-        //         // 匹配到直接把容忍值加满
-        //         this.successCount = 3;
-        //         this.ipc.playContent(section.screens);
-        //       }
-        //     }
-        //   }
-        //   if (success) {
-        //     this.successCount ++;
-        //     if (this.successCount >= 3) {
-        //       this.successCount = 3;
-        //     }
-        //   } else {
-        //     this.successCount --;
-        //     if (this.successCount <= 0) {
-        //       this.successCount = 0;
-        //     }
-        //   }
-        //   console.log("识别成功次数: " + this.successCount)
-        // }
         this.handleTextRecognize(model, res, sections)
 
         if (this.successCount === 0) {
@@ -240,7 +214,7 @@ export default {
             // 检查识别类型
             if (section.recognize_type === 0
                 // 检查屏幕数量是否相等
-                // && this.ipc.getScreenNum() === section.screens.length
+                && this.ipc.getScreenNum() === section.screens.length
                 // 检查识别结果
                 && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
               console.log("识别到文字：" + section.recognize_txt)

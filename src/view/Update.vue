@@ -3,7 +3,7 @@
     <div class="center">
       <h3 style="display: block">发现新的资源包</h3>
       <el-progress style="margin-top: 10px" type="circle" :percentage="progressValue"/>
-      <p>{{ progressValue >= 75 ? '解压中。。。' : '正在下载。。。'}}</p>
+      <p style="font-size: 22px">{{ `正在下载${index + 1}/${total}` }}</p>
     </div>
   </div>
 </template>
@@ -14,7 +14,9 @@ import { Progress } from 'element-ui'
 export default {
   name: "Update",
   props: {
-    'value': Number
+    'value': Number,
+    'total': Number,
+    'index': Number
   },
   components: {
     'el-progress': Progress
