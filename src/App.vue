@@ -215,7 +215,7 @@ export default {
             // 检查识别类型
             if (section.recognize_type === 0
                 // 检查屏幕数量是否相等
-                && this.ipc.getScreenNum() === section.screens.length
+                // && this.ipc.getScreenNum() === section.screens.length
                 // 检查识别结果
                 && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
               console.log("识别到文字：" + section.recognize_txt)
