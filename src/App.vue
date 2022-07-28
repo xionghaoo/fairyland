@@ -67,6 +67,7 @@ export default {
   },
   methods: {
     getConfig() {
+      console.log('get config')
       // let _this = this;
       Request.requestGet(Config.api.config, {}).then((res) => {
         console.log('请求配置', res)
