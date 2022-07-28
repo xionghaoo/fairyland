@@ -54,6 +54,7 @@ export default {
     })
 
     if (window.currentIndex === 0) {
+      this.getConfig()
       // 在第一个屏幕检查更新
       this.checkVersionUpdate()
     }
@@ -65,6 +66,15 @@ export default {
     })
   },
   methods: {
+    getConfig() {
+      // let _this = this;
+      Request.requestGet(Config.api.config, {}).then((res) => {
+        console.log('请求配置', res)
+        if (res.code === 0) {
+          localStorage.setItem('interval', res.data.interval)
+        }
+      })
+    },
     checkVersionUpdate() {
       let _this = this;
       let local_version = localStorage.getItem('version') ?? 0
@@ -118,32 +128,6 @@ export default {
               _this.startTextRecognize()
             })
             _this.ipc.downloadMultiFile(urls)
-
-            // 有新的版本
-            // let resourceUrl = Config.resourceHost + rd.resource_uri
-            // let sections = JSON.stringify(rd.sections)
-            // console.log('资源下载路径：' + resourceUrl)
-            // _this.ipc.onDownloadProgress((progress) => {
-            //   console.log('download progress: ' + progress)
-            //   _this.progress = progress * 0.75
-            // })
-            // _this.ipc.onDownloadCompleted(() => {
-            //   // 下载完成
-            // })
-            // _this.ipc.onResourceUpdated(() => {
-            //   _this.progress = 100
-            //   // 资源更新完成
-            //   localStorage.setItem('sections', sections)
-            //   _this.sections = rd.sections
-            //   // 保存资源版本号
-            //   localStorage.setItem('version', rd.version_code)
-            //
-            //   // 删除多余资源
-            //   // _this.ipc.deleteFiles(_this.sections)
-            //
-            //   _this.startTextRecognize()
-            // })
-            // _this.ipc.downloadResource(resourceUrl)
           } else {
             // 没有发现新版本
             _this.startTextRecognize()
@@ -223,7 +207,7 @@ export default {
               success = true;
               // 匹配到直接把容忍值加满
               this.successCount = 3;
-              this.ipc.playContent(section.screens);
+              this.ipc.playContent(section.screens, localStorage.getItem('interval'));
             }
           }
         }

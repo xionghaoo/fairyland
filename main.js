@@ -30,12 +30,15 @@ ipc.on('setUpdateStatus', function (e, args) {
     }
 })
 // 显示屏幕内容
-ipc.on('showContent', function (e, args) {
+ipc.on('showContent', function (e, screens, interval) {
     for (let i = 0; i < windowList.length; i++) {
-        // setTimeout(() => {
-        //
-        // })
-        windowList[i].webContents.postMessage('onShowContent', args, [])
+        if (interval && interval > 0) {
+            setTimeout(() => {
+                windowList[i].webContents.postMessage('onShowContent', screens, [])
+            }, interval * i)
+        } else {
+            windowList[i].webContents.postMessage('onShowContent', screens, [])
+        }
     }
 })
 ipc.on('stopContent', function (e, args) {

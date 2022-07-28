@@ -7,9 +7,9 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         return ipc.sendSync('getScreenNum');
     }
-    playContent(data) {
+    playContent(data, interval) {
         const ipc = window.require('electron').ipcRenderer
-        ipc.send('showContent', data);
+        ipc.send('showContent', data, interval);
     }
     stopContent(content) {
         const ipc = window.require('electron').ipcRenderer

@@ -14,7 +14,8 @@ const Config = (() => {
   let isDev = url.indexOf('dev') >= 0 || url.indexOf('test') >= 0;//是否是测试环境
 
   let baseUrl = isLocalhost || isDev ? RequestHttpDev : RequestHttpPro
-  baseUrl = 'http://119.23.154.148:5007'
+  // baseUrl = 'http://119.23.154.148:5007' // 正式地址
+  baseUrl = 'http://10.22.69.72:5001'
   // baseUrl = 'http://192.168.3.34:5001'
   // baseUrl = 'http://192.168.8.103:5001'
   let api = baseUrl + '/api'
@@ -30,7 +31,8 @@ const Config = (() => {
     resourceHost: baseUrl + '/img',
     api: {
       /*-- 基础信息 --*/
-      versionUpdate: api + '/fairyland/update',//七牛token
+      versionUpdate: api + '/fairyland/update',
+      config: api + '/fairyland/config',
 
     },
     recognizeInterval: 1000,
