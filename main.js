@@ -32,6 +32,7 @@ ipc.on('setUpdateStatus', function (e, args) {
 let tIds = []
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, interval) {
+    tIds = []
     for (let i = 0; i < windowList.length; i++) {
         // 给每块屏幕发送消息
         if (interval && interval > 0) {
