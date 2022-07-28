@@ -1,4 +1,5 @@
 const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
+import { setTimeout, clearTimeout } from 'timers';
 const path = require('path')
 const StreamZip = require("node-stream-zip");
 const fs = require("fs");
@@ -38,21 +39,21 @@ ipc.on('showContent', function (e, screens, interval) {
         if (interval && interval > 0) {
             let tId = null;
             if (screens.length > 0) {
-                tId = windowList[i].setTimeout(() => {
+                tId = setTimeout(() => {
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
                 }, interval * i)
                 tIds.push(tId)
                 console.log('添加timeout', tIds)
             } else {
                 for (let j = 0; j < tIds.length; j++) {
-                    windowList[i].clearTimeout(tIds[j])
+                    clearTimeout(tIds[j])
                 }
                 console.log('清空内容', tIds)
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
             for (let j = 0; j < tIds.length; j++) {
-                windowList[i].clearTimeout(tIds[j])
+                clearTimeout(tIds[j])
             }
             console.log('清空内容', tIds)
             windowList[i].webContents.postMessage('onShowContent', screens, [])
