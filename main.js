@@ -29,6 +29,7 @@ ipc.on('setUpdateStatus', function (e, args) {
         windowList[i].webContents.postMessage('onUpdateChange', args, [])
     }
 })
+let tIds = []
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, interval) {
     for (let i = 0; i < windowList.length; i++) {
@@ -37,14 +38,13 @@ ipc.on('showContent', function (e, screens, interval) {
             let tId = null;
             if (screens.length > 0) {
                 tId = setTimeout(() => {
-                    // if (screens.length > 0) {
-                    //     console.log('显示内容', screens.length)
-                    //     windowList[i].webContents.postMessage('onShowContent', screens, [])
-                    // }
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
                 }, interval * i)
+                tIds.push(tId)
             } else {
-                clearTimeout(tId)
+                for (let j = 0; j < tIds.length; j++) {
+                    clearTimeout(tIds[j])
+                }
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
