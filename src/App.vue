@@ -77,9 +77,9 @@ export default {
       })
     },
     checkVersionUpdate() {
-      console.log('checkVersionUpdate')
       let _this = this;
       let local_version = localStorage.getItem('version') ?? 0
+      console.log('checkVersionUpdate', local_version)
       Request.requestGet(
           Config.api.versionUpdate,
           {
@@ -88,7 +88,7 @@ export default {
             // device_uuid: 'sz001'
           }
       ).then((res) => {
-        console.log('请求更新', res.data)
+        console.log('请求更新', res)
         // _this.isInit = false
         _this.ipc.setInitStatus(false)
         setTimeout(() => {
