@@ -20,6 +20,7 @@
     "element-ui": "^2.15.9",
     "lottie-web": "^5.9.4",
     "node-stream-zip": "^1.15.0",
+    "timers": "^0.1.1",
     "vue": "^2.6.11",
     "vue-resource": "^1.5.3",
     "vue-router": "^3.0.1"
