@@ -34,7 +34,9 @@ ipc.on('showContent', function (e, screens, interval) {
     for (let i = 0; i < windowList.length; i++) {
         if (interval && interval > 0) {
             setTimeout(() => {
-                windowList[i].webContents.postMessage('onShowContent', screens, [])
+                if (screens.length > 0) {
+                    windowList[i].webContents.postMessage('onShowContent', screens, [])
+                }
             }, interval * i)
         } else {
             windowList[i].webContents.postMessage('onShowContent', screens, [])
