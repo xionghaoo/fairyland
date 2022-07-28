@@ -52,7 +52,7 @@ ipc.on('showContent', function (e, screens, interval) {
             }
         } else {
             for (let j = 0; j < tIds.length; j++) {
-                clearTimeout(tIds[j])
+                windowList[i].clearTimeout(tIds[j])
             }
             console.log('清空内容', tIds)
             windowList[i].webContents.postMessage('onShowContent', screens, [])
