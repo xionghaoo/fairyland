@@ -42,14 +42,19 @@ ipc.on('showContent', function (e, screens, interval) {
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
                 }, interval * i)
                 tIds.push(tId)
+                console.log('添加timeout', tIds)
             } else {
                 for (let j = 0; j < tIds.length; j++) {
                     clearTimeout(tIds[j])
                 }
+                console.log('清空内容', tIds)
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
-            console.log('清空内容', screens.length)
+            for (let j = 0; j < tIds.length; j++) {
+                clearTimeout(tIds[j])
+            }
+            console.log('清空内容', tIds)
             windowList[i].webContents.postMessage('onShowContent', screens, [])
         }
     }
