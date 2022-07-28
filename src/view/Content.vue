@@ -62,6 +62,7 @@ export default {
       if (screens.length > 0) {
         for (let i = 0; i < screens.length; i++) {
           let s = screens[i]
+          // 寻找当前屏幕
           if (s.index === _this.index + 1) {
             let file_uri = ''
             // 匹配到屏幕，获取文件uri
