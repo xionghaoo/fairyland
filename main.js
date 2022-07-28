@@ -31,19 +31,16 @@ ipc.on('setUpdateStatus', function (e, args) {
 })
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, interval) {
-    let timeoutIds = []
     for (let i = 0; i < windowList.length; i++) {
         if (interval && interval > 0 && screens.length > 0) {
-            let id = setTimeout(() => {
+            setTimeout(() => {
                 if (screens.length > 0) {
+                    console.log('显示内容', screens.length)
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
                 }
             }, interval * i)
-            timeoutIds.push(id)
         } else {
-            for (let j = 0; j < timeoutIds.length; j++) {
-                clearTimeout(timeoutIds[j])
-            }
+            console.log('清空内容', screens.length)
             windowList[i].webContents.postMessage('onShowContent', screens, [])
         }
     }
