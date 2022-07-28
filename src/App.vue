@@ -77,6 +77,7 @@ export default {
       })
     },
     checkVersionUpdate() {
+      console.log('checkVersionUpdate')
       let _this = this;
       let local_version = localStorage.getItem('version') ?? 0
       Request.requestGet(
