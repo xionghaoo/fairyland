@@ -32,7 +32,7 @@ ipc.on('setUpdateStatus', function (e, args) {
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, interval) {
     for (let i = 0; i < windowList.length; i++) {
-        if (interval && interval > 0) {
+        if (interval && interval > 0 && screens.length > 0) {
             setTimeout(() => {
                 if (screens.length > 0) {
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
