@@ -13,7 +13,7 @@ ipc.on('getAppPath', function (e) {
 ipc.on('getScreenNum', function (e) {
     e.returnValue = windowList.length
 })
-ipc.on('getScreenSliceNum', function (e) {
+ipc.on('getContentSliceNum', function (e) {
     e.returnValue = sliceTotal
 })
 ipc.on('show-message-dialog', function (e, msg) {
