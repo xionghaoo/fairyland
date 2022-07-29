@@ -93,9 +93,9 @@ export default {
           this.file_type = 3
         }
       } else {
+        this.file_type = 0
         if (this.last_res_url != null) {
           console.log("显示默认内容")
-          this.file_type = 0
           _this.showDefaultContent();
           this.isShowNext = !this.isShowNext
           this.last_res_url = null
