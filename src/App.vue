@@ -186,7 +186,7 @@ export default {
         this.handleTextRecognize(model, res, sections)
 
         if (this.successCount === 0) {
-          this.ipc.playContent([]);
+          this.ipc.playContent([], localStorage.getItem('interval'));
         }
       }
     },
