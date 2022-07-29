@@ -93,8 +93,8 @@ export default {
           _this.file_type = 2
         }
       } else {
-        _this.file_type = 0
         if (_this.last_res_url != null || _this.file_type === 2) {
+          _this.file_type = 0
           console.log("显示默认内容")
           _this.showDefaultContent();
           _this.isShowNext = !_this.isShowNext
