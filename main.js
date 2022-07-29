@@ -43,6 +43,7 @@ ipc.on('showContent', function (e, screens, interval) {
     sliceTotal = num
     let sliceScreens = []
     for (let i = 0; i < num; i++) {
+        console.log(`分片: ${i}, ${i * windowList.length}`)
         sliceScreens.push(screens.slice(i, i * windowList.length))
     }
 
