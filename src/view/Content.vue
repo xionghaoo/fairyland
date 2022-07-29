@@ -69,7 +69,7 @@ export default {
           console.log(`getScreenSliceNum: ${_this.ipc.getScreenSliceNum()}`)
           if (index === 0) {
             // 这是最后一个屏幕
-            index = _this.ipc.getScreenNum() * _this.ipc.getScreenSliceNum()
+            index = _this.ipc.getScreenNum() * (_this.ipc.getScreenSliceNum() - 1)
           }
           console.log('index = ', index)
           if (index === _this.index + 1) {
