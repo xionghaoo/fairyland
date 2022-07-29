@@ -37,12 +37,13 @@ ipc.on('setUpdateStatus', function (e, args) {
 let tIds = []
 let contentIndex = 0
 let sliceTotal = 0
+let lastSectionId = null
 // 显示屏幕内容
-ipc.on('showContent', function (e, screens, interval) {
+ipc.on('showContent', function (e, screens, sectionId, interval) {
     let div = Math.floor(screens.length / windowList.length)
     let re = screens.length % windowList.length
     let num = re > 0 ? div + 1 : div
-    console.log(`div = ${div}, re: ${re}, num = ${num}, screens: ${screens.length}`)
+    // 屏幕组数
     sliceTotal = num
     let sliceScreens = []
     let sliceIndex = 0
@@ -59,6 +60,15 @@ ipc.on('showContent', function (e, screens, interval) {
     console.log(`分片： ${contentIndex}, 长度: ${single_screens.length}`)
     if (!single_screens) single_screens = []
 
+    // 切换卡片
+    if (lastSectionId !== sectionId) {
+        for (let j = 0; j < tIds.length; j++) {
+            clearTimeout(tIds[j])
+        }
+        tIds = []
+    }
+    lastSectionId = sectionId
+
     for (let i = 0; i < windowList.length; i++) {
         // 给每块屏幕发送消息
         if (interval && interval > 0) {
@@ -74,13 +84,11 @@ ipc.on('showContent', function (e, screens, interval) {
                 for (let j = 0; j < tIds.length; j++) {
                     clearTimeout(tIds[j])
                 }
-                console.log('清空内容-----', tIds)
                 tIds = []
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
             // 同步显示
-            // console.log('同步显示')
             windowList[i].webContents.postMessage('onShowContent', single_screens, [])
         }
     }

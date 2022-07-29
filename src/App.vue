@@ -187,7 +187,7 @@ export default {
 
         if (this.successCount === 0) {
           // 取消播放
-          this.ipc.playContent([], localStorage.getItem('interval'));
+          this.ipc.playContent([], null, localStorage.getItem('interval'));
         }
       }
     },
@@ -209,7 +209,7 @@ export default {
               // 匹配到直接把容忍值加满
               this.successCount = Config.recognizeThreshold;
               // 开始播放
-              this.ipc.playContent(section.screens, localStorage.getItem('interval'));
+              this.ipc.playContent(section.screens, section.id, localStorage.getItem('interval'));
             }
           }
         }

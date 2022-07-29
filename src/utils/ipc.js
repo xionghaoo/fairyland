@@ -11,9 +11,9 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         return ipc.sendSync('getScreenSliceNum');
     }
-    playContent(data, interval) {
+    playContent(data, sectionId, interval) {
         const ipc = window.require('electron').ipcRenderer
-        ipc.send('showContent', data, interval);
+        ipc.send('showContent', data, sectionId, interval);
     }
     stopContent(content) {
         const ipc = window.require('electron').ipcRenderer
