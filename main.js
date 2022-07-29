@@ -49,6 +49,7 @@ ipc.on('showContent', function (e, screens, interval) {
     // 分片
     let single_screens = sliceScreens[contentIndex]
     console.log('分片', single_screens)
+    if (!single_screens) single_screens = []
 
     for (let i = 0; i < windowList.length; i++) {
         // 给每块屏幕发送消息
