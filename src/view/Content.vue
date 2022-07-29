@@ -16,7 +16,7 @@
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
-    <div> 待填充的默认页 </div>
+    <div v-else> 待填充的默认页 </div>
   </div>
 </template>
 
