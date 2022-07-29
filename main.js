@@ -59,7 +59,7 @@ ipc.on('showContent', function (e, screens, sectionId, interval) {
 
     // 分片
     let single_screens = sliceScreens[contentIndex]
-    console.log(`分片： ${contentIndex}, 长度: ${single_screens.length}`)
+    // console.log(`分片： ${contentIndex}, 长度: ${single_screens.length}`)
     if (!single_screens) single_screens = []
 
     // 切换卡片
