@@ -37,7 +37,9 @@ ipc.on('setUpdateStatus', function (e, args) {
 let tIds = []
 let contentIndex = 0
 let sliceTotal = 0
+// 卡片切换时的记录
 let lastSectionId = null
+let lastContentIndex = null
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, sectionId, interval) {
     let div = Math.floor(screens.length / windowList.length)
@@ -61,13 +63,14 @@ ipc.on('showContent', function (e, screens, sectionId, interval) {
     if (!single_screens) single_screens = []
 
     // 切换卡片
-    if (lastSectionId !== sectionId) {
+    if (lastSectionId !== sectionId || lastContentIndex !== contentIndex) {
         for (let j = 0; j < tIds.length; j++) {
             clearTimeout(tIds[j])
         }
         tIds = []
     }
     lastSectionId = sectionId
+    lastContentIndex = contentIndex
 
     for (let i = 0; i < windowList.length; i++) {
         // 给每块屏幕发送消息
