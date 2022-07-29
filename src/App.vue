@@ -186,6 +186,7 @@ export default {
         this.handleTextRecognize(model, res, sections)
 
         if (this.successCount === 0) {
+          // 取消播放
           this.ipc.playContent([], localStorage.getItem('interval'));
         }
       }
@@ -207,6 +208,7 @@ export default {
               success = true;
               // 匹配到直接把容忍值加满
               this.successCount = Config.recognizeThreshold;
+              // 开始播放
               this.ipc.playContent(section.screens, localStorage.getItem('interval'));
             }
           }

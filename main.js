@@ -30,18 +30,34 @@ ipc.on('setUpdateStatus', function (e, args) {
     }
 })
 
+// 定时器id
 let tIds = []
+let contentIndex = 0
+let sliceTotal = 0
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, interval) {
+    let div = Math.floor(screens.length / windowList.length)
+    let re = screens.length % windowList.length
+    let num = re > 0 ? div + 1 : div
+    sliceTotal = num
+    let sliceScreens = []
+    for (let i = 0; i < num; i++) {
+        sliceScreens.push(screens.slice(i, i * windowList.length))
+    }
+
+    // 分片
+    let single_screens = sliceScreens[contentIndex]
+    console.log('分片', single_screens)
+
     for (let i = 0; i < windowList.length; i++) {
         // 给每块屏幕发送消息
         if (interval && interval > 0) {
             // 延迟显示
             let tId = null;
-            if (screens.length > 0) {
+            if (single_screens.length > 0) {
                 tId = setTimeout(() => {
-                    windowList[i].webContents.postMessage('onShowContent', screens, [])
-                    console.log('延迟显示内容-----', screens.length)
+                    windowList[i].webContents.postMessage('onShowContent', single_screens, [])
+                    console.log('延迟显示内容-----', single_screens.length)
                 }, interval * i)
                 tIds.push(Number(tId))
             } else {
@@ -53,14 +69,9 @@ ipc.on('showContent', function (e, screens, interval) {
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
-            console.log('同步显示')
             // 同步显示
-            // for (let j = 0; j < tIds.length; j++) {
-            //     clearTimeout(tIds[j])
-            // }
-            // tIds = []
-            // console.log('清空内容', tIds)
-            windowList[i].webContents.postMessage('onShowContent', screens, [])
+            // console.log('同步显示')
+            windowList[i].webContents.postMessage('onShowContent', single_screens, [])
         }
     }
 })
@@ -386,6 +397,13 @@ app.whenReady().then(() => {
     if (!ret) {
         console.log('registration failed')
     }
+
+    globalShortcut.register('CommandOrControl+N', () => {
+        contentIndex ++;
+        if (contentIndex >= sliceTotal) {
+            contentIndex = 0
+        }
+    })
 
     // 清除本地缓存
     globalShortcut.register('CommandOrCtrl+Shift+Delete', () => {
