@@ -63,6 +63,10 @@ ipc.on('showContent', function (e, screens, sectionId, interval) {
     if (!single_screens) single_screens = []
 
     // 切换卡片
+    if (lastSectionId !== sectionId) {
+        contentIndex = 0
+        lastContentIndex = null
+    }
     if (lastSectionId !== sectionId || lastContentIndex !== contentIndex) {
         for (let j = 0; j < tIds.length; j++) {
             clearTimeout(tIds[j])
