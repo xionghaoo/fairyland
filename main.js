@@ -42,6 +42,11 @@ let lastSectionId = null
 let lastContentIndex = null
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, sectionId, interval) {
+    if (lastSectionId !== sectionId) {
+        contentIndex = 0
+        lastContentIndex = null
+    }
+
     let div = Math.floor(screens.length / windowList.length)
     let re = screens.length % windowList.length
     let num = re > 0 ? div + 1 : div
@@ -59,14 +64,9 @@ ipc.on('showContent', function (e, screens, sectionId, interval) {
 
     // 分片
     let single_screens = sliceScreens[contentIndex]
-    // console.log(`分片： ${contentIndex}, 长度: ${single_screens.length}`)
     if (!single_screens) single_screens = []
 
     // 切换卡片
-    if (lastSectionId !== sectionId) {
-        contentIndex = 0
-        lastContentIndex = null
-    }
     if (lastSectionId !== sectionId || lastContentIndex !== contentIndex) {
         for (let j = 0; j < tIds.length; j++) {
             clearTimeout(tIds[j])
