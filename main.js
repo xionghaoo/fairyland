@@ -41,18 +41,19 @@ ipc.on('showContent', function (e, screens, interval) {
             if (screens.length > 0) {
                 tId = setTimeout(() => {
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
-                    console.log('延迟显示内容-----')
+                    console.log('延迟显示内容-----', screens.length)
                 }, interval * i)
                 tIds.push(Number(tId))
             } else {
                 for (let j = 0; j < tIds.length; j++) {
                     clearTimeout(tIds[j])
                 }
-                tIds = []
                 console.log('清空内容-----', tIds)
+                tIds = []
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
+            console.log('同步显示')
             // 同步显示
             // for (let j = 0; j < tIds.length; j++) {
             //     clearTimeout(tIds[j])
