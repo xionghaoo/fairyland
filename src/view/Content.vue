@@ -16,6 +16,7 @@
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
+    <div> 待填充的默认页 </div>
   </div>
 </template>
 
@@ -60,10 +61,12 @@ export default {
     this.file_prefix = `file:///${path}/assets/contents`
     this.ipc.onShowContent((screens) => {
       if (screens.length > 0) {
+        let hasMatched = false
         for (let i = 0; i < screens.length; i++) {
           let s = screens[i]
           // 寻找当前屏幕
           if (s.index === _this.index + 1) {
+            hasMatched = true
             let file_uri = ''
             // 匹配到屏幕，获取文件uri
             if (s.file_type < 1000) {
@@ -84,6 +87,10 @@ export default {
               this.last_res_url = file_uri
             }
           }
+        }
+        if (!hasMatched) {
+          // 没有找到屏幕，显示默认画面
+          this.file_type = 3
         }
       } else {
         if (this.last_res_url != null) {
