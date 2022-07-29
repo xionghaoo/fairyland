@@ -16,7 +16,7 @@
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
-    <div v-else> 待填充的默认页 </div>
+    <div v-else-if="file_type === 2"> 待填充的默认页 </div>
   </div>
 </template>
 
@@ -70,35 +70,36 @@ export default {
             let file_uri = ''
             // 匹配到屏幕，获取文件uri
             if (s.file_type < 1000) {
-              this.file_type = s.file_type
+              _this.file_type = s.file_type
               file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
             } else {
-              this.file_type = s.file_type - 1000
+              _this.file_type = s.file_type - 1000
               file_uri = s.item_uri.split('/').at(-1)
             }
             console.log("文件 uri: " + file_uri)
             console.log("file_type: " + this.file_type)
             // 把uri赋值给组件
             if (this.last_res_url !== file_uri) {
-              let needNext = !this.isShowNext
-              this.showContent(this.file_type, file_uri, needNext)
-              this.isShowNext = needNext
+              let needNext = !_this.isShowNext
+              _this.showContent(_this.file_type, file_uri, needNext)
+              _this.isShowNext = needNext
               console.log("给文件uri赋值: " + file_uri)
-              this.last_res_url = file_uri
+              _this.last_res_url = file_uri
             }
           }
         }
         if (!hasMatched) {
-          // 没有找到屏幕，显示默认画面
-          this.file_type = 3
+          console.log('显示补充画面')
+          // 没有找到屏幕，显示补充画面
+          _this.file_type = 2
         }
       } else {
-        this.file_type = 0
-        if (this.last_res_url != null) {
+        _this.file_type = 0
+        if (_this.last_res_url != null || _this.file_type === 2) {
           console.log("显示默认内容")
           _this.showDefaultContent();
-          this.isShowNext = !this.isShowNext
-          this.last_res_url = null
+          _this.isShowNext = !_this.isShowNext
+          _this.last_res_url = null
         }
       }
     })
