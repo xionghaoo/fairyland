@@ -45,13 +45,15 @@ ipc.on('showContent', function (e, screens, interval) {
     let sliceIndex = 0
     for (let i = 0; i < num; i++) {
         // console.log(`分片: ${sliceIndex}`)
-        sliceScreens.push(screens.slice(sliceIndex, sliceIndex + windowList.length))
+        let end = sliceIndex + windowList.length
+        if (end >= screens.length) end = screens.length
+        sliceScreens.push(screens.slice(sliceIndex, end))
         sliceIndex += windowList.length
     }
 
     // 分片
     let single_screens = sliceScreens[contentIndex]
-    console.log('分片', contentIndex)
+    console.log(`分片： ${contentIndex}, 长度: ${single_screens.length}`)
     if (!single_screens) single_screens = []
 
     for (let i = 0; i < windowList.length; i++) {
