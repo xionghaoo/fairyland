@@ -39,6 +39,7 @@ ipc.on('showContent', function (e, screens, interval) {
     let div = Math.floor(screens.length / windowList.length)
     let re = screens.length % windowList.length
     let num = re > 0 ? div + 1 : div
+    console.log(`div = ${div}, re: ${re}, ${num}`)
     sliceTotal = num
     let sliceScreens = []
     for (let i = 0; i < num; i++) {
