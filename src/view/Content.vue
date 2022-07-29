@@ -66,6 +66,10 @@ export default {
           let s = screens[i]
           // 寻找当前屏幕
           let index = s.index % _this.ipc.getScreenNum()
+          if (index === 0) {
+            // 这是最后一个屏幕
+            index = _this.ipc.getScreenNum() * _this.ipc.getScreenSliceNum()
+          }
           if (index === _this.index + 1) {
             hasMatched = true
             let file_uri = ''
