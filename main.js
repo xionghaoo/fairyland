@@ -1,5 +1,4 @@
 const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
-import { setTimeout, clearTimeout } from 'timers';
 const path = require('path')
 const StreamZip = require("node-stream-zip");
 const fs = require("fs");
@@ -30,32 +29,36 @@ ipc.on('setUpdateStatus', function (e, args) {
         windowList[i].webContents.postMessage('onUpdateChange', args, [])
     }
 })
+
 let tIds = []
 // 显示屏幕内容
 ipc.on('showContent', function (e, screens, interval) {
-    tIds = []
     for (let i = 0; i < windowList.length; i++) {
         // 给每块屏幕发送消息
         if (interval && interval > 0) {
+            // 延迟显示
             let tId = null;
             if (screens.length > 0) {
                 tId = setTimeout(() => {
                     windowList[i].webContents.postMessage('onShowContent', screens, [])
+                    console.log('延迟显示内容-----')
                 }, interval * i)
-                tIds.push(tId)
-                console.log('添加timeout', tIds)
+                tIds.push(Number(tId))
             } else {
                 for (let j = 0; j < tIds.length; j++) {
                     clearTimeout(tIds[j])
                 }
-                console.log('清空内容', tIds)
+                tIds = []
+                console.log('清空内容-----', tIds)
                 windowList[i].webContents.postMessage('onShowContent', [], [])
             }
         } else {
-            for (let j = 0; j < tIds.length; j++) {
-                clearTimeout(tIds[j])
-            }
-            console.log('清空内容', tIds)
+            // 同步显示
+            // for (let j = 0; j < tIds.length; j++) {
+            //     clearTimeout(tIds[j])
+            // }
+            // tIds = []
+            // console.log('清空内容', tIds)
             windowList[i].webContents.postMessage('onShowContent', screens, [])
         }
     }
