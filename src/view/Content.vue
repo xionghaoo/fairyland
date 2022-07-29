@@ -89,7 +89,6 @@ export default {
           }
         }
         if (!hasMatched) {
-          console.log('显示补充画面')
           // 没有找到屏幕，显示补充画面
           _this.file_type = 2
         }
