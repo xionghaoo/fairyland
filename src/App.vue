@@ -200,23 +200,21 @@ export default {
             let section = sections[j];
             // 检查识别类型
             if (section.recognize_type === 0
-                // 检查屏幕数量是否相等
-                // && this.ipc.getScreenNum() === section.screens.length
                 // 检查识别结果
                 && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())) {
               console.log("识别到文字：" + section.recognize_txt)
               // 匹配到卡片
               success = true;
               // 匹配到直接把容忍值加满
-              this.successCount = 3;
+              this.successCount = Config.recognizeThreshold;
               this.ipc.playContent(section.screens, localStorage.getItem('interval'));
             }
           }
         }
         if (success) {
           this.successCount ++;
-          if (this.successCount >= 3) {
-            this.successCount = 3;
+          if (this.successCount >= Config.recognizeThreshold) {
+            this.successCount = Config.recognizeThreshold;
           }
         } else {
           this.successCount --;
