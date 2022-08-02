@@ -415,15 +415,22 @@ app.whenReady().then(() => {
         globalShortcut.unregisterAll()
     })
 
-    // 注册一个'CommandOrControl+X' 快捷键监听器
-    const ret = globalShortcut.register('CommandOrControl+X', () => {
+    // 退出应用
+    const ret = globalShortcut.register('CommandOrControl+Q', () => {
         app.exit()
     })
     if (!ret) {
         console.log('registration failed')
     }
 
-    globalShortcut.register('CommandOrControl+N', () => {
+    // 向上和向下翻页
+    globalShortcut.register('UP', () => {
+        contentIndex --;
+        if (contentIndex < 0) {
+            contentIndex = sliceTotal
+        }
+    })
+    globalShortcut.register('DOWN', () => {
         contentIndex ++;
         if (contentIndex >= sliceTotal) {
             contentIndex = 0
@@ -431,7 +438,7 @@ app.whenReady().then(() => {
     })
 
     // 清除本地缓存
-    globalShortcut.register('CommandOrCtrl+Shift+Delete', () => {
+    globalShortcut.register('CommandOrCtrl+SHIFT+DELETE', () => {
         const clearObj = {
             storages: ['appcache', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage'],
         };

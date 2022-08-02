@@ -41,7 +41,8 @@ export default {
       hasUpdate: false,
       isInit: true,
       sections: [],
-      successCount: 0
+      successCount: 0,
+      play_mode: 0
     }
   },
   mounted() {
@@ -54,7 +55,7 @@ export default {
     })
 
     if (window.currentIndex === 0) {
-      this.getConfig()
+      // this.getConfig()
       // 在第一个屏幕检查更新
       this.checkVersionUpdate()
     }
@@ -187,7 +188,7 @@ export default {
 
         if (this.successCount === 0) {
           // 取消播放
-          this.ipc.playContent([], null, localStorage.getItem('interval'));
+          this.ipc.playContent([], null, this.play_mode);
         }
       }
     },
@@ -208,8 +209,10 @@ export default {
               success = true;
               // 匹配到直接把容忍值加满
               this.successCount = Config.recognizeThreshold;
+              // 重置播放模式
+              this.play_mode = section.play_mode
               // 开始播放
-              this.ipc.playContent(section.screens, section.id, localStorage.getItem('interval'));
+              this.ipc.playContent(section.screens, section.id, this.play_mode);
             }
           }
         }
