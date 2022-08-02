@@ -186,6 +186,7 @@ export default {
           // 视频
           this.video_uri = `${this.file_prefix}/${uri}`
           let video = document.getElementById("content_video");
+          video.volume = 1.0
           let source = document.createElement('source');
           if (video) {
             video.pause();
