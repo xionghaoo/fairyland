@@ -211,6 +211,7 @@ export default {
               this.successCount = Config.recognizeThreshold;
               // 重置播放模式
               this.play_mode = section.play_mode
+              console.log('play_mode: ', section.play_mode)
               // 开始播放
               this.ipc.playContent(section.screens, section.id, this.play_mode);
             }
