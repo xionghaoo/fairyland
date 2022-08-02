@@ -85,8 +85,8 @@ export default {
           Config.api.versionUpdate,
           {
             version: local_version,
-            device_uuid: 'wuhan01'
-            // device_uuid: 'sz001'
+            // device_uuid: 'wuhan01'
+            device_uuid: 'sz001'
           }
       ).then((res) => {
         console.log('请求更新', res)
