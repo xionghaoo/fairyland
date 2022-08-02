@@ -427,7 +427,7 @@ app.whenReady().then(() => {
     globalShortcut.register('UP', () => {
         contentIndex --;
         if (contentIndex < 0) {
-            contentIndex = sliceTotal
+            contentIndex = sliceTotal - 1
         }
     })
     globalShortcut.register('DOWN', () => {
