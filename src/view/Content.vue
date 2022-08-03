@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <div v-if="file_type === 0">
       <transition name="el-fade-in-linear">
         <div v-show="!isShowNext">
