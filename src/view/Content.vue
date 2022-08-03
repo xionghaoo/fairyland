@@ -16,7 +16,7 @@
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
-    <iframe v-else-if="file_type >= 1000" :src="remote_url" title="remote"></iframe>
+    <iframe width="100%" height="100%" v-else-if="file_type >= 1000" :src="remote_url" title="remote"></iframe>
     <div v-else-if="file_type === 2"> 待填充的补充页 </div>
   </div>
 </template>
@@ -204,7 +204,7 @@ export default {
         case 1000:
         case 1001:
           console.log('设置远程url: ' + uri)
-          this.remote_url = uri
+          this.remote_url = "https://www.byai.com/"
           break
       }
     }
