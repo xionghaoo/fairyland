@@ -204,7 +204,7 @@ export default {
         case 1000:
         case 1001:
           console.log('设置远程url: ' + uri)
-          this.remote_url = "https://www.byai.com/"
+          this.remote_url = uri
           break
       }
     }
