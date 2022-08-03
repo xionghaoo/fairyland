@@ -77,9 +77,9 @@ export default {
           if (index === _this.index + 1) {
             hasMatched = true
             let file_uri = ''
+            _this.file_type = s.file_type
             // 匹配到屏幕，获取文件uri
             if (s.file_type < 1000) {
-              _this.file_type = s.file_type
               file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
             } else {
               file_uri = s.item_uri
@@ -203,6 +203,7 @@ export default {
         // 网络资源
         case 1000:
         case 1001:
+          console.log('设置远程url: ' + uri)
           this.remote_url = uri
           break
       }
