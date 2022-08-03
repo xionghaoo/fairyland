@@ -12,7 +12,7 @@
         </div>
       </transition>
     </div>
-    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop muted>
+    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
