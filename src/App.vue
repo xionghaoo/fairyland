@@ -203,8 +203,8 @@ export default {
             // 检查识别类型
             if (section.recognize_type === 0
                 // 检查识别结果
-                // && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())
-                && res[i].text.toLowerCase() === section.recognize_txt.toLowerCase()
+                && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())
+                // && res[i].text.toLowerCase() === section.recognize_txt.toLowerCase()
             ) {
               console.log("识别到文字：" + section.recognize_txt)
               // 匹配到卡片

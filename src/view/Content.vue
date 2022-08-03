@@ -12,7 +12,7 @@
         </div>
       </transition>
     </div>
-    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
+    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop muted>
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
@@ -198,7 +198,10 @@ export default {
             video.load();
             video.play();
             if (this.index === 3) {
+              console.log('屏蔽声音')
               video.muted = true
+            } else {
+              video.muted = false
             }
           }
           break;
