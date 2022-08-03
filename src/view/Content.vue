@@ -16,6 +16,7 @@
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
+    <iframe v-else-if="file_type >= 1000" :src="remote_url" title="remote"></iframe>
     <div v-else-if="file_type === 2"> 待填充的补充页 </div>
   </div>
 </template>
@@ -47,6 +48,7 @@ export default {
       video_uri: '',
       next_img_uri: '',
       next_video_uri: '',
+      remote_url: '',
       isShowNext: false,
       last_res_url: null,
       file_prefix: '',
@@ -80,8 +82,9 @@ export default {
               _this.file_type = s.file_type
               file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
             } else {
-              _this.file_type = s.file_type - 1000
-              file_uri = s.item_uri.split('/').at(-1)
+              file_uri = s.item_uri
+              // _this.file_type = s.file_type - 1000
+              // file_uri = s.item_uri.split('/').at(-1)
             }
             console.log("文件 uri: " + file_uri)
             console.log("file_type: " + this.file_type)
@@ -197,6 +200,11 @@ export default {
           }
           break;
         }
+        // 网络资源
+        case 1000:
+        case 1001:
+          this.remote_url = uri
+          break
       }
     }
   }

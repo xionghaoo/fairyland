@@ -290,7 +290,13 @@ const downloadSingleFile = (win, urls, index) => {
             });
         })
     }
+    // if (urls[index].startsWith("https://roboland-deliv.ubtrobot.com")) {
+    //     console.log(`下载资源: ${urls[index]}`)
+    //     // 只下载阿里云的资源
+    //     win.webContents.downloadURL(urls[index])
+    // }
     console.log(`下载资源: ${urls[index]}`)
+    // 只下载阿里云的资源
     win.webContents.downloadURL(urls[index])
 }
 
