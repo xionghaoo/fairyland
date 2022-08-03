@@ -197,12 +197,12 @@ export default {
             source.setAttribute('type', 'video/mp4');
             video.load();
             video.play();
-            if (this.index === 3) {
-              console.log('屏蔽声音')
-              video.muted = true
-            } else {
-              video.muted = false
-            }
+            // if (this.index === 3) {
+            //   console.log('屏蔽声音')
+            //   video.muted = true
+            // } else {
+            //   video.muted = false
+            // }
           }
           break;
         }
