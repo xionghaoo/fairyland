@@ -197,6 +197,9 @@ export default {
             source.setAttribute('type', 'video/mp4');
             video.load();
             video.play();
+            if (this.index === 3) {
+              video.muted = true
+            }
           }
           break;
         }
