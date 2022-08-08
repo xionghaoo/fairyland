@@ -17,7 +17,7 @@
       Your browser does not support the video tag.
     </video>
     <iframe width="100%" height="100%" v-else-if="file_type >= 1000" :src="remote_url" title="remote"></iframe>
-    <div v-else-if="file_type === 2"> 待填充的补充页 </div>
+    <div v-else-if="file_type === 2"></div>
   </div>
 </template>
 
@@ -62,6 +62,10 @@ export default {
     let path = this.ipc.getAppPath();
     this.file_prefix = `file:///${path}/assets/contents`
     this.ipc.onShowContent((screens) => {
+      if (screens === null) {
+        this.file_type = 2;
+        return
+      }
       if (screens.length > 0) {
         let hasMatched = false
         for (let i = 0; i < screens.length; i++) {

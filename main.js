@@ -41,7 +41,7 @@ let sliceTotal = 0
 let lastSectionId = null
 let lastContentIndex = null
 // 显示屏幕内容
-ipc.on('showContent', function (e, screens, sectionId, interval) {
+ipc.on('showContent', async function (e, screens, sectionId, interval) {
     if (lastSectionId !== sectionId) {
         contentIndex = 0
         lastContentIndex = null
@@ -72,6 +72,17 @@ ipc.on('showContent', function (e, screens, sectionId, interval) {
             clearTimeout(tIds[j])
         }
         tIds = []
+    }
+    // TODO 切换卡片时白屏
+    if (lastContentIndex !== contentIndex) {
+        // console.log("翻页时白屏", single_screens)
+        for (let i = 0; i < windowList.length; i++) {
+            windowList[i].webContents.postMessage('onShowContent', null, [])
+        }
+        await new Promise((resolve)=>setTimeout(() => {
+            console.log("等待白屏");
+            resolve();
+        }, 200));
     }
     lastSectionId = sectionId
     lastContentIndex = contentIndex
