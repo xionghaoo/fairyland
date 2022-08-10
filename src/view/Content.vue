@@ -34,6 +34,11 @@ import cover_7_4 from "@/assets/cover_7_4.jpg"
 import cover_7_5 from "@/assets/cover_7_5.jpg"
 import cover_7_6 from "@/assets/cover_7_6.jpg"
 import cover_7_7 from "@/assets/cover_7_7.jpg"
+import cover_5_1 from "@/assets/cover_5_1.jpg"
+import cover_5_2 from "@/assets/cover_5_2.jpg"
+import cover_5_3 from "@/assets/cover_5_3.jpg"
+import cover_5_4 from "@/assets/cover_5_4.jpg"
+import cover_5_5 from "@/assets/cover_5_5.jpg"
 import Constant from "@/utils/constant";
 
 export default {
@@ -121,6 +126,8 @@ export default {
     showDefaultContent() {
       if (this.ipc.getScreenNum() === 4) {
         this.fourScreenCover()
+      } else if (this.ipc.getScreenNum() === 5) {
+        this.fiveScreenCover()
       } else if (this.ipc.getScreenNum() === 7) {
         this.sevenScreenCover()
       } else {
@@ -144,6 +151,30 @@ export default {
         case 3:
           this.img_uri = img4;
           this.next_img_uri = img4;
+          break;
+      }
+    },
+    fiveScreenCover() {
+      switch (this.$props.index) {
+        case 0:
+          this.img_uri = cover_5_1;
+          this.next_img_uri = cover_5_1;
+          break;
+        case 1:
+          this.img_uri = cover_5_2;
+          this.next_img_uri = cover_5_2;
+          break;
+        case 2:
+          this.img_uri = cover_5_3;
+          this.next_img_uri = cover_5_3;
+          break;
+        case 3:
+          this.img_uri = cover_5_4;
+          this.next_img_uri = cover_5_4;
+          break;
+        case 4:
+          this.img_uri = cover_5_5;
+          this.next_img_uri = cover_5_5;
           break;
       }
     },
