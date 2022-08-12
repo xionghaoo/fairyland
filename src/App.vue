@@ -254,7 +254,6 @@ body {
 }
 .camera {
   position: absolute;
-  width: 100px;
   left: 0;
   top: 0;
 }
