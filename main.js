@@ -455,7 +455,7 @@ app.whenReady().then(() => {
     })
 
     for (let i = 0; i < windowList.length; i++) {
-        globalShortcut.register(`CommandOrControl+${i+1}`, () => {
+        globalShortcut.register(`${i+1}`, () => {
             // 视频控制
             windowList[i].webContents.postMessage('toggleVideo', null, [])
         })
