@@ -455,10 +455,13 @@ app.whenReady().then(() => {
     })
 
     for (let i = 0; i < windowList.length; i++) {
-        globalShortcut.register(`${i+1}`, () => {
+        const ret = globalShortcut.register(`${i+1}`, () => {
             // 视频控制
             windowList[i].webContents.postMessage('toggleVideo', null, [])
         })
+        if (!ret) {
+            console.log(`${i+1} registration failed`)
+        }
     }
 
 

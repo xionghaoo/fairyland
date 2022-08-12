@@ -149,20 +149,20 @@ export default {
     fourScreenCover() {
       switch (this.$props.index) {
         case 0:
-          this.img_uri = img1;
-          this.next_img_uri = img1;
+          this.img_uri = cover_5_1;
+          this.next_img_uri = cover_5_1;
           break;
         case 1:
-          this.img_uri = img2;
-          this.next_img_uri = img2;
+          this.img_uri = cover_5_2;
+          this.next_img_uri = cover_5_2;
           break;
         case 2:
-          this.img_uri = img3;
-          this.next_img_uri = img3;
+          this.img_uri = cover_5_4;
+          this.next_img_uri = cover_5_4;
           break;
         case 3:
-          this.img_uri = img4;
-          this.next_img_uri = img4;
+          this.img_uri = cover_5_5;
+          this.next_img_uri = cover_5_5;
           break;
       }
     },
