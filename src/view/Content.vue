@@ -23,10 +23,6 @@
 
 <script>
 import IPC from "@/utils/ipc";
-import img1 from "@/assets/cover_left_top.png"
-import img2 from "@/assets/cover_right_top.png"
-import img3 from "@/assets/cover_left_bottom.png"
-import img4 from "@/assets/cover_right_bottom.png"
 import cover_7_1 from "@/assets/cover_7_1.jpg"
 import cover_7_2 from "@/assets/cover_7_2.jpg"
 import cover_7_3 from "@/assets/cover_7_3.jpg"
