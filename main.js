@@ -35,7 +35,7 @@ ipc.on('setUpdateStatus', function (e, args) {
 
 // 定时器id
 let tIds = []
-let contentIndex = 0
+let contentIndex = null
 let sliceTotal = 0
 // 卡片切换时的记录
 let lastSectionId = null
