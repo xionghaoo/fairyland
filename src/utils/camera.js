@@ -39,8 +39,8 @@ class Camera {
                 _this.height = height;
 
                 console.log(`camera width: ${_this.camera.videoWidth}， height: ${_this.camera.videoHeight}`)
-                _this.camera.setAttribute('width', '100');
-                _this.camera.setAttribute('height', `${Math.round(100 * 480 / 640)}`);
+                _this.camera.setAttribute('width', '50');
+                _this.camera.setAttribute('height', `${Math.round(50 * 480 / 640)}`);
                 // let canvas = document.getElementById('canvas');
                 // canvas.setAttribute('width', width.toString());
                 // canvas.setAttribute('height', height.toString());
