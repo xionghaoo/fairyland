@@ -454,6 +454,14 @@ app.whenReady().then(() => {
         }
     })
 
+    for (let i = 0; i < windowList.length; i++) {
+        globalShortcut.register(`CommandOrControl+${i+1}`, () => {
+            // 视频控制
+            windowList[i].webContents.postMessage('toggleVideo', null, [])
+        })
+    }
+
+
     // 清除本地缓存
     globalShortcut.register('CommandOrCtrl+SHIFT+DELETE', () => {
         const clearObj = {

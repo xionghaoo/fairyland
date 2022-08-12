@@ -120,6 +120,18 @@ export default {
           _this.last_res_url = null
         }
       }
+    });
+
+    this.ipc.toggleVideo(() => {
+      // 视频播放暂停
+      let video = document.getElementById("content_video");
+      if (video) {
+        if(video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
     })
   },
   methods: {
