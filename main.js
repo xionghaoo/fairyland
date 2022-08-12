@@ -434,6 +434,10 @@ app.whenReady().then(() => {
 
     // 退出应用
     const ret = globalShortcut.register('CommandOrControl+Q', () => {
+        // 退出应用时清除定时器
+        for (let j = 0; j < tIds.length; j++) {
+            clearTimeout(tIds[j])
+        }
         app.exit()
     })
     if (!ret) {
