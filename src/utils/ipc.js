@@ -100,6 +100,12 @@ class IPC {
             callback()
         })
     }
+    toggleAllVideo(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('toggleAllVideo', () => {
+            callback()
+        })
+    }
 }
 
 export default IPC

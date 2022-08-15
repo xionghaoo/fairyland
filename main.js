@@ -465,6 +465,12 @@ app.whenReady().then(() => {
         })
     }
 
+    globalShortcut.register('Space', () => {
+        for (let i = 0; i < windowList.length; i++) {
+            // 视频控制
+            windowList[i].webContents.postMessage('toggleAllVideo', null, [])
+        }
+    })
 
     // 清除本地缓存
     globalShortcut.register('CommandOrCtrl+SHIFT+DELETE', () => {

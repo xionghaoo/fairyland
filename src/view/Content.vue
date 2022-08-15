@@ -12,7 +12,7 @@
         </div>
       </transition>
     </div>
-    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" autoplay loop>
+    <video v-else-if="file_type === 1" id="content_video" width="100%" height="100%" :autoplay="auto_play" loop>
       <source :src="video_uri" type="video/mp4">
       Your browser does not support the video tag.
     </video>
@@ -54,6 +54,8 @@ export default {
       last_res_url: null,
       file_prefix: '',
       file_type: 0,
+      auto_play: false,
+      is_play_all: false
     }
   },
   created() {
@@ -83,6 +85,7 @@ export default {
             hasMatched = true
             let file_uri = ''
             _this.file_type = s.file_type
+            _this.auto_play = s.auto_play
             // 匹配到屏幕，获取文件uri
             if (s.file_type < 1000) {
               file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
@@ -126,6 +129,20 @@ export default {
           video.play();
         } else {
           video.pause();
+        }
+      }
+    })
+    this.ipc.toggleAllVideo(() => {
+      _this.is_play_all = !_this.is_play_all;
+      // 视频播放暂停
+      let video = document.getElementById("content_video");
+      if (video) {
+        if (_this.is_play_all) {
+          if (video.paused) {
+            video.play();
+          }
+        } else {
+          video.pause()
         }
       }
     })
