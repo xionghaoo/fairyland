@@ -14,12 +14,8 @@ const Config = (() => {
   let isDev = url.indexOf('dev') >= 0 || url.indexOf('test') >= 0;//是否是测试环境
 
   let baseUrl = isLocalhost || isDev ? RequestHttpDev : RequestHttpPro
-  // baseUrl = 'http://119.23.154.148:5007' // 正式地址
   baseUrl = 'http://rvi.ubtrobot.com:5007' // 正式地址
-  // baseUrl = 'http://rvi.ubtrobot.com:5009' // 测试
-  // baseUrl = 'http://10.22.69.72:5001'
-  // baseUrl = 'http://172.20.10.2:5001'
-  // baseUrl = 'http://192.168.3.34:5001'
+  baseUrl = 'http://192.168.3.34:5001' // 正式地址
   let api = baseUrl + '/api'
   return {
     // 是否是开发环境
@@ -34,13 +30,15 @@ const Config = (() => {
     api: {
       /*-- 基础信息 --*/
       versionUpdate: api + '/fairyland/update',
-      config: api + '/fairyland/config',
+      cardList: api + '/fairyland/card_list',
 
     },
     recognizeInterval: 1000,
     recognizeApi: "ws://120.76.175.224:9001",
     ossHost: 'https://roboland-deliv.ubtrobot.com/',
-    recognizeThreshold: 5
+    recognizeThreshold: 5,
+    // deviceId: "wuhan01"
+    deviceId: "sz001"
     // recognizeApi: "ws://119.23.154.148:9006"
   }
 })();

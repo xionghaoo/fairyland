@@ -11,6 +11,10 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         return ipc.sendSync('getContentSliceNum');
     }
+    getDownloadedFiles() {
+        const ipc = window.require('electron').ipcRenderer
+        return ipc.sendSync('getDownloadedFiles');
+    }
     playContent(data, sectionId, interval) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('showContent', data, sectionId, interval);
@@ -35,11 +39,11 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('showNotify', data)
     }
-    downloadResource(url) {
-        // let url = 'https://dl-tc.coolapkmarket.com/down/apk_upload/2020/1101/IDM_-v12.3_signed-162932-o_1em0thqn3jhj1akloa0qnd1lrgr-uid-456271.apk?t=1656220581&sign=0c7f339d43cdde9174550401e39838a0'
-        const ipc = window.require('electron').ipcRenderer
-        ipc.send('downloadResource', url)
-    }
+    // downloadResource(url) {
+    //     // let url = 'https://dl-tc.coolapkmarket.com/down/apk_upload/2020/1101/IDM_-v12.3_signed-162932-o_1em0thqn3jhj1akloa0qnd1lrgr-uid-456271.apk?t=1656220581&sign=0c7f339d43cdde9174550401e39838a0'
+    //     const ipc = window.require('electron').ipcRenderer
+    //     ipc.send('downloadResource', url)
+    // }
     downloadMultiFile(urls) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('downloadMultiFile', urls)
@@ -56,24 +60,24 @@ class IPC {
             callback()
         })
     }
-    onDownloadProgress(callback) {
-        const ipc = window.require('electron').ipcRenderer
-        ipc.on('onDownloadProgress', (e, progress) => {
-            callback(progress)
-        })
-    }
-    onResourceUpdated(callback) {
-        const ipc = window.require('electron').ipcRenderer
-        ipc.on('onResourceUpdated', () => {
-            callback()
-        })
-    }
-    onDownloadCompleted(callback) {
-        const ipc = window.require('electron').ipcRenderer
-        ipc.on('onDownloadCompleted', () => {
-            callback()
-        })
-    }
+    // onDownloadProgress(callback) {
+    //     const ipc = window.require('electron').ipcRenderer
+    //     ipc.on('onDownloadProgress', (e, progress) => {
+    //         callback(progress)
+    //     })
+    // }
+    // onResourceUpdated(callback) {
+    //     const ipc = window.require('electron').ipcRenderer
+    //     ipc.on('onResourceUpdated', () => {
+    //         callback()
+    //     })
+    // }
+    // onDownloadCompleted(callback) {
+    //     const ipc = window.require('electron').ipcRenderer
+    //     ipc.on('onDownloadCompleted', () => {
+    //         callback()
+    //     })
+    // }
     setInitStatus(status) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('setInitStatus', status)

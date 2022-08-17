@@ -55,7 +55,7 @@ export default {
     })
 
     if (window.currentIndex === 0) {
-      // this.getConfig()
+      this.getCardList()
       // 在第一个屏幕检查更新
       this.checkVersionUpdate()
     }
@@ -67,13 +67,15 @@ export default {
     })
   },
   methods: {
-    getConfig() {
-      console.log('get config')
-      // let _this = this;
-      Request.requestGet(Config.api.config, {}).then((res) => {
-        console.log('请求配置', res)
+    getCardList() {
+      console.log('getCardList')
+      Request.requestGet(
+          Config.api.cardList,
+          { device_uuid: Config.deviceId }
+      ).then((res) => {
+        console.log('请求卡片列表', res)
         if (res.code === 0) {
-          localStorage.setItem('interval', res.data.interval)
+          localStorage.setItem('card_list', res.data)
         }
       })
     },
@@ -85,8 +87,8 @@ export default {
           Config.api.versionUpdate,
           {
             version: local_version,
-            device_uuid: 'wuhan01'
-            // device_uuid: 'sz001'
+            // device_uuid: 'wuhan01'
+            device_uuid: Config.deviceId
           }
       ).then((res) => {
         console.log('请求更新', res)
@@ -100,37 +102,52 @@ export default {
             let rd = res.data
             let sections = JSON.stringify(rd.sections)
             // 下载多个资源文件
+            let existFiles = _this.ipc.getDownloadedFiles();
             const urls = []
             for (let i = 0; i < rd.sections.length; i++) {
               let screens = rd.sections[i].screens;
               for (let j = 0; j < screens.length; j++) {
-                if (screens[j].file_type < 1000) {
+                let nameList = screens[j].item_uri.split("/")
+                let name = nameList[nameList.length - 1]
+                if (screens[j].file_type < 1000 && !existFiles.includes(name)) {
                   urls.push(Config.ossHost + screens[j].item_uri)
                 } else {
-                  urls.push(screens[j].item_uri)
+                  // 网络资源不用下载
+                  // urls.push(screens[j].item_uri)
                 }
               }
             }
-            _this.totalDownload = urls.length
-            _this.ipc.onDownloadSingleProgress((index, progress) => {
-              console.log(`index: ${index}, progress: ${progress}`)
-              _this.progress = progress.toFixed(0)
-              _this.downloadIndex = index
-            })
-            _this.ipc.onDownloadMultiFileCompleted(() => {
-              _this.progress = 100
+            console.log("下载资源", urls)
+            // 下载资源
+            if (urls.length > 0) {
+              _this.totalDownload = urls.length
+              _this.ipc.onDownloadSingleProgress((index, progress) => {
+                console.log(`index: ${index}, progress: ${progress}`)
+                _this.progress = progress.toFixed(0)
+                _this.downloadIndex = index
+              })
+              _this.ipc.onDownloadMultiFileCompleted(() => {
+                _this.progress = 100
+                // 资源更新完成
+                localStorage.setItem('sections', sections)
+                _this.sections = rd.sections
+                // 保存资源版本号
+                localStorage.setItem('version', rd.version_code)
+                // 删除多余资源
+                // _this.ipc.deleteFiles(_this.sections)
+                _this.startTextRecognize()
+              })
+              _this.ipc.downloadMultiFile(urls)
+            } else {
               // 资源更新完成
               localStorage.setItem('sections', sections)
               _this.sections = rd.sections
               // 保存资源版本号
               localStorage.setItem('version', rd.version_code)
-
               // 删除多余资源
               // _this.ipc.deleteFiles(_this.sections)
-
               _this.startTextRecognize()
-            })
-            _this.ipc.downloadMultiFile(urls)
+            }
           } else {
             // 没有发现新版本
             _this.startTextRecognize()
@@ -216,6 +233,18 @@ export default {
               console.log('play_mode: ', section.play_mode)
               // 开始播放
               this.ipc.playContent(section.screens, section.id, this.play_mode);
+            } else if (section.recognize_type === 0) {
+              // 检查卡片列表中的其他文本
+              let resTxt = res[i].text.toLowerCase()
+              let cards = localStorage.getItem('card_list')
+              for (let k = 0; k < cards.length; k++) {
+                if (resTxt.includes(cards[k])) {
+                  success = true
+                  this.successCount = 2;
+                  this.ipc.playContent(null, null, 0);
+                  break;
+                }
+              }
             }
           }
         }

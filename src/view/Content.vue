@@ -17,7 +17,12 @@
       Your browser does not support the video tag.
     </video>
     <iframe width="100%" height="100%" v-else-if="file_type >= 1000" :src="remote_url" title="remote"></iframe>
-    <div v-else-if="file_type === 2"></div>
+    <div v-else-if="file_type === 2">
+    <!-- 多余屏幕填充内容 -->
+    </div>
+    <div v-else-if="file_type === 3">
+      <p>还没有内容，请等待，试试其他卡片</p>
+    </div>
   </div>
 </template>
 
@@ -65,9 +70,14 @@ export default {
     let path = this.ipc.getAppPath();
     this.file_prefix = `file:///${path}/assets/contents`
     this.ipc.onShowContent((screens) => {
+      console.log("onShowContent", screens)
       if (screens === null) {
         this.file_type = 2;
         return
+      }
+      if (screens === "showNoCard") {
+        this.file_type = 3;
+        return;
       }
       if (screens.length > 0) {
         let hasMatched = false
@@ -111,7 +121,7 @@ export default {
           _this.file_type = 2
         }
       } else {
-        if (_this.last_res_url != null || _this.file_type === 2) {
+        if (_this.last_res_url != null || _this.file_type === 2 || _this.file_type === 3) {
           _this.file_type = 0
           console.log("显示默认内容")
           _this.showDefaultContent();
