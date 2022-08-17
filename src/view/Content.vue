@@ -21,7 +21,7 @@
     <!-- 多余屏幕填充内容 -->
     </div>
     <div v-else-if="file_type === 3">
-      <p>还没有内容，请等待，试试其他卡片</p>
+      <img :src="img_no_bind_card" width="100%" height="100%">
     </div>
   </div>
 </template>
@@ -40,6 +40,7 @@ import cover_5_2 from "@/assets/cover_5_2.jpg"
 import cover_5_3 from "@/assets/cover_5_3.jpg"
 import cover_5_4 from "@/assets/cover_5_4.jpg"
 import cover_5_5 from "@/assets/cover_5_5.jpg"
+import img_no_bind_card from "@/assets/img_no_bind_card.jpg"
 import Constant from "@/utils/constant";
 
 export default {
@@ -60,7 +61,8 @@ export default {
       file_prefix: '',
       file_type: 0,
       auto_play: false,
-      is_play_all: false
+      is_play_all: false,
+      img_no_bind_card: img_no_bind_card
     }
   },
   created() {
