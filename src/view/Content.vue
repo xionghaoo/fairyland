@@ -72,7 +72,6 @@ export default {
     let path = this.ipc.getAppPath();
     this.file_prefix = `file:///${path}/assets/contents`
     this.ipc.onShowContent((screens) => {
-      console.log("onShowContent", screens)
       if (screens === null) {
         this.file_type = 2;
         return

@@ -236,9 +236,9 @@ export default {
             } else if (section.recognize_type === 0) {
               // 检查卡片列表中的其他文本
               let resTxt = res[i].text.toLowerCase()
-              let cards = localStorage.getItem('card_list')
+              let cards = localStorage.getItem('card_list').split(",")
               for (let k = 0; k < cards.length; k++) {
-                if (resTxt.includes(cards[k])) {
+                if (resTxt === cards[k].toLowerCase()) {
                   success = true
                   this.successCount = 2;
                   this.ipc.playContent(null, null, 0);
