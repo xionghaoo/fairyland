@@ -36,8 +36,8 @@ const Config = (() => {
     recognizeApi: "ws://120.76.175.224:9001",
     ossHost: 'https://roboland-deliv.ubtrobot.com/',
     recognizeThreshold: 5,
-    deviceId: "wuhan01"
-    // deviceId: "sz001"
+    // deviceId: "wuhan01"
+    deviceId: "sz001"
     // recognizeApi: "ws://119.23.154.148:9006"
   }
 })();
