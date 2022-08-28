@@ -2618,7 +2618,7 @@ body-parser@1.20.0:
 
 bonjour@^3.5.0:
   version "3.5.0"
-  resolved "https://registry.npmmirror.com/bonjour/-/bonjour-3.5.0.tgz"
+  resolved "https://registry.yarnpkg.com/bonjour/-/bonjour-3.5.0.tgz#8e890a183d8ee9a2393b3844c691a42bcf7bc9f5"
   integrity sha512-RaVTblr+OnEli0r/ud8InrU7D+G0y6aJhlxaLa6Pwty4+xoxboF1BsUI45tujvRpbj9dQVoglChqonGAsjEBYg==
   dependencies:
     array-flatten "^2.1.0"
