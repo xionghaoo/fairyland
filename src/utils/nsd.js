@@ -1,5 +1,7 @@
-import bonjour from 'bonjour'
-import os from 'os'
+// import bonjour from 'bonjour'
+// import os from 'os'
+const bonjour = require('bonjour')
+const os = require('os')
 
 function getIPAddress(){
     var interfaces = os.networkInterfaces();
@@ -13,10 +15,9 @@ function getIPAddress(){
         }
     }
 }
-console.log(getIPAddress()) // 本地ip
 
-let server_name = getIPAddress().replaceAll('.', '-')
+let server_name = `vision-${getIPAddress().replaceAll('.', '-')}`
 console.log("server name: " + server_name)
-//3000端口开启name = my-is-hostA的服务
+
 const bonjourServer = bonjour()
 bonjourServer.publish({ name: server_name, type: 'http', port: 3000})

@@ -10825,6 +10825,11 @@ ws@^6.0.0, ws@^6.2.1:
   dependencies:
     async-limiter "~1.0.0"
 
+ws@^8.8.1:
+  version "8.8.1"
+  resolved "https://repo.huaweicloud.com/repository/npm/ws/-/ws-8.8.1.tgz#5dbad0feb7ade8ecc99b830c1d77c913d4955ff0"
+  integrity sha512-bGy2JzvzkPowEJV++hF07hAD6niYSr0JzBNo/J29WsB57A2r7Wlc1UFcTR9IzrPvuNVO4B8LGqF8qcpsVOhJCA==
+
 xmlbuilder@^9.0.7:
   version "9.0.7"
   resolved "https://repo.huaweicloud.com/repository/npm/xmlbuilder/-/xmlbuilder-9.0.7.tgz"

@@ -1,7 +1,7 @@
 const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
 const path = require('path')
-const StreamZip = require("node-stream-zip");
 const fs = require("fs");
+require('./src/utils/nsd')
 require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
 
@@ -413,7 +413,21 @@ const createMultiWindow = () => {
     }
 }
 
+const startRecognizeServer = () => {
+    const ws = require('ws')
+    const wss = new ws.WebSocketServer({ port: 8800, path: '/recognize'});
+    console.log("start websocket server")
+    wss.on('connection', function connection(ws) {
+        ws.on('message', function message(data) {
+            console.log('received: %s', data);
+        });
+
+        ws.send('something');
+    });
+}
+
 app.whenReady().then(() => {
+    startRecognizeServer()
     // createWindow()
     createMultiWindow()
 
