@@ -25,6 +25,12 @@ class IPC {
             content: content
         });
     }
+    onRecognizeTxt(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onRecognizeTxt', (e, recTxt) => {
+            callback(recTxt)
+        })
+    }
     onShowContent(callback) {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('onShowContent', (e, args) => {
@@ -60,24 +66,6 @@ class IPC {
             callback()
         })
     }
-    // onDownloadProgress(callback) {
-    //     const ipc = window.require('electron').ipcRenderer
-    //     ipc.on('onDownloadProgress', (e, progress) => {
-    //         callback(progress)
-    //     })
-    // }
-    // onResourceUpdated(callback) {
-    //     const ipc = window.require('electron').ipcRenderer
-    //     ipc.on('onResourceUpdated', () => {
-    //         callback()
-    //     })
-    // }
-    // onDownloadCompleted(callback) {
-    //     const ipc = window.require('electron').ipcRenderer
-    //     ipc.on('onDownloadCompleted', () => {
-    //         callback()
-    //     })
-    // }
     setInitStatus(status) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('setInitStatus', status)

@@ -415,21 +415,60 @@ const createMultiWindow = () => {
 
 const startRecognizeServer = () => {
     const ws = require('ws')
-    const wss = new ws.WebSocketServer({ port: 8800, path: '/recognize'});
+    const wss = new ws.WebSocketServer({ port: 8800, path: '/controller'});
     console.log("start websocket server")
-    wss.on('connection', function connection(ws) {
-        ws.on('message', function message(data) {
-            console.log('received: %s', data);
-        });
+    if (windowList.length > 0) {
+        let win = windowList[0]
 
-        ws.send('something');
-    });
+        wss.on('connection', function connection(ws) {
+            ws.on('message', function message(res) {
+                let data = JSON.parse(res)
+                console.log('type: ' + data.type)
+                console.log('data: ' + data.data)
+                switch (data.type) {
+                    case 'rec_txt':
+                        // 接收到文本
+                        win.webContents.send('onRecognizeTxt', data.data);
+                        ws.send(JSON.stringify({ code: 200 }))
+                        break;
+                    case 'cmd':
+                        // 接收到指令
+                        handleCmd(data.data)
+                        break;
+                }
+            });
+        });
+    }
+
+}
+
+function handleCmd(cmd) {
+    switch (cmd) {
+        case 'prev': prev(); break;
+        case 'next': next(); break;
+    }
+}
+
+function prev() {
+    console.log('上一页')
+    contentIndex --;
+    if (contentIndex < 0) {
+        contentIndex = sliceTotal - 1
+    }
+}
+
+function next() {
+    console.log('下一页')
+    contentIndex ++;
+    if (contentIndex >= sliceTotal) {
+        contentIndex = 0
+    }
 }
 
 app.whenReady().then(() => {
-    startRecognizeServer()
     // createWindow()
     createMultiWindow()
+    startRecognizeServer()
 
     // 文件路径测试
     console.log('app path: ' + app.getAppPath())

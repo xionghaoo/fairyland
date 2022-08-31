@@ -16,8 +16,8 @@
 
 <script>
 import Content from "@/view/Content";
-import WebSocketManager from "@/utils/ws";
-import Camera from "@/utils/camera";
+// import WebSocketManager from "@/utils/ws";
+// import Camera from "@/utils/camera";
 import IPC from "@/utils/ipc";
 import Request from "@/utils/request";
 import Config from "@/utils/config";
@@ -49,9 +49,14 @@ export default {
     let _this = this;
     this.ipc = new IPC();
     this.sections = JSON.parse(localStorage.getItem('sections'))
-    this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
-      // 收到websocket消息
-      _this.handleResult(data)
+    // TODO 测试
+    // this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
+    //   // 收到websocket消息
+    //   _this.handleResult(data)
+    // })
+
+    this.ipc.onRecognizeTxt((recTxt) => {
+      _this.handleRecognizeResult(recTxt)
     })
 
     if (window.currentIndex === 0) {
@@ -159,8 +164,8 @@ export default {
       })
     },
     startTextRecognize() {
-      let _this = this;
-      // this.hasUpdate = false
+      // TODO 测试
+     /* let _this = this;
       _this.ipc.setUpdateStatus(false)
 
       setTimeout(() => {
@@ -168,7 +173,7 @@ export default {
         _this.camera.open(() => {
           _this.startScan();
         })
-      }, 100)
+      }, 100)*/
     },
     startScan() {
       console.log("开始识别")
@@ -209,41 +214,49 @@ export default {
         }
       }
     },
+    // TODO 测试
+    handleRecognizeResult(txt) {
+      let sections = this.sections
+      this.handleTextRecognize('chinese_ocr', txt, sections)
+
+      if (this.successCount === 0) {
+        // 取消播放
+        this.ipc.playContent([], null, this.play_mode);
+      }
+    },
     // 文字识别
-    handleTextRecognize(model, res, sections) {
+    handleTextRecognize(model, recTxt, sections) {
       if (model === 'chinese_ocr') {
         let success = false;
         // 文字识别
-        for (let i = 0; i < res.length; i++) {
-          for (let j = 0; j < sections.length; j++) {
-            let section = sections[j];
-            // 检查识别类型
-            if (section.recognize_type === 0
-                // 检查识别结果
-                && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())
-                // && res[i].text.toLowerCase() === section.recognize_txt.toLowerCase()
-            ) {
-              console.log("识别到文字：" + section.recognize_txt)
-              // 匹配到卡片
-              success = true;
-              // 匹配到直接把容忍值加满
-              this.successCount = Config.recognizeThreshold;
-              // 重置播放模式
-              this.play_mode = section.play_mode
-              console.log('play_mode: ', section.play_mode)
-              // 开始播放
-              this.ipc.playContent(section.screens, section.id, this.play_mode);
-            } else if (section.recognize_type === 0) {
-              // 检查卡片列表中的其他文本
-              let resTxt = res[i].text.toLowerCase()
-              let cards = localStorage.getItem('card_list').split(",")
-              for (let k = 0; k < cards.length; k++) {
-                if (resTxt === cards[k].toLowerCase()) {
-                  success = true
-                  this.successCount = 2;
-                  this.ipc.playContent(null, null, 0);
-                  break;
-                }
+        for (let j = 0; j < sections.length; j++) {
+          let section = sections[j];
+          // 检查识别类型
+          if (section.recognize_type === 0
+              // 检查识别结果
+              && recTxt.toLowerCase().includes(section.recognize_txt.toLowerCase())
+              // && res[i].text.toLowerCase() === section.recognize_txt.toLowerCase()
+          ) {
+            console.log("识别到文字：" + section.recognize_txt)
+            // 匹配到卡片
+            success = true;
+            // 匹配到直接把容忍值加满
+            this.successCount = Config.recognizeThreshold;
+            // 重置播放模式
+            this.play_mode = section.play_mode
+            console.log('play_mode: ', section.play_mode)
+            // 开始播放
+            this.ipc.playContent(section.screens, section.id, this.play_mode);
+          } else if (section.recognize_type === 0) {
+            // 检查卡片列表中的其他文本
+            let resTxt = recTxt.toLowerCase()
+            let cards = localStorage.getItem('card_list').split(",")
+            for (let k = 0; k < cards.length; k++) {
+              if (resTxt === cards[k].toLowerCase()) {
+                success = true
+                this.successCount = 2;
+                this.ipc.playContent(null, null, 0);
+                break;
               }
             }
           }
