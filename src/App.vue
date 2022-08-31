@@ -55,10 +55,6 @@ export default {
     //   _this.handleResult(data)
     // })
 
-    this.ipc.onRecognizeTxt((recTxt) => {
-      _this.handleRecognizeResult(recTxt)
-    })
-
     if (window.currentIndex === 0) {
       this.getCardList()
       // 在第一个屏幕检查更新
@@ -174,6 +170,11 @@ export default {
           _this.startScan();
         })
       }, 100)*/
+
+      let _this = this;
+      this.ipc.onRecognizeTxt((recTxt) => {
+        _this.handleRecognizeResult(recTxt)
+      })
     },
     startScan() {
       console.log("开始识别")

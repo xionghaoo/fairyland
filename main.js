@@ -446,6 +446,8 @@ function handleCmd(cmd) {
     switch (cmd) {
         case 'prev': prev(); break;
         case 'next': next(); break;
+        case 'playOrPauseAll': playOrPauseAll(); break;
+        case 'exit': exit(); break;
     }
 }
 
@@ -463,6 +465,21 @@ function next() {
     if (contentIndex >= sliceTotal) {
         contentIndex = 0
     }
+}
+
+function playOrPauseAll() {
+    for (let i = 0; i < windowList.length; i++) {
+        // 视频控制
+        windowList[i].webContents.postMessage('toggleAllVideo', null, [])
+    }
+}
+
+function exit() {
+    // 退出应用时清除定时器
+    for (let j = 0; j < tIds.length; j++) {
+        clearTimeout(tIds[j])
+    }
+    app.exit()
 }
 
 app.whenReady().then(() => {
@@ -499,10 +516,11 @@ app.whenReady().then(() => {
     // 退出应用
     const ret = globalShortcut.register('CommandOrControl+Q', () => {
         // 退出应用时清除定时器
-        for (let j = 0; j < tIds.length; j++) {
-            clearTimeout(tIds[j])
-        }
-        app.exit()
+        // for (let j = 0; j < tIds.length; j++) {
+        //     clearTimeout(tIds[j])
+        // }
+        // app.exit()
+        exit()
     })
     if (!ret) {
         console.log('registration failed')
@@ -510,16 +528,18 @@ app.whenReady().then(() => {
 
     // 向上和向下翻页
     globalShortcut.register('UP', () => {
-        contentIndex --;
-        if (contentIndex < 0) {
-            contentIndex = sliceTotal - 1
-        }
+        // contentIndex --;
+        // if (contentIndex < 0) {
+        //     contentIndex = sliceTotal - 1
+        // }
+        prev()
     })
     globalShortcut.register('DOWN', () => {
-        contentIndex ++;
-        if (contentIndex >= sliceTotal) {
-            contentIndex = 0
-        }
+        // contentIndex ++;
+        // if (contentIndex >= sliceTotal) {
+        //     contentIndex = 0
+        // }
+        next()
     })
 
     for (let i = 0; i < windowList.length; i++) {
