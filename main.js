@@ -182,69 +182,6 @@ function removeDir(dir) {
     fs.rmdirSync(dir)//如果文件夹是空的，就将自己删除掉
 }
 
-// ipc.on('downloadResource', function (e, url) {
-//     let win = windowList[0]
-//     win.webContents.session.on('will-download', (e, item) => {
-//         const filePath = path.join(app.getAppPath(), 'assets', item.getFilename());
-//         // const filePath = "assets\\" + item.getFilename();
-//         console.log('download file path: ' + filePath)
-//         item.setSavePath(filePath)
-//         let value = 0
-//         item.on('updated', (evt, state) => {
-//             console.log('update state: ' + state)
-//             if ('progressing' === state) {
-//                 if (item.isPaused()) {
-//                     console.log('Download is paused')
-//                 } else {
-//                     //此处  用接收到的字节数和总字节数求一个比例  就是进度百分比
-//                     if (item.getReceivedBytes() && item.getTotalBytes()) {
-//                         value = parseInt(100 * (item.getReceivedBytes() / item.getTotalBytes()))
-//                     }
-//                     // 把百分比发给渲染进程进行展示
-//                     win.webContents.send('onDownloadProgress', value);
-//                     // mac 程序坞、windows 任务栏显示进度
-//                     win.setProgressBar(value);
-//                 }
-//             }
-//             if (state === 'interrupted') {
-//                 console.log('Download is interrupted but can be resumed')
-//             }
-//         })
-//
-//         //监听下载结束事件
-//         item.on('done', (e, state) => {
-//             console.log('done: ' + state)
-//             //如果窗口还在的话，去掉进度条
-//             if (!win.isDestroyed()) {
-//                 win.setProgressBar(-1);
-//             }
-//             //下载被取消或中断了
-//             if (state === 'interrupted') {
-//                 dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 因为某些原因被中断下载`);
-//             }
-//             if (state === 'completed') {
-//                 console.log('资源下载成功')
-//                 win.webContents.send('onDownloadCompleted');
-//                 // 解压资源文件
-//                 const zip = new StreamZip({
-//                     file: filePath,
-//                     storeEntries: true
-//                 });
-//                 let outPath = path.join(app.getAppPath(), 'assets')
-//                 zip.on('ready', () => {
-//                     zip.extract(null, outPath, (err, count) => {
-//                         console.log(err ? 'Extract error' : `Extracted ${count} entries`);
-//                         if (!err) {
-//                             win.webContents.send('onResourceUpdated');
-//                         }
-//                         zip.close();
-//                     });
-//                 });
-//             }
-//         });
-//     })
-//     win.webContents.downloadURL(url)
-// })
 /**
  * 按顺序下载多文件
  */
@@ -419,7 +356,7 @@ const startRecognizeServer = () => {
     console.log("start websocket server")
     if (windowList.length > 0) {
         let win = windowList[0]
-
+        let timerId = -1;
         wss.on('connection', function connection(ws) {
             ws.on('message', function message(res) {
                 let data = JSON.parse(res)
@@ -430,6 +367,12 @@ const startRecognizeServer = () => {
                         // 接收到文本
                         win.webContents.send('onRecognizeTxt', data.data);
                         ws.send(JSON.stringify({ code: 200 }))
+                        // 停止事件监听
+                        clearTimeout(timerId)
+                        timerId = setTimeout(() => {
+                            console.log('stopRecognize')
+                            win.webContents.send('onStopRecognize', data.data);
+                        }, 2000)
                         break;
                     case 'cmd':
                         // 接收到指令

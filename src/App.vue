@@ -175,6 +175,10 @@ export default {
       this.ipc.onRecognizeTxt((recTxt) => {
         _this.handleRecognizeResult(recTxt)
       })
+
+      this.ipc.onStopRecognize(() => {
+        _this.ipc.playContent([], null, this.play_mode);
+      })
     },
     startScan() {
       console.log("开始识别")

@@ -31,6 +31,12 @@ class IPC {
             callback(recTxt)
         })
     }
+    onStopRecognize(callback) {
+        const ipc = window.require('electron').ipcRenderer
+        ipc.on('onStopRecognize', () => {
+            callback()
+        })
+    }
     onShowContent(callback) {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('onShowContent', (e, args) => {
