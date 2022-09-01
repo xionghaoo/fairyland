@@ -368,17 +368,18 @@ const startRecognizeServer = () => {
                         win.webContents.send('onRecognizeTxt', data.data);
                         ws.send(JSON.stringify({ code: 200 }))
                         // 停止事件监听
-                        clearTimeout(timerId)
-                        timerId = setTimeout(() => {
-                            console.log('stopRecognize')
-                            win.webContents.send('onStopRecognize', data.data);
-                        }, 2000)
                         break;
                     case 'cmd':
                         // 接收到指令
                         handleCmd(data.data)
                         break;
                 }
+
+                clearTimeout(timerId)
+                timerId = setTimeout(() => {
+                    console.log('stopRecognize')
+                    win.webContents.send('onStopRecognize', data.data);
+                }, 2000)
             });
         });
     }
