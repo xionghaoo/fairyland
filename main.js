@@ -147,7 +147,7 @@ ipc.on('showNotify', function (e, args) {
 })
 
 ipc.on('getDownloadedFiles', function (e) {
-    let contents_dir = path.join(app.getAppPath(), 'assets', "contents")
+    let contents_dir = path.join(app.getPath('documents'), 'Fairyland')
     e.returnValue = fs.readdirSync(contents_dir)
 })
 
@@ -448,11 +448,11 @@ app.whenReady().then(() => {
     }
 
     // 文件路径测试
-    log.info('app path: ' + app.getAppPath())
-    const filePath = path.join(app.getAppPath(), 'assets', "test.file");
-    log.info('filePath: ' + filePath)
-    const outPath = path.join('src', 'assets')
-    log.info('out path: ' + outPath)
+    // log.info('app path: ' + app.getAppPath())
+    // const filePath = path.join(app.getAppPath(), 'assets', "test.file");
+    // log.info('filePath: ' + filePath)
+    // const outPath = path.join('src', 'assets')
+    // log.info('out path: ' + outPath)
     // createOtherWindow()
 
     app.on('activate', () => {

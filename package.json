@@ -4,6 +4,7 @@
   "private": true,
   "main": "main.js",
   "authors": "xionghao",
+  "author": "xionghao",
   "description": "幻境项目",
   "scripts": {
     "start": "vue-cli-service build && export ELECTRON_IS_DEV=1 || set ELECTRON_IS_DEV=1 && electron-forge start",
@@ -13,7 +14,10 @@
     "lint": "vue-cli-service lint",
     "package": "vue-cli-service build && electron-forge package",
     "make": "vue-cli-service build && electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "pack": "vue-cli-service build && electron-builder --dir",
+    "release": "electron-builder --publish -p onTag",
+    "dist": "vue-cli-service build && electron-builder"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",
@@ -42,6 +46,7 @@
     "@vue/cli-service": "~4.5.17",
     "babel-eslint": "^10.1.0",
     "electron": "^18.2.3",
+    "electron-builder": "^23.3.3",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11"
@@ -65,6 +70,34 @@
     "last 2 versions",
     "not dead"
   ],
+  "build": {
+    "appId": "com.ubt.fairyland",
+    "directories": {
+      "buildResources": "./resources",
+      "output": "./build"
+    },
+    "files": [
+      "**/*",
+      "!build"
+    ],
+    "asar": true,
+    "win": {
+      "target": "portable"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "xionghaoo",
+        "repo": "fairyland",
+        "token": "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",
+        "releaseType": "draft"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xionghaoo/fairyland.git"
+  },
   "config": {
     "forge": {
       "publishers": [
