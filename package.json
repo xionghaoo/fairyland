@@ -1,6 +1,6 @@
 {
   "name": "fairyland",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": true,
   "main": "main.js",
   "authors": "xionghao",
@@ -16,7 +16,7 @@
     "make": "vue-cli-service build && electron-forge make",
     "publish": "electron-forge publish",
     "pack": "vue-cli-service build && electron-builder --dir",
-    "release": "electron-builder --publish -p onTag",
+    "release": "electron-builder --p always",
     "dist": "vue-cli-service build && electron-builder"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.8",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^5.2.1",
     "element-ui": "^2.15.9",
     "lottie-web": "^5.9.4",
     "publish": "^0.6.0",
@@ -72,6 +73,7 @@
   ],
   "build": {
     "appId": "com.ubt.fairyland",
+    "productName": "fairyland",
     "directories": {
       "buildResources": "./resources",
       "output": "./build"
@@ -82,7 +84,18 @@
     ],
     "asar": true,
     "win": {
-      "target": "portable"
+      "publish": [
+        "github"
+      ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
     },
     "publish": [
       {
@@ -90,6 +103,7 @@
         "owner": "xionghaoo",
         "repo": "fairyland",
         "token": "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",
+        "private": true,
         "releaseType": "draft"
       }
     ]
@@ -97,48 +111,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xionghaoo/fairyland.git"
-  },
-  "config": {
-    "forge": {
-      "publishers": [
-        {
-          "name": "@electron-forge/publisher-github",
-          "config": {
-            "repository": {
-              "owner": "xionghaoo",
-              "name": "fairyland"
-            },
-            "authToken": "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",
-            "prerelease": false,
-            "draft": true
-          }
-        }
-      ],
-      "packagerConfig": {
-        "asar": true
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "fairyland"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
   }
 }

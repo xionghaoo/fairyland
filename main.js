@@ -1,28 +1,46 @@
-const {app, BrowserWindow, screen, globalShortcut, dialog, Notification, systemPreferences, autoUpdater } = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog, Notification, systemPreferences } = require('electron')
 const path = require('path')
 const fs = require("fs");
 require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
+const { autoUpdater } = require("electron-updater");
 if (isDev) {
     log.info('Running in development');
 } else {
     log.info('Running in production');
 }
 
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
+// app.on('ready', function()  {
+//     autoUpdater.checkForUpdates();
+// });
+
+autoUpdater.on('download-progress', (progressObj) => {
+    let log_message = "Download speed: " + progressObj.bytesPerSecond;
+    log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+    log.info(log_message)
+})
+autoUpdater.on('update-downloaded', () => {
+    log.info('Update downloaded')
+});
+
 // const server = 'https://update.electronjs.org'
 // const feed = `${server}/xionghaoo/fairyland/${app.getVersion()}`
 // autoUpdater.setFeedURL(feed)
 
-require('update-electron-app')({
-    repo: 'xionghaoo/fairyland',
-    updateInterval: '1 hour',
-    logger: require('electron-log')
-})
+// require('update-electron-app')({
+//     repo: 'xionghaoo/fairyland',
+//     updateInterval: '1 hour',
+//     logger: require('electron-log')
+// })
 
 // Default Squirrel.Windows event handler for your Electron apps
-if(require('electron-squirrel-startup')) app.quit();
+// if(require('electron-squirrel-startup')) app.quit();
 
 let windowList = [];
 
@@ -434,6 +452,8 @@ const createMultiWindow = () => {
 }
 
 app.whenReady().then(() => {
+    autoUpdater.checkForUpdates();
+
     if (process.platform === 'darwin') {
         systemPreferences.askForMediaAccess('camera').then((permit) => {
             if (permit) {
