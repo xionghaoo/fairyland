@@ -1,0 +1,13 @@
+{
+  "osxSign": {
+    "identity": "hao xiong (5T373N439A)",
+    "hardened-runtime": true,
+    "entitlements": "entitlements.plist",
+    "entitlements-inherit": "entitlements.plist",
+    "signature-flags": "library"
+  },
+  "osxNotarize": {
+    "appleId": "xionghao930316@gmail.com",
+    "appleIdPassword": "Luna@930316"
+  }
+}

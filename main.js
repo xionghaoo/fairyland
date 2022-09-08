@@ -1,9 +1,15 @@
-const {app, BrowserWindow, screen, globalShortcut, dialog, Notification } = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog, Notification, systemPreferences } = require('electron')
 const path = require('path')
-const StreamZip = require("node-stream-zip");
 const fs = require("fs");
 require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
+require('update-electron-app')()
+
+require('update-electron-app')({
+    repo: 'xionghaoo/fairyland',
+    updateInterval: '1 hour',
+    logger: require('electron-log')
+})
 
 let windowList = [];
 
@@ -414,8 +420,18 @@ const createMultiWindow = () => {
 }
 
 app.whenReady().then(() => {
-    // createWindow()
-    createMultiWindow()
+    if (process.platform === 'darwin') {
+        systemPreferences.askForMediaAccess('camera').then((permit) => {
+            if (permit) {
+                createMultiWindow()
+            }
+        })
+        systemPreferences.askForMediaAccess('microphone').then((permit) => {
+            console.log('microphone permission: ' + permit)
+        })
+    } else {
+        createMultiWindow()
+    }
 
     // 文件路径测试
     console.log('app path: ' + app.getAppPath())
