@@ -3,7 +3,6 @@ const path = require('path')
 const fs = require("fs");
 require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
-require('update-electron-app')()
 
 require('update-electron-app')({
     repo: 'xionghaoo/fairyland',
