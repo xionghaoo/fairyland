@@ -1,8 +1,19 @@
-const {app, BrowserWindow, screen, globalShortcut, dialog, Notification, systemPreferences } = require('electron')
+const {app, BrowserWindow, screen, globalShortcut, dialog, Notification, systemPreferences, autoUpdater } = require('electron')
 const path = require('path')
 const fs = require("fs");
 require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
+const log = require('electron-log');
+const isDev = require('electron-is-dev');
+if (isDev) {
+    log.info('Running in development');
+} else {
+    log.info('Running in production');
+}
+
+// const server = 'https://update.electronjs.org'
+// const feed = `${server}/xionghaoo/fairyland/${app.getVersion()}`
+// autoUpdater.setFeedURL(feed)
 
 require('update-electron-app')({
     repo: 'xionghaoo/fairyland',
@@ -10,10 +21,13 @@ require('update-electron-app')({
     logger: require('electron-log')
 })
 
+// Default Squirrel.Windows event handler for your Electron apps
+if(require('electron-squirrel-startup')) app.quit();
+
 let windowList = [];
 
-ipc.on('getAppPath', function (e) {
-    e.returnValue = app.getAppPath()
+ipc.on('getPath', function (e, name) {
+    e.returnValue = app.getPath(name)
 })
 ipc.on('getScreenNum', function (e) {
     e.returnValue = windowList.length
@@ -66,7 +80,7 @@ ipc.on('showContent', async function (e, screens, sectionId, interval) {
     let sliceScreens = []
     let sliceIndex = 0
     for (let i = 0; i < num; i++) {
-        // console.log(`分片: ${sliceIndex}`)
+        // log.info(`分片: ${sliceIndex}`)
         let end = sliceIndex + windowList.length
         if (end >= screens.length) end = screens.length
         sliceScreens.push(screens.slice(sliceIndex, end))
@@ -86,12 +100,12 @@ ipc.on('showContent', async function (e, screens, sectionId, interval) {
     }
     // TODO 切换卡片时白屏
     if (lastContentIndex !== contentIndex) {
-        // console.log("翻页时白屏", single_screens)
+        // log.info("翻页时白屏", single_screens)
         for (let i = 0; i < windowList.length; i++) {
             windowList[i].webContents.postMessage('onShowContent', null, [])
         }
         await new Promise((resolve)=>setTimeout(() => {
-            console.log("等待白屏");
+            log.info("等待白屏");
             resolve();
         }, 200));
     }
@@ -106,7 +120,7 @@ ipc.on('showContent', async function (e, screens, sectionId, interval) {
             if (single_screens.length > 0) {
                 tId = setTimeout(() => {
                     windowList[i].webContents.postMessage('onShowContent', single_screens, [])
-                    console.log('延迟显示内容-----', single_screens.length)
+                    log.info('延迟显示内容-----', single_screens.length)
                 }, interval * i)
                 tIds.push(Number(tId))
             } else {
@@ -138,7 +152,7 @@ ipc.on('getDownloadedFiles', function (e) {
 })
 
 ipc.on('deleteFiles', function (e, sections) {
-    console.log('delete files: ' + sections)
+    log.info('delete files: ' + sections)
     let assets_dir = path.join(app.getAppPath(), 'assets')
     let files = fs.readdirSync(assets_dir)
     let screens = new Set()
@@ -151,16 +165,16 @@ ipc.on('deleteFiles', function (e, sections) {
             screens.add(folder)
         }
     }
-    console.log('screens', screens)
+    log.info('screens', screens)
     for(let i = 0; i < files.length; i++){
-        console.log(files[i])
+        log.info(files[i])
         let f = files[i]
         let realFile = path.join(assets_dir, f)
         let stat = fs.lstatSync(realFile)
         // 删除多余的文件夹
         if (stat.isDirectory()) {
             if (!screens.has(f)) {
-                console.log('delete file: ' + f)
+                log.info('delete file: ' + f)
                 removeDir(realFile)
             }
         }
@@ -192,14 +206,14 @@ function removeDir(dir) {
 //     win.webContents.session.on('will-download', (e, item) => {
 //         const filePath = path.join(app.getAppPath(), 'assets', item.getFilename());
 //         // const filePath = "assets\\" + item.getFilename();
-//         console.log('download file path: ' + filePath)
+//         log.info('download file path: ' + filePath)
 //         item.setSavePath(filePath)
 //         let value = 0
 //         item.on('updated', (evt, state) => {
-//             console.log('update state: ' + state)
+//             log.info('update state: ' + state)
 //             if ('progressing' === state) {
 //                 if (item.isPaused()) {
-//                     console.log('Download is paused')
+//                     log.info('Download is paused')
 //                 } else {
 //                     //此处  用接收到的字节数和总字节数求一个比例  就是进度百分比
 //                     if (item.getReceivedBytes() && item.getTotalBytes()) {
@@ -212,13 +226,13 @@ function removeDir(dir) {
 //                 }
 //             }
 //             if (state === 'interrupted') {
-//                 console.log('Download is interrupted but can be resumed')
+//                 log.info('Download is interrupted but can be resumed')
 //             }
 //         })
 //
 //         //监听下载结束事件
 //         item.on('done', (e, state) => {
-//             console.log('done: ' + state)
+//             log.info('done: ' + state)
 //             //如果窗口还在的话，去掉进度条
 //             if (!win.isDestroyed()) {
 //                 win.setProgressBar(-1);
@@ -228,7 +242,7 @@ function removeDir(dir) {
 //                 dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 因为某些原因被中断下载`);
 //             }
 //             if (state === 'completed') {
-//                 console.log('资源下载成功')
+//                 log.info('资源下载成功')
 //                 win.webContents.send('onDownloadCompleted');
 //                 // 解压资源文件
 //                 const zip = new StreamZip({
@@ -238,7 +252,7 @@ function removeDir(dir) {
 //                 let outPath = path.join(app.getAppPath(), 'assets')
 //                 zip.on('ready', () => {
 //                     zip.extract(null, outPath, (err, count) => {
-//                         console.log(err ? 'Extract error' : `Extracted ${count} entries`);
+//                         log.info(err ? 'Extract error' : `Extracted ${count} entries`);
 //                         if (!err) {
 //                             win.webContents.send('onResourceUpdated');
 //                         }
@@ -260,19 +274,20 @@ ipc.on('downloadMultiFile', function (e, urls) {
 const downloadSingleFile = (win, urls, index) => {
     if (index === 0) {
         win.webContents.session.on('will-download', (e, item) => {
-            const folder = path.join(app.getAppPath(), 'assets', 'contents')
+            const folder = path.join(app.getPath('documents'), 'Fairyland')
+            log.info('download file path: ' + folder)
             if (!fs.existsSync(folder)) {
                 fs.mkdirSync(folder)
             }
             const filePath = path.join(folder, item.getFilename());
-            console.log('download file path: ' + filePath)
+            log.info('download file path: ' + filePath)
             item.setSavePath(filePath)
             let value = 0
             item.on('updated', (evt, state) => {
-                console.log('update state: ' + state)
+                log.info('update state: ' + state)
                 if ('progressing' === state) {
                     if (item.isPaused()) {
-                        console.log('Download is paused')
+                        log.info('Download is paused')
                     } else {
                         //此处  用接收到的字节数和总字节数求一个比例  就是进度百分比
                         if (item.getReceivedBytes() && item.getTotalBytes()) {
@@ -285,13 +300,13 @@ const downloadSingleFile = (win, urls, index) => {
                     }
                 }
                 if (state === 'interrupted') {
-                    console.log('Download is interrupted but can be resumed')
+                    log.info('Download is interrupted but can be resumed')
                 }
             })
 
             //监听下载结束事件
             item.on('done', (e, state) => {
-                console.log('done: ' + state)
+                log.info('done: ' + state)
                 //如果窗口还在的话，去掉进度条
                 if (!win.isDestroyed()) {
                     win.setProgressBar(-1);
@@ -307,7 +322,7 @@ const downloadSingleFile = (win, urls, index) => {
                     // dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 被中断下载`);
                 }
                 if (state === 'completed') {
-                    console.log('资源下载成功: ' + index + ', urls length: ' + urls.length)
+                    log.info('资源下载成功: ' + index + ', urls length: ' + urls.length)
                     if (index < urls.length - 1) {
                         downloadSingleFile(win, urls, ++index)
                     } else {
@@ -318,11 +333,11 @@ const downloadSingleFile = (win, urls, index) => {
         })
     }
     // if (urls[index].startsWith("https://roboland-deliv.ubtrobot.com")) {
-    //     console.log(`下载资源: ${urls[index]}`)
+    //     log.info(`下载资源: ${urls[index]}`)
     //     // 只下载阿里云的资源
     //     win.webContents.downloadURL(urls[index])
     // }
-    console.log(`下载资源: ${urls[index]}`)
+    log.info(`下载资源: ${urls[index]}`)
     // 只下载阿里云的资源
     win.webContents.downloadURL(urls[index])
 }
@@ -331,7 +346,7 @@ const downloadSingleFile = (win, urls, index) => {
 const createMultiWindow = () => {
     let displays = screen.getAllDisplays()
     displays.find((display) => {
-        console.log(`find display id: ${display.id}, ${display.bounds.width} x ${display.bounds.height}`)
+        log.info(`find display id: ${display.id}, ${display.bounds.width} x ${display.bounds.height}`)
     })
     windowList = []
     let screenIndexes = [];
@@ -357,8 +372,8 @@ const createMultiWindow = () => {
         return a - b;
     })
 
-    console.log('xArr', xArr)
-    console.log('yArr', yArr)
+    log.info('xArr', xArr)
+    log.info('yArr', yArr)
 
     let s_index = 0
 
@@ -373,8 +388,8 @@ const createMultiWindow = () => {
                 let x = display.bounds.x;
                 let y = display.bounds.y;
                 if (x === xArr[j] && y === yArr[i]) {
-                    console.log(`x = ${x}, y = ${y}`)
-                    console.log(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
+                    log.info(`x = ${x}, y = ${y}`)
+                    log.info(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
                     // 找到对应的原点坐标
                     screenIndexes.push({
                         x: x,
@@ -387,7 +402,7 @@ const createMultiWindow = () => {
         }
     }
 
-    console.log('找到屏幕：', screenIndexes)
+    log.info('找到屏幕：', screenIndexes)
 
     // 对屏幕进行排序
     screenIndexes.sort((a, b) => {
@@ -426,18 +441,18 @@ app.whenReady().then(() => {
             }
         })
         systemPreferences.askForMediaAccess('microphone').then((permit) => {
-            console.log('microphone permission: ' + permit)
+            log.info('microphone permission: ' + permit)
         })
     } else {
         createMultiWindow()
     }
 
     // 文件路径测试
-    console.log('app path: ' + app.getAppPath())
+    log.info('app path: ' + app.getAppPath())
     const filePath = path.join(app.getAppPath(), 'assets', "test.file");
-    console.log('filePath: ' + filePath)
+    log.info('filePath: ' + filePath)
     const outPath = path.join('src', 'assets')
-    console.log('out path: ' + outPath)
+    log.info('out path: ' + outPath)
     // createOtherWindow()
 
     app.on('activate', () => {
@@ -467,7 +482,7 @@ app.whenReady().then(() => {
         app.exit()
     })
     if (!ret) {
-        console.log('registration failed')
+        log.info('registration failed')
     }
 
     // 向上和向下翻页

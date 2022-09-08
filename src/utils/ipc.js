@@ -1,7 +1,7 @@
 class IPC {
-    getAppPath() {
+    getPath(name) {
         const ipc = window.require('electron').ipcRenderer
-        return ipc.sendSync('getAppPath');
+        return ipc.sendSync('getPath', name);
     }
     getScreenNum() {
         const ipc = window.require('electron').ipcRenderer
