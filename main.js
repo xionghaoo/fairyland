@@ -12,26 +12,14 @@ if (isDev) {
     log.info('Running in production');
 }
 
+const updateUrl = "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
-// app.on('ready', function()  {
-//     autoUpdater.checkForUpdates();
-// });
-
-autoUpdater.on('download-progress', (progressObj) => {
-    let log_message = "Download speed: " + progressObj.bytesPerSecond;
-    log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
-    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-    log.info(log_message)
-})
-autoUpdater.on('update-downloaded', () => {
-    log.info('Update downloaded')
-});
 
 // const server = 'https://update.electronjs.org'
 // const feed = `${server}/xionghaoo/fairyland/${app.getVersion()}`
-// autoUpdater.setFeedURL(feed)
+autoUpdater.setFeedURL(updateUrl)
 
 // require('update-electron-app')({
 //     repo: 'xionghaoo/fairyland',
@@ -166,6 +154,9 @@ ipc.on('showNotify', function (e, args) {
 
 ipc.on('getDownloadedFiles', function (e) {
     let contents_dir = path.join(app.getPath('documents'), 'Fairyland')
+    if (!fs.existsSync(contents_dir)) {
+        fs.mkdirSync(contents_dir)
+    }
     e.returnValue = fs.readdirSync(contents_dir)
 })
 
