@@ -1,4 +1,7 @@
 class IPC {
+    constructor() {
+        this.ipc = window.require('electron').ipcRenderer
+    }
     getPath(name) {
         const ipc = window.require('electron').ipcRenderer
         return ipc.sendSync('getPath', name);
@@ -60,24 +63,6 @@ class IPC {
             callback()
         })
     }
-    // onDownloadProgress(callback) {
-    //     const ipc = window.require('electron').ipcRenderer
-    //     ipc.on('onDownloadProgress', (e, progress) => {
-    //         callback(progress)
-    //     })
-    // }
-    // onResourceUpdated(callback) {
-    //     const ipc = window.require('electron').ipcRenderer
-    //     ipc.on('onResourceUpdated', () => {
-    //         callback()
-    //     })
-    // }
-    // onDownloadCompleted(callback) {
-    //     const ipc = window.require('electron').ipcRenderer
-    //     ipc.on('onDownloadCompleted', () => {
-    //         callback()
-    //     })
-    // }
     setInitStatus(status) {
         const ipc = window.require('electron').ipcRenderer
         ipc.send('setInitStatus', status)
@@ -108,6 +93,21 @@ class IPC {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('toggleAllVideo', () => {
             callback()
+        })
+    }
+    onUpdaterDownloadStart(callback) {
+        this.ipc.on('onUpdaterDownloadStart', () => {
+            callback()
+        })
+    }
+    onUpdaterDownloadProgress(callback) {
+        this.ipc.on('onUpdaterDownloadProgress', (e, args) => {
+            callback(args)
+        })
+    }
+    onUpdaterDownloadCompleted(callback) {
+        this.ipc.on('onUpdaterDownloadCompleted', (e, args) => {
+            callback(args)
         })
     }
 }

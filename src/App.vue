@@ -1,16 +1,19 @@
 <template>
-  <div v-if="isInit" id="app">
-    <p>幻境Splash</p>
-  </div>
-  <div v-else-if="hasUpdate" id="app">
-    <my-update v-if="window.currentIndex === 0" :value="progress" :total="totalDownload" :index="downloadIndex"/>
-    <div v-else style="width: 100%; height: 100%">
-      <div style="display: block;margin: auto;font-size: 20px">等待更新</div>
+  <div>
+    <div v-if="isInit" id="app">
+      <p>幻境Splash</p>
     </div>
-  </div>
-  <div v-else id="app">
-    <my-content :index="window.currentIndex"/>
-    <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
+    <div v-else-if="hasUpdate" id="app">
+      <my-update v-if="window.currentIndex === 0" :value="progress" :total="totalDownload" :index="downloadIndex"/>
+      <div v-else style="width: 100%; height: 100%">
+        <div style="display: block;margin: auto;font-size: 20px">等待更新</div>
+      </div>
+    </div>
+    <div v-else id="app">
+      <my-content :index="window.currentIndex"/>
+      <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
+    </div>
+    <my-updater/>
   </div>
 </template>
 
@@ -22,11 +25,13 @@ import IPC from "@/utils/ipc";
 import Request from "@/utils/request";
 import Config from "@/utils/config";
 import Update from "@/view/Update";
+import Updater from "@/components/Updater";
 
 export default {
   name: 'App',
   components: {
     'my-update': Update,
+    'my-updater': Updater,
     'my-content': Content
   },
   data() {
@@ -58,6 +63,7 @@ export default {
       this.getCardList()
       // 在第一个屏幕检查更新
       this.checkVersionUpdate()
+
     }
     this.ipc.onInitChange((status) => {
       _this.isInit = status

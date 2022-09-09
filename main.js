@@ -5,80 +5,22 @@ require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
-const { autoUpdater } = require("electron-updater");
+// const { autoUpdater } = require("electron-updater");
+const updater = require("./src/utils/updater")
+
 if (isDev) {
+    const app = require('electron').app;
+    Object.defineProperty(app, 'isPackaged', {
+        get() {
+            return true;
+        }
+    });
     log.info('Running in development');
 } else {
     log.info('Running in production');
 }
 
 log.info('current app version: ' + app.getVersion())
-
-const updateUrl = "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
-
-const msg = {
-    error: '检查更新出错',
-    checking: '正在检查更新……',
-    updateAva: '检测到新版本，正在下载……',
-    updateNotAva: '现在使用的就是最新版本，不用更新'
-}
-
-// const server = 'https://update.electronjs.org'
-// const feed = `${server}/xionghaoo/fairyland/${app.getVersion()}`
-autoUpdater.setFeedURL(updateUrl)
-autoUpdater.on('error', function () {
-    // mainWindow.webContents.send(message.error)
-    log.error(msg.error)
-})
-autoUpdater.on('checking-for-update', function () {
-    // mainWindow.webContents.send(message.checking)
-    log.info(msg.checking)
-})
-autoUpdater.on('update-available', function () {
-    // mainWindow.webContents.send(message.updateAva)
-    log.info(msg.updateAva)
-})
-autoUpdater.on('update-not-available', function () {
-    // mainWindow.webContents.send(message.updateNotAva)
-    log.info(msg.updateNotAva)
-})
-
-// 更新下载进度事件
-autoUpdater.on('download-progress', function (progressObj) {
-    log.warn('触发下载。。。')
-    console.log(progressObj)
-    log.warn(progressObj)
-    // mainWindow.webContents.send('downloadProgress', progressObj)
-    msg.info('downloadProgress: ' + progressObj)
-})
-autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName) {
-    ipc.on('isUpdateNow', () => {
-        log.warn('开始更新')
-        autoUpdater.quitAndInstall()
-        // mainWindow.destroy()
-        // callback()
-    })
-    // mainWindow.webContents.send('isUpdateNow')
-    log.info('isUpdateNow', releaseName)
-})
-
-ipc.on('checkForUpdate', () => {
-    // 执行自动更新检查
-    log.warn('执行自动更新检查')
-    log.warn(__dirname)
-    autoUpdater.checkForUpdates()
-})
-
-ipc.on('downloadUpdate', () => {
-    // 下载
-    log.warn('执行下载')
-    autoUpdater.downloadUpdate()
-})
-
-
 
 let windowList = [];
 
@@ -260,69 +202,6 @@ function removeDir(dir) {
     fs.rmdirSync(dir)//如果文件夹是空的，就将自己删除掉
 }
 
-// ipc.on('downloadResource', function (e, url) {
-//     let win = windowList[0]
-//     win.webContents.session.on('will-download', (e, item) => {
-//         const filePath = path.join(app.getAppPath(), 'assets', item.getFilename());
-//         // const filePath = "assets\\" + item.getFilename();
-//         log.info('download file path: ' + filePath)
-//         item.setSavePath(filePath)
-//         let value = 0
-//         item.on('updated', (evt, state) => {
-//             log.info('update state: ' + state)
-//             if ('progressing' === state) {
-//                 if (item.isPaused()) {
-//                     log.info('Download is paused')
-//                 } else {
-//                     //此处  用接收到的字节数和总字节数求一个比例  就是进度百分比
-//                     if (item.getReceivedBytes() && item.getTotalBytes()) {
-//                         value = parseInt(100 * (item.getReceivedBytes() / item.getTotalBytes()))
-//                     }
-//                     // 把百分比发给渲染进程进行展示
-//                     win.webContents.send('onDownloadProgress', value);
-//                     // mac 程序坞、windows 任务栏显示进度
-//                     win.setProgressBar(value);
-//                 }
-//             }
-//             if (state === 'interrupted') {
-//                 log.info('Download is interrupted but can be resumed')
-//             }
-//         })
-//
-//         //监听下载结束事件
-//         item.on('done', (e, state) => {
-//             log.info('done: ' + state)
-//             //如果窗口还在的话，去掉进度条
-//             if (!win.isDestroyed()) {
-//                 win.setProgressBar(-1);
-//             }
-//             //下载被取消或中断了
-//             if (state === 'interrupted') {
-//                 dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 因为某些原因被中断下载`);
-//             }
-//             if (state === 'completed') {
-//                 log.info('资源下载成功')
-//                 win.webContents.send('onDownloadCompleted');
-//                 // 解压资源文件
-//                 const zip = new StreamZip({
-//                     file: filePath,
-//                     storeEntries: true
-//                 });
-//                 let outPath = path.join(app.getAppPath(), 'assets')
-//                 zip.on('ready', () => {
-//                     zip.extract(null, outPath, (err, count) => {
-//                         log.info(err ? 'Extract error' : `Extracted ${count} entries`);
-//                         if (!err) {
-//                             win.webContents.send('onResourceUpdated');
-//                         }
-//                         zip.close();
-//                     });
-//                 });
-//             }
-//         });
-//     })
-//     win.webContents.downloadURL(url)
-// })
 /**
  * 按顺序下载多文件
  */
@@ -490,11 +369,26 @@ const createMultiWindow = () => {
         win.setFullScreen(true)
         win.loadFile('./dist/index.html')
     }
+
+    if (windowList.length > 0) {
+        updater.setStartCallback(() => {
+            windowList[0].webContents.send('onUpdaterDownloadStart')
+        })
+        updater.setUpdateCallback((progressObj) => {
+            windowList[0].webContents.send('onUpdaterDownloadProgress', progressObj)
+        })
+        updater.setFinishCallback(() => {
+            windowList[0].webContents.send('onUpdaterDownloadCompleted')
+            updater.installUpdate()
+            for (let i = 0; i < windowList.length; i++) {
+                windowList[i].destroy()
+            }
+        })
+        updater.checkUpdate(windowList[0]);
+    }
 }
 
 app.whenReady().then(() => {
-    autoUpdater.checkForUpdates();
-
     if (process.platform === 'darwin') {
         systemPreferences.askForMediaAccess('camera').then((permit) => {
             if (permit) {
@@ -507,14 +401,6 @@ app.whenReady().then(() => {
     } else {
         createMultiWindow()
     }
-
-    // 文件路径测试
-    // log.info('app path: ' + app.getAppPath())
-    // const filePath = path.join(app.getAppPath(), 'assets', "test.file");
-    // log.info('filePath: ' + filePath)
-    // const outPath = path.join('src', 'assets')
-    // log.info('out path: ' + outPath)
-    // createOtherWindow()
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createMultiWindow()

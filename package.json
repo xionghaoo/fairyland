@@ -88,7 +88,8 @@
     "win": {
       "publish": {
         "provider": "generic",
-        "url": "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
+        "url": "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/",
+        "updaterCacheDirName": "fairyland-updater"
       },
       "target": [
         {
