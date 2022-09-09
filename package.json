@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "main": "main.js",
-  "authors": "xionghao",
-  "author": "xionghao",
+  "author": {
+    "name": "xionghao",
+    "email": "xionghao930316@gmail.com"
+  },
   "description": "幻境项目",
   "scripts": {
-    "start": "vue-cli-service build && export ELECTRON_IS_DEV=1 || set ELECTRON_IS_DEV=1 && electron-forge start",
-    "start_prod": "vue-cli-service build && export ELECTRON_IS_DEV=0 || set ELECTRON_IS_DEV=0 && electron-forge start",
+    "start": "cross-env ELECTRON_IS_DEV=1 && vue-cli-service build && electron-forge start",
+    "start_prod": "cross-env ELECTRON_IS_DEV=0 && vue-cli-service build && electron-forge start",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
@@ -46,6 +48,7 @@
     "@vue/cli-plugin-eslint": "~4.5.17",
     "@vue/cli-service": "~4.5.17",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
     "electron": "^18.2.3",
     "electron-builder": "^23.3.3",
     "eslint": "^6.7.2",
@@ -97,6 +100,32 @@
         }
       ]
     },
+    "mac": {
+      "publish": [
+        "github"
+      ],
+      "entitlements": "./entitlements.plist"
+    },
+    "dmg": {
+      "window": {
+        "width": 600,
+        "height": 400
+      },
+      "contents": [
+        {
+          "x": 106,
+          "y": 252,
+          "name": "Fairyland"
+        },
+        {
+          "x": 490,
+          "y": 252,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "title": "幻境 v${version}"
+    },
     "publish": [
       {
         "provider": "github",
@@ -104,7 +133,7 @@
         "repo": "fairyland",
         "token": "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",
         "private": true,
-        "releaseType": "draft"
+        "releaseType": "release"
       }
     ]
   },
