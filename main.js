@@ -12,23 +12,73 @@ if (isDev) {
     log.info('Running in production');
 }
 
+log.info('current app version: ' + app.getVersion())
+
 const updateUrl = "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
+const msg = {
+    error: '检查更新出错',
+    checking: '正在检查更新……',
+    updateAva: '检测到新版本，正在下载……',
+    updateNotAva: '现在使用的就是最新版本，不用更新'
+}
+
 // const server = 'https://update.electronjs.org'
 // const feed = `${server}/xionghaoo/fairyland/${app.getVersion()}`
 autoUpdater.setFeedURL(updateUrl)
+autoUpdater.on('error', function () {
+    // mainWindow.webContents.send(message.error)
+    log.error(msg.error)
+})
+autoUpdater.on('checking-for-update', function () {
+    // mainWindow.webContents.send(message.checking)
+    log.info(msg.checking)
+})
+autoUpdater.on('update-available', function () {
+    // mainWindow.webContents.send(message.updateAva)
+    log.info(msg.updateAva)
+})
+autoUpdater.on('update-not-available', function () {
+    // mainWindow.webContents.send(message.updateNotAva)
+    log.info(msg.updateNotAva)
+})
 
-// require('update-electron-app')({
-//     repo: 'xionghaoo/fairyland',
-//     updateInterval: '1 hour',
-//     logger: require('electron-log')
-// })
+// 更新下载进度事件
+autoUpdater.on('download-progress', function (progressObj) {
+    log.warn('触发下载。。。')
+    console.log(progressObj)
+    log.warn(progressObj)
+    // mainWindow.webContents.send('downloadProgress', progressObj)
+    msg.info('downloadProgress: ' + progressObj)
+})
+autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName) {
+    ipc.on('isUpdateNow', () => {
+        log.warn('开始更新')
+        autoUpdater.quitAndInstall()
+        // mainWindow.destroy()
+        // callback()
+    })
+    // mainWindow.webContents.send('isUpdateNow')
+    log.info('isUpdateNow', releaseName)
+})
 
-// Default Squirrel.Windows event handler for your Electron apps
-// if(require('electron-squirrel-startup')) app.quit();
+ipc.on('checkForUpdate', () => {
+    // 执行自动更新检查
+    log.warn('执行自动更新检查')
+    log.warn(__dirname)
+    autoUpdater.checkForUpdates()
+})
+
+ipc.on('downloadUpdate', () => {
+    // 下载
+    log.warn('执行下载')
+    autoUpdater.downloadUpdate()
+})
+
+
 
 let windowList = [];
 
