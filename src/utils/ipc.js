@@ -110,6 +110,14 @@ class IPC {
             callback(args)
         })
     }
+    registerShortcutKey() {
+        this.ipc.send('registerShortcutKey')
+    }
+    onShowMessage(callback) {
+        this.ipc.on('showMessage', (e, args) => {
+            callback(args)
+        })
+    }
 }
 
 export default IPC

@@ -6,27 +6,19 @@
     <div v-else-if="hasUpdate" id="app">
       <my-update v-if="window.currentIndex === 0" :value="progress" :total="totalDownload" :index="downloadIndex"/>
       <div v-else style="width: 100%; height: 100%">
-        <div style="display: block;margin-top: 100px;font-size: 20px;background: #2c3e50">等待更新</div>
+        <div style="display: block;margin: auto;font-size: 20px">等待更新</div>
       </div>
     </div>
     <div v-else id="app">
-      <div v-if="company_id">
-        <my-content :index="window.currentIndex"/>
-        <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
-      </div>
-      <div v-else>
-        <my-login v-if="window.currentIndex === 0" :callback="loginCallback"/>
-        <div v-else style="background: #2c3e50"></div>
-      </div>
+      <my-content :index="window.currentIndex"/>
+      <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
     </div>
-    <!-- 检查安装包更新 -->
     <my-updater/>
   </div>
 </template>
 
 <script>
 import Content from "@/view/Content";
-import Login from "@/view/Login";
 import WebSocketManager from "@/utils/ws";
 import Camera from "@/utils/camera";
 import IPC from "@/utils/ipc";
@@ -36,12 +28,11 @@ import Update from "@/view/Update";
 import Updater from "@/components/Updater";
 
 export default {
-  name: 'App',
+  name: "Home",
   components: {
     'my-update': Update,
     'my-updater': Updater,
-    'my-content': Content,
-    'my-login': Login
+    'my-content': Content
   },
   data() {
     let name = this.$router.history.current.name;
@@ -58,15 +49,11 @@ export default {
       isInit: true,
       sections: [],
       successCount: 0,
-      play_mode: 0,
-      company_id: null
+      play_mode: 0
     }
   },
   mounted() {
     let _this = this;
-
-    this.company_id = localStorage.getItem('company_id');
-
     this.ipc = new IPC();
     this.sections = JSON.parse(localStorage.getItem('sections'))
     this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
@@ -75,22 +62,11 @@ export default {
     })
 
     if (window.currentIndex === 0) {
-      if (this.company_id) {
-        console.log('has login')
-        // 已登录
-        this.getCardList(this.company_id)
-        this.checkVersionUpdate(this.company_id)
-        this.ipc.registerShortcutKey()
-      } else {
-        // 当前未登录
-        console.log('need login')
-        this.hasUpdate = false
-        this.isInit = false
-      }
+      this.getCardList()
+      // 在第一个屏幕检查更新
+      this.checkVersionUpdate()
+
     }
-    this.ipc.onShowMessage((args) => {
-      this.$message(args);
-    })
     this.ipc.onInitChange((status) => {
       _this.isInit = status
     })
@@ -99,30 +75,19 @@ export default {
     })
   },
   methods: {
-    loginCallback() {
-      this.company_id = localStorage.getItem('company_id');
-      this.getCardList(this.company_id)
-      this.checkVersionUpdate(this.company_id)
-      this.ipc.registerShortcutKey()
-    },
-    getCardList(company_id) {
+    getCardList() {
       console.log('getCardList')
       Request.requestGet(
           Config.api.cardList,
-          { company_id: company_id }
+          { device_uuid: Config.deviceId }
       ).then((res) => {
         console.log('请求卡片列表', res)
         if (res.code === 0) {
           localStorage.setItem('card_list', res.data)
-        } else {
-          this.$message({
-            message: res.data.message,
-            type: 'error'
-          });
         }
       })
     },
-    checkVersionUpdate(company_id) {
+    checkVersionUpdate() {
       let _this = this;
       let local_version = localStorage.getItem('version') ?? 0
       console.log('checkVersionUpdate', local_version)
@@ -131,7 +96,7 @@ export default {
           {
             version: local_version,
             // device_uuid: 'wuhan01'
-            company_id: company_id
+            device_uuid: Config.deviceId
           }
       ).then((res) => {
         console.log('请求更新', res)
@@ -309,21 +274,7 @@ export default {
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  height: 100%;
-}
-html {
-  height: 100%;
-}
-body {
-  height: 100%;
-}
+<style scoped>
 .camera {
   position: absolute;
   left: 0;

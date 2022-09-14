@@ -4,6 +4,7 @@ class Updater {
         const { autoUpdater } = require("electron-updater");
         const log = require('electron-log');
         const path = require('path')
+        const fs = require("fs");
 
         this.updater = autoUpdater
         this.log = log
@@ -18,7 +19,9 @@ class Updater {
         let cacheDirName = "fairyland-updater"
         const updatePendingPath = path.join(autoUpdater.app.baseCachePath, cacheDirName, 'pending')
         log.log('clean cache path: ' + updatePendingPath)
-        this.emptyDir(updatePendingPath)
+        if (fs.existsSync(updatePendingPath)) {
+            this.emptyDir(updatePendingPath)
+        }
 
         const updateUrl = "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
         autoUpdater.logger = log;

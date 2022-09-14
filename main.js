@@ -9,12 +9,11 @@ const isDev = require('electron-is-dev');
 const updater = require("./src/utils/updater")
 
 if (isDev) {
-    const app = require('electron').app;
-    Object.defineProperty(app, 'isPackaged', {
-        get() {
-            return true;
-        }
-    });
+    // Object.defineProperty(app, 'isPackaged', {
+    //     get() {
+    //         return true;
+    //     }
+    // });
     log.info('Running in development');
 } else {
     log.info('Running in production');
@@ -49,6 +48,15 @@ ipc.on('setUpdateStatus', function (e, args) {
         windowList[i].webContents.postMessage('onUpdateChange', args, [])
     }
 })
+ipc.on('registerShortcutKey', function () {
+    registerKeys()
+})
+
+function showMessage(msg) {
+    if (windowList.length > 0) {
+        windowList[0].webContents.postMessage('showMessage', msg, [])
+    }
+}
 
 // 定时器id
 let tIds = []
@@ -256,8 +264,10 @@ const downloadSingleFile = (win, urls, index) => {
                     } else {
                         win.webContents.send('onDownloadMultiFileCompleted');
                     }
-                    new Notification({ title: '下载失败', body: '文件 ${item.getFilename()} 被中断下载' }).show()
-                    // dialog.showErrorBox('下载失败', `文件 ${item.getFilename()} 被中断下载`);
+                    showMessage({
+                        message: `文件 ${item.getFilename()} 被中断下载`,
+                        type: 'error'
+                    })
                 }
                 if (state === 'completed') {
                     log.info('资源下载成功: ' + index + ', urls length: ' + urls.length)
@@ -388,38 +398,8 @@ const createMultiWindow = () => {
     }
 }
 
-app.whenReady().then(() => {
-    if (process.platform === 'darwin') {
-        systemPreferences.askForMediaAccess('camera').then((permit) => {
-            if (permit) {
-                createMultiWindow()
-            }
-        })
-        systemPreferences.askForMediaAccess('microphone').then((permit) => {
-            log.info('microphone permission: ' + permit)
-        })
-    } else {
-        createMultiWindow()
-    }
-
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createMultiWindow()
-    })
-
-    app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') {
-            app.quit()
-        }
-    })
-
-    app.on('will-quit', () => {
-        // 注销快捷键
-        globalShortcut.unregister('CommandOrControl+X')
-
-        // 注销所有快捷键
-        globalShortcut.unregisterAll()
-    })
-
+function registerKeys() {
+    log.info('注册快捷键')
     // 退出应用
     const ret = globalShortcut.register('CommandOrControl+Q', () => {
         // 退出应用时清除定时器
@@ -469,6 +449,37 @@ app.whenReady().then(() => {
             windowList[i].webContents.session.clearStorageData(clearObj)
         }
     })
+}
+
+app.whenReady().then(() => {
+    if (process.platform === 'darwin') {
+        systemPreferences.askForMediaAccess('camera').then((permit) => {
+            if (permit) {
+                createMultiWindow()
+            }
+        })
+        systemPreferences.askForMediaAccess('microphone').then((permit) => {
+            log.info('microphone permission: ' + permit)
+        })
+    } else {
+        createMultiWindow()
+    }
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) createMultiWindow()
+    })
+
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+            app.quit()
+        }
+    })
+
+    app.on('will-quit', () => {
+        // 注销所有快捷键
+        globalShortcut.unregisterAll()
+    })
+
 })
 
 
