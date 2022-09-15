@@ -7,7 +7,8 @@
     "name": "xionghao",
     "email": "xionghao930316@gmail.com"
   },
-  "description": "幻境项目",
+  "description": "幻境客户端",
+  "productName": "fairyland-desktop",
   "scripts": {
     "start": "cross-env ELECTRON_IS_DEV=1 && vue-cli-service build && electron-forge start",
     "start_prod": "cross-env ELECTRON_IS_DEV=0 && vue-cli-service build && electron-forge start",
@@ -97,6 +98,9 @@
           ]
         }
       ]
+    },
+    "nsis": {
+      "shortcutName": "Fairyland"
     },
     "mac": {
       "publish": [
