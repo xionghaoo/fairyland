@@ -230,7 +230,7 @@ const downloadSingleFile = (win, urls, index) => {
             item.setSavePath(filePath)
             let value = 0
             item.on('updated', (evt, state) => {
-                log.info('update state: ' + state)
+                // log.info('update state: ' + state)
                 if ('progressing' === state) {
                     if (item.isPaused()) {
                         log.info('Download is paused')

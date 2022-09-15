@@ -5,8 +5,8 @@
  */
 
 //测试环境api地址
-export const RequestHttpDev = 'https://127.0.0.1';
+export const RequestHttpDev = 'http://rvi.ubtrobot.com:5009';
 
 //生产环境api地址
-export const RequestHttpPro = 'https://127.0.0.1';
+export const RequestHttpPro = 'http://rvi.ubtrobot.com:5007';
 

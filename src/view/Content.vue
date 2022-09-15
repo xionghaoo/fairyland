@@ -41,7 +41,6 @@ import cover_5_3 from "@/assets/cover_5_3.jpg"
 import cover_5_4 from "@/assets/cover_5_4.jpg"
 import cover_5_5 from "@/assets/cover_5_5.jpg"
 import img_no_bind_card from "@/assets/img_no_bind_card.jpg"
-import Constant from "@/utils/constant";
 
 export default {
   name: "Content",
