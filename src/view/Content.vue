@@ -99,7 +99,9 @@ export default {
             _this.auto_play = s.auto_play
             // 匹配到屏幕，获取文件uri
             if (s.file_type < 1000) {
-              file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
+              let tmp = s.item_uri.split('/')
+              // file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
+              file_uri = tmp[tmp.length - 1]
             } else {
               file_uri = s.item_uri
               // _this.file_type = s.file_type - 1000
