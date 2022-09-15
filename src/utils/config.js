@@ -15,7 +15,7 @@ const Config = (() => {
 
   let baseUrl = isLocalhost || isDev ? RequestHttpDev : RequestHttpPro
   baseUrl = 'http://rvi.ubtrobot.com:5007' // 正式地址
-  baseUrl = 'http://192.168.1.122:5002' // TODO 测试
+  // baseUrl = 'http://192.168.1.122:5002' // TODO 测试
   let api = baseUrl + '/api'
   return {
     // 是否是开发环境
