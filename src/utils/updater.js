@@ -5,6 +5,7 @@ class Updater {
         const log = require('electron-log');
         const path = require('path')
         const fs = require("fs");
+        const { app } = require("electron");
 
         this.updater = autoUpdater
         this.log = log
@@ -23,7 +24,7 @@ class Updater {
             this.emptyDir(updatePendingPath)
         }
 
-        const updateUrl = "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
+        const updateUrl = `https://roboland-deliv.ubtrobot.com/vision/fairyland/update/${app.getVersion()}`
         autoUpdater.logger = log;
         autoUpdater.logger.transports.file.level = 'info';
         log.info('App starting...');
