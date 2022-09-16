@@ -5,7 +5,7 @@
         :show-close="false"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
-        title="下载进度"
+        title="发现新的安装包，正在下载"
         width="30%"
     >
       <div style="text-align:center">
@@ -34,7 +34,7 @@ export default {
       _this.isShow = true
     })
     this.ipc.onUpdaterDownloadProgress((obj) => {
-      _this.progress = obj.percent.toFixed(0)
+      _this.progress = Number(obj.percent.toFixed(0))
     })
     this.ipc.onUpdaterDownloadCompleted(() => {
       _this.isShow = false

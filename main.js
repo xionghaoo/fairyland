@@ -293,6 +293,49 @@ const downloadSingleFile = (win, urls, index) => {
 
 const createMultiWindow = () => {
     let displays = screen.getAllDisplays()
+    let screenWidth = 800;
+    let screenHeight = 600;
+    let isFullscreen = true;
+    if (isDev) {
+        // 模拟多屏的情况
+        let display = displays[0]
+        isFullscreen = false;
+        let dw = display.bounds.width / 2
+        let dh = display.bounds.height / 2
+        displays = [];
+        for (let i = 0; i < 4; i++) {
+            let dx = 0;
+            let dy = 0;
+            switch (i) {
+                case 0:
+                    dx = 0;
+                    dy = 0;
+                    break;
+                case 1:
+                    dx = display.bounds.width / 2;
+                    dy = 0;
+                    break;
+                case 2:
+                    dx = 0;
+                    dy = display.bounds.height / 2;
+                    break;
+                case 3:
+                    dx = display.bounds.width / 2;
+                    dy = display.bounds.height / 2;
+                    break;
+            }
+            displays.push({
+                bounds: {
+                    x: dx,
+                    y: dy,
+                    width: dw,
+                    height: dh
+                }
+            })
+        }
+    }
+    console.log(displays)
+
     displays.find((display) => {
         log.info(`find display id: ${display.id}, ${display.bounds.width} x ${display.bounds.height}`)
     })
@@ -361,8 +404,8 @@ const createMultiWindow = () => {
         let screen = screenIndexes[i];
 
         const win = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: screenWidth,
+            height: screenHeight,
             x: screen.x,
             y: screen.y,
             frame: false,
@@ -376,7 +419,7 @@ const createMultiWindow = () => {
             },
         })
         windowList.push(win);
-        win.setFullScreen(true)
+        win.setFullScreen(isFullscreen)
         win.loadFile('./dist/index.html')
     }
 
