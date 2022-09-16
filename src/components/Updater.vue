@@ -31,6 +31,7 @@ export default {
     this.ipc = new IPC();
 
     this.ipc.onUpdaterDownloadStart(() => {
+      console.log('installer download start')
       _this.isShow = true
     })
     this.ipc.onUpdaterDownloadProgress((obj) => {
@@ -43,3 +44,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.app-container {
+  height: 100%;
+}
+</style>

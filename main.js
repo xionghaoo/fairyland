@@ -432,12 +432,16 @@ const createMultiWindow = () => {
         })
         updater.setFinishCallback(() => {
             windowList[0].webContents.send('onUpdaterDownloadCompleted')
+            destroyTimers()
             updater.installUpdate()
-            for (let i = 0; i < windowList.length; i++) {
-                windowList[i].destroy()
-            }
         })
         updater.checkUpdate(windowList[0]);
+    }
+}
+
+function destroyTimers() {
+    for (let j = 0; j < tIds.length; j++) {
+        clearTimeout(tIds[j])
     }
 }
 
@@ -514,9 +518,7 @@ app.whenReady().then(() => {
     // 退出应用
     const ret = globalShortcut.register('CommandOrControl+Q', () => {
         // 退出应用时清除定时器
-        for (let j = 0; j < tIds.length; j++) {
-            clearTimeout(tIds[j])
-        }
+        destroyTimers()
         app.exit()
     })
     if (!ret) {

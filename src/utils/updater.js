@@ -1,14 +1,20 @@
-
 class Updater {
     constructor() {
         const { autoUpdater } = require("electron-updater");
         const log = require('electron-log');
         const path = require('path')
         const fs = require("fs");
-        const { app } = require("electron");
 
         this.updater = autoUpdater
         this.log = log
+
+        // TODO 重新安装启动时这里会有bug
+        let cacheDirName = "fairyland-updater"
+        const updatePendingPath = path.join(autoUpdater.app.baseCachePath, cacheDirName, 'pending')
+        log.log('clean cache path: ' + updatePendingPath)
+        if (fs.existsSync(updatePendingPath)) {
+            this.emptyDir(updatePendingPath)
+        }
 
         const msg = {
             error: '检查更新出错',
@@ -17,14 +23,7 @@ class Updater {
             updateNotAva: '现在使用的就是最新版本，不用更新'
         }
 
-        let cacheDirName = "fairyland-updater"
-        const updatePendingPath = path.join(autoUpdater.app.baseCachePath, cacheDirName, 'pending')
-        log.log('clean cache path: ' + updatePendingPath)
-        if (fs.existsSync(updatePendingPath)) {
-            this.emptyDir(updatePendingPath)
-        }
-
-        const updateUrl = `https://roboland-deliv.ubtrobot.com/vision/fairyland/update/${app.getVersion()}`
+        const updateUrl = "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/"
         autoUpdater.logger = log;
         autoUpdater.logger.transports.file.level = 'info';
         log.info('App starting...');
@@ -95,7 +94,7 @@ class Updater {
     }
     installUpdate() {
         this.log.warn('安装更新')
-        this.updater.quitAndInstall()
+        this.updater.quitAndInstall(true, false)
     }
 }
 

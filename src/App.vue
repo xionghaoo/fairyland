@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <div v-if="isInit" id="app">
       <p>幻境Splash</p>
     </div>
@@ -20,7 +20,7 @@
       </div>
     </div>
     <!-- 检查安装包更新 -->
-    <my-updater/>
+    <my-updater v-if="window.currentIndex === 0"/>
   </div>
 </template>
 
