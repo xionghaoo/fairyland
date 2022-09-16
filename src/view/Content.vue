@@ -99,12 +99,9 @@ export default {
             // 匹配到屏幕，获取文件uri
             if (s.file_type < 1000) {
               let tmp = s.item_uri.split('/')
-              // file_uri = s.item_uri.replace(Constant.RESOURCE_PREFIX, '')
               file_uri = tmp[tmp.length - 1]
             } else {
               file_uri = s.item_uri
-              // _this.file_type = s.file_type - 1000
-              // file_uri = s.item_uri.split('/').at(-1)
             }
             console.log("文件 uri: " + file_uri)
             console.log("file_type: " + this.file_type)

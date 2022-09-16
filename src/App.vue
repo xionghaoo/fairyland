@@ -166,7 +166,7 @@ export default {
               _this.totalDownload = urls.length
               _this.ipc.onDownloadSingleProgress((index, progress) => {
                 console.log(`index: ${index}, progress: ${progress}`)
-                _this.progress = progress.toFixed(0)
+                _this.progress = Number(progress.toFixed(0))
                 _this.downloadIndex = index
               })
               _this.ipc.onDownloadMultiFileCompleted(() => {
