@@ -244,8 +244,15 @@ export default {
       let model = obj.model;
       let res = obj.result;
       if (res) {
-        this.handleTextRecognize(model, res, sections)
-
+        let txt = '';
+        for (let i = 0; i < res.length; i++) {
+          txt += res[i].text
+        }
+        if (txt !== '') {
+          this.handleTextRecognize(model, txt, sections)
+        } else {
+          this.handleSuccessCount(false)
+        }
         if (this.successCount === 0) {
           // 取消播放
           this.ipc.playContent([], null, this.play_mode);
@@ -253,56 +260,55 @@ export default {
       }
     },
     // 文字识别
-    handleTextRecognize(model, res, sections) {
+    handleTextRecognize(model, recTxt, sections) {
       if (model === 'chinese_ocr') {
         let success = false;
         // 文字识别
-        for (let i = 0; i < res.length; i++) {
-          for (let j = 0; j < sections.length; j++) {
-            let section = sections[j];
-            // 检查识别类型
-            if (section.recognize_type === 0
-                // 检查识别结果
-                && res[i].text.toLowerCase().includes(section.recognize_txt.toLowerCase())
-                // && res[i].text.toLowerCase() === section.recognize_txt.toLowerCase()
-            ) {
-              console.log("识别到文字：" + section.recognize_txt)
-              // 匹配到卡片
-              success = true;
-              // 匹配到直接把容忍值加满
-              this.successCount = Config.recognizeThreshold;
-              // 重置播放模式
-              this.play_mode = section.play_mode
-              console.log('play_mode: ', section.play_mode)
-              // 开始播放
-              this.ipc.playContent(section.screens, section.id, this.play_mode);
-            } else if (section.recognize_type === 0) {
-              // 检查卡片列表中的其他文本
-              let resTxt = res[i].text.toLowerCase()
-              let cards = localStorage.getItem('card_list').split(",")
-              for (let k = 0; k < cards.length; k++) {
-                if (resTxt === cards[k].toLowerCase()) {
-                  success = true
-                  this.successCount = 2;
-                  this.ipc.playContent(null, null, 0);
-                  break;
-                }
+        for (let j = 0; j < sections.length; j++) {
+          let section = sections[j];
+          // 检查识别类型
+          if (section.recognize_type === 0
+              // 检查识别结果
+              && recTxt.toLowerCase().includes(section.recognize_txt.toLowerCase())
+          ) {
+            console.log("识别到文字：" + section.recognize_txt)
+            // 匹配到卡片
+            success = true;
+            // 匹配到直接把容忍值加满
+            this.successCount = Config.recognizeThreshold;
+            // 重置播放模式
+            this.play_mode = section.play_mode
+            console.log('play_mode: ', section.play_mode)
+            // 开始播放
+            this.ipc.playContent(section.screens, section.id, this.play_mode);
+          } else if (section.recognize_type === 0) {
+            // 检查卡片列表中的其他文本
+            let cards = localStorage.getItem('card_list').split(",")
+            for (let k = 0; k < cards.length; k++) {
+              if (recTxt.toLowerCase() === cards[k].toLowerCase()) {
+                success = true
+                this.successCount = 2;
+                this.ipc.playContent(null, null, 0);
+                break;
               }
             }
           }
         }
-        if (success) {
-          this.successCount ++;
-          if (this.successCount >= Config.recognizeThreshold) {
-            this.successCount = Config.recognizeThreshold;
-          }
-        } else {
-          this.successCount --;
-          if (this.successCount <= 0) {
-            this.successCount = 0;
-          }
-        }
+        this.handleSuccessCount(success)
         console.log("识别成功次数: " + this.successCount)
+      }
+    },
+    handleSuccessCount(success) {
+      if (success) {
+        this.successCount ++;
+        if (this.successCount >= Config.recognizeThreshold) {
+          this.successCount = Config.recognizeThreshold;
+        }
+      } else {
+        this.successCount --;
+        if (this.successCount <= 0) {
+          this.successCount = 0;
+        }
       }
     }
   }

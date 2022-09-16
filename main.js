@@ -400,18 +400,6 @@ const createMultiWindow = () => {
 
 function registerKeys() {
     log.info('注册快捷键')
-    // 退出应用
-    const ret = globalShortcut.register('CommandOrControl+Q', () => {
-        // 退出应用时清除定时器
-        for (let j = 0; j < tIds.length; j++) {
-            clearTimeout(tIds[j])
-        }
-        app.exit()
-    })
-    if (!ret) {
-        log.info('registration failed')
-    }
-
     // 向上和向下翻页
     globalShortcut.register('UP', () => {
         contentIndex --;
@@ -480,6 +468,17 @@ app.whenReady().then(() => {
         globalShortcut.unregisterAll()
     })
 
+    // 退出应用
+    const ret = globalShortcut.register('CommandOrControl+Q', () => {
+        // 退出应用时清除定时器
+        for (let j = 0; j < tIds.length; j++) {
+            clearTimeout(tIds[j])
+        }
+        app.exit()
+    })
+    if (!ret) {
+        log.info('registration failed')
+    }
 })
 
 
