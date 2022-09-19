@@ -3,10 +3,12 @@ import IPC from "@/utils/ipc";
 class Camera {
     constructor(element) {
         this.ipc = new IPC()
-        this.width = 320
+        // 照片的大小
+        this.width = 1280
         this.camera = element
+        this.isHide = true
     }
-    open(complete) {
+    open(complete, error) {
         let _this = this;
         let constraints = {
             audio: false,
@@ -25,25 +27,24 @@ class Camera {
                 };
             })
             .catch(err => {
-                _this.ipc.showNotify({
-                    title: "提示",
-                    message: "摄像头连接失败"
-                })
                 console.log(err);
+                error(err)
             });
 
         let width = this.width;
         this.camera.addEventListener('canplay', () => {
             if (!_this.streaming) {
-                let height = _this.camera.videoHeight / (_this.camera.videoWidth / width);
-                _this.height = height;
+                _this.height = _this.camera.videoHeight / (_this.camera.videoWidth / width);
 
                 console.log(`camera width: ${_this.camera.videoWidth}， height: ${_this.camera.videoHeight}`)
                 // 不显示摄像头
-                // _this.camera.setAttribute('width', '50');
-                // _this.camera.setAttribute('height', `${Math.round(50 * 480 / 640)}`);
-                _this.camera.setAttribute('width', '0');
-                _this.camera.setAttribute('height', '0');
+                if (this.isHide) {
+                    _this.camera.setAttribute('width', '0');
+                    _this.camera.setAttribute('height', '0');
+                } else {
+                    _this.camera.setAttribute('width', '50');
+                    _this.camera.setAttribute('height', `${Math.round(50 * 480 / 640)}`);
+                }
                 _this.streaming = true;
             }
         }, false)

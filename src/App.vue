@@ -63,8 +63,9 @@ export default {
     }
   },
   mounted() {
-    let _this = this;
+    this.networkCheck();
 
+    let _this = this;
     this.company_id = localStorage.getItem('company_id');
 
     this.ipc = new IPC();
@@ -99,6 +100,24 @@ export default {
     })
   },
   methods: {
+    networkCheck() {
+      const updateOnlineStatus = () => {
+        if (navigator.onLine) {
+          console.log('网络已连接')
+        } else {
+          console.log('网络未连接')
+          this.$message({
+            message: '网络连接已断开',
+            type: 'error'
+          })
+        }
+      }
+
+      window.addEventListener('online', updateOnlineStatus)
+      window.addEventListener('offline', updateOnlineStatus)
+
+      updateOnlineStatus()
+    },
     loginCallback() {
       this.company_id = localStorage.getItem('company_id');
       this.getCardList(this.company_id)
@@ -203,13 +222,17 @@ export default {
     },
     startTextRecognize() {
       let _this = this;
-      // this.hasUpdate = false
       _this.ipc.setUpdateStatus(false)
 
       setTimeout(() => {
         _this.camera = new Camera(document.getElementById("video"))
         _this.camera.open(() => {
           _this.startScan();
+        }, () => {
+          _this.$message({
+            type: "error",
+            message: "摄像头连接失败"
+          })
         })
       }, 100)
     },
