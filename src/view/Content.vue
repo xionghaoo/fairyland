@@ -67,9 +67,9 @@ export default {
   created() {
     this.ipc = new IPC();
     let _this = this;
-    this.showDefaultContent()
     let path = this.ipc.getPath('documents');
     this.file_prefix = `file:///${path}/Fairyland`
+    this.showDefaultContent()
     this.ipc.onShowContent((screens) => {
       if (screens === null) {
         this.file_type = 2;
