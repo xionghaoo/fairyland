@@ -158,14 +158,27 @@ export default {
   },
   methods: {
     showDefaultContent() {
-      if (this.ipc.getScreenNum() === 4) {
-        this.fourScreenCover()
-      } else if (this.ipc.getScreenNum() === 5) {
-        this.fiveScreenCover()
-      } else if (this.ipc.getScreenNum() === 7) {
-        this.sevenScreenCover()
+      let covers = JSON.parse(localStorage.getItem('covers'))
+      if (covers) {
+        for (let i = 0; i < covers.length; i++) {
+          if (this.$props.index === i) {
+            let tmp = covers[i].split('/')
+            let file_uri = tmp[tmp.length - 1]
+            let url = `${this.file_prefix}/${file_uri}`;
+            this.img_uri = url;
+            this.next_img_uri = url;
+          }
+        }
       } else {
-        this.fourScreenCover()
+        if (this.ipc.getScreenNum() === 4) {
+          this.fourScreenCover()
+        } else if (this.ipc.getScreenNum() === 5) {
+          this.fiveScreenCover()
+        } else if (this.ipc.getScreenNum() === 7) {
+          this.sevenScreenCover()
+        } else {
+          this.fourScreenCover()
+        }
       }
     },
     fourScreenCover() {

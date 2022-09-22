@@ -11,7 +11,7 @@ const Config = (() => {
   if (process.env.NODE_ENV === 'production') {
     baseUrl = RequestHttpPro
   }
-  // baseUrl = 'http://192.168.1.122:5002' // TODO 测试
+  baseUrl = 'http://192.168.1.116:5002' // TODO 测试
   let api = baseUrl + '/api'
   return {
     // ajax_http请求url

@@ -48,6 +48,11 @@ ipc.on('setUpdateStatus', function (e, args) {
         windowList[i].webContents.postMessage('onUpdateChange', args, [])
     }
 })
+ipc.on('setCompanyId', function (e, args) {
+    for (let i = 0; i < windowList.length; i++) {
+        windowList[i].webContents.postMessage('onCompanyIdUpdate', args, [])
+    }
+})
 ipc.on('registerShortcutKey', function () {
     registerKeys()
 })

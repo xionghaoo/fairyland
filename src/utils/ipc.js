@@ -7,8 +7,7 @@ class IPC {
         return ipc.sendSync('getPath', name);
     }
     getScreenNum() {
-        const ipc = window.require('electron').ipcRenderer
-        return ipc.sendSync('getScreenNum');
+        return this.ipc.sendSync('getScreenNum');
     }
     getContentSliceNum() {
         const ipc = window.require('electron').ipcRenderer
@@ -80,6 +79,14 @@ class IPC {
     onUpdateChange(callback) {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('onUpdateChange', (e, args) => {
+            callback(args)
+        })
+    }
+    setCompanyId(id) {
+        this.ipc.send('setCompanyId', id)
+    }
+    onCompanyIdUpdate(callback) {
+        this.ipc.on('onCompanyIdUpdate', (e, args) => {
             callback(args)
         })
     }

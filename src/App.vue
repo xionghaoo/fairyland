@@ -14,9 +14,11 @@
         <my-content :index="window.currentIndex"/>
         <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
       </div>
-      <div v-else>
+      <div v-else style="height: 100%">
         <my-login v-if="window.currentIndex === 0" :callback="loginCallback"/>
-        <div v-else style="background: #2c3e50"></div>
+        <div v-else style="background: #2c3e50; height: 100%;display: flex;justify-content: center;align-items: center">
+          <div style="color: white">等待登录</div>
+        </div>
       </div>
     </div>
     <!-- 检查安装包更新 -->
@@ -75,19 +77,19 @@ export default {
       _this.handleResult(data)
     })
 
-    if (window.currentIndex === 0) {
-      if (this.company_id) {
+    if (this.company_id) {
+      if (window.currentIndex === 0) {
         console.log('has login')
         // 已登录
         this.getCardList(this.company_id)
         this.checkVersionUpdate(this.company_id)
         this.ipc.registerShortcutKey()
-      } else {
-        // 当前未登录
-        console.log('need login')
-        this.hasUpdate = false
-        this.isInit = false
       }
+    } else {
+      // 当前未登录
+      console.log('need login')
+      this.hasUpdate = false
+      this.isInit = false
     }
     this.ipc.onShowMessage((args) => {
       this.$message(args);
@@ -97,6 +99,10 @@ export default {
     })
     this.ipc.onUpdateChange((status) => {
       _this.hasUpdate = status
+    })
+    this.ipc.onCompanyIdUpdate((id) => {
+      // 更新下每个窗口的状态
+      this.company_id = id;
     })
   },
   methods: {
@@ -120,6 +126,7 @@ export default {
     },
     loginCallback() {
       this.company_id = localStorage.getItem('company_id');
+      this.ipc.setCompanyId(this.company_id)
       this.getCardList(this.company_id)
       this.checkVersionUpdate(this.company_id)
       this.ipc.registerShortcutKey()
@@ -162,23 +169,41 @@ export default {
           // 检查是否有更新
           if (hasUpdate) {
             let rd = res.data
+            // 封面资源
+            let coverUrls = []
+            let thisDeviceScreenNum = _this.ipc.getScreenNum();
+            let covers = rd.covers;
+            for (let i = 0; i < covers.length; i++) {
+              if (covers[i].screen_num === thisDeviceScreenNum && covers[i].cover_images) {
+                let nameList = covers[i].cover_images.split(',')
+                for (let j = 0; j < nameList.length; j++) {
+                  coverUrls.push(Config.ossHost + nameList[j])
+                }
+                // 保存封面
+                localStorage.setItem('covers', JSON.stringify(nameList))
+                break;
+              }
+            }
+            // 案例资源
             let sections = JSON.stringify(rd.sections)
             // 下载多个资源文件
             let existFiles = _this.ipc.getDownloadedFiles();
-            const urls = []
+            const sectionUrls = []
             for (let i = 0; i < rd.sections.length; i++) {
               let screens = rd.sections[i].screens;
               for (let j = 0; j < screens.length; j++) {
                 let nameList = screens[j].item_uri.split("/")
                 let name = nameList[nameList.length - 1]
                 if (screens[j].file_type < 1000 && !existFiles.includes(name)) {
-                  urls.push(Config.ossHost + screens[j].item_uri)
+                  sectionUrls.push(Config.ossHost + screens[j].item_uri)
                 } else {
                   // 网络资源不用下载
                   // urls.push(screens[j].item_uri)
                 }
               }
             }
+
+            let urls = coverUrls.concat(sectionUrls)
             console.log("下载资源", urls)
             // 下载资源
             if (urls.length > 0) {
