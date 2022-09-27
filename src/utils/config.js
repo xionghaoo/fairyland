@@ -24,11 +24,12 @@ const Config = (() => {
       cardList: api + '/fairyland/card_list',
 
     },
-    recognizeInterval: 1000,
+    recognizeInterval: 1200,
     recognizeApi: "ws://120.76.175.224:9001",
     ossHost: 'https://roboland-deliv.ubtrobot.com/',
     recognizeThreshold: 5,
-    deviceId: "wuhan01"
+    deviceId: "wuhan01",
+    api_text_recognize: "https://rvi.ubtrobot.com/aipocket_test/ocr/zh_en"
     // deviceId: "sz001"
     // recognizeApi: "ws://119.23.154.148:9006"
   }

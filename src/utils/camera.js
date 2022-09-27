@@ -4,7 +4,7 @@ class Camera {
     constructor(element) {
         this.ipc = new IPC()
         // 照片的大小
-        this.width = 1280
+        this.width = 640
         this.camera = element
         this.isHide = true
     }

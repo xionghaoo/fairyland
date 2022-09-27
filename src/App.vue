@@ -29,7 +29,6 @@
 <script>
 import Content from "@/view/Content";
 import Login from "@/view/Login";
-import WebSocketManager from "@/utils/ws";
 import Camera from "@/utils/camera";
 import IPC from "@/utils/ipc";
 import Request from "@/utils/request";
@@ -72,20 +71,20 @@ export default {
 
     this.ipc = new IPC();
     this.sections = JSON.parse(localStorage.getItem('sections'))
-    this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
-      // 收到websocket消息
-      _this.handleResult(data)
-    }, (err) => {
-      this.$message({
-        message: 'AI服务错误: ' + err,
-        type: 'error'
-      })
-    }, () => {
-      this.$message({
-        message: 'AI服务已关闭',
-        type: 'error'
-      })
-    })
+    // this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
+    //   // 收到websocket消息
+    //   _this.handleResult(data)
+    // }, (err) => {
+    //   this.$message({
+    //     message: 'AI服务错误: ' + err,
+    //     type: 'error'
+    //   })
+    // }, () => {
+    //   this.$message({
+    //     message: 'AI服务已关闭',
+    //     type: 'error'
+    //   })
+    // })
 
     if (this.company_id) {
       if (window.currentIndex === 0) {
@@ -302,14 +301,43 @@ export default {
         // }
         let imgData = _this.camera.capture();
         // console.log(imgData)
-        _this.ws.send("chinese_ocr", imgData)
+        // _this.ws.send("chinese_ocr", imgData)
+        _this.requestTextRec(imgData)
       }, Config.recognizeInterval);
+    },
+    requestTextRec(img) {
+      let _this = this;
+      Request.requestPost(
+          Config.api_text_recognize,
+          {image_base64: img,}
+      ).then((res) => {
+        if (res.code === 0) {
+          _this.handleNewResult(res.data)
+        }
+      })
+    },
+    handleNewResult(data) {
+      let sections = this.sections
+
+      let txt = '';
+      for (let i = 0; i < data.length; i++) {
+        txt += data[i].text
+      }
+      if (txt !== '') {
+        console.log('识别文本', txt)
+        this.handleTextRecognize(txt, sections)
+      } else {
+        this.handleSuccessCount(false)
+      }
+      if (this.successCount === 0) {
+        // 取消播放
+        this.ipc.playContent([], null, this.play_mode);
+      }
     },
     handleResult(obj) {
       console.log("处理识别结果", obj)
       // let _this = this;
       let sections = this.sections
-      let model = obj.model;
       let res = obj.result;
       if (res) {
         let txt = '';
@@ -317,7 +345,7 @@ export default {
           txt += res[i].text
         }
         if (txt !== '') {
-          this.handleTextRecognize(model, txt, sections)
+          this.handleTextRecognize(txt, sections)
         } else {
           this.handleSuccessCount(false)
         }
@@ -328,43 +356,41 @@ export default {
       }
     },
     // 文字识别
-    handleTextRecognize(model, recTxt, sections) {
-      if (model === 'chinese_ocr') {
-        let success = false;
-        // 文字识别
-        for (let j = 0; j < sections.length; j++) {
-          let section = sections[j];
-          // 检查识别类型
-          if (section.recognize_type === 0
-              // 检查识别结果
-              && recTxt.toLowerCase().includes(section.recognize_txt.toLowerCase())
-          ) {
-            console.log("识别到文字：" + section.recognize_txt)
-            // 匹配到卡片
-            success = true;
-            // 匹配到直接把容忍值加满
-            this.successCount = Config.recognizeThreshold;
-            // 重置播放模式
-            this.play_mode = section.play_mode
-            console.log('play_mode: ', section.play_mode)
-            // 开始播放
-            this.ipc.playContent(section.screens, section.id, this.play_mode);
-          } else if (section.recognize_type === 0) {
-            // 检查卡片列表中的其他文本
-            let cards = localStorage.getItem('card_list').split(",")
-            for (let k = 0; k < cards.length; k++) {
-              if (recTxt.toLowerCase() === cards[k].toLowerCase()) {
-                success = true
-                this.successCount = 2;
-                this.ipc.playContent(null, null, 0);
-                break;
-              }
+    handleTextRecognize(recTxt, sections) {
+      let success = false;
+      // 文字识别
+      for (let j = 0; j < sections.length; j++) {
+        let section = sections[j];
+        // 检查识别类型
+        if (section.recognize_type === 0
+            // 检查识别结果
+            && recTxt.toLowerCase().includes(section.recognize_txt.toLowerCase())
+        ) {
+          console.log("识别到文字：" + section.recognize_txt)
+          // 匹配到卡片
+          success = true;
+          // 匹配到直接把容忍值加满
+          this.successCount = Config.recognizeThreshold;
+          // 重置播放模式
+          this.play_mode = section.play_mode
+          console.log('play_mode: ', section.play_mode)
+          // 开始播放
+          this.ipc.playContent(section.screens, section.id, this.play_mode);
+        } else if (section.recognize_type === 0) {
+          // 检查卡片列表中的其他文本
+          let cards = localStorage.getItem('card_list').split(",")
+          for (let k = 0; k < cards.length; k++) {
+            if (recTxt.toLowerCase() === cards[k].toLowerCase()) {
+              success = true
+              this.successCount = 2;
+              this.ipc.playContent(null, null, 0);
+              break;
             }
           }
         }
-        this.handleSuccessCount(success)
-        console.log("识别成功次数: " + this.successCount)
       }
+      this.handleSuccessCount(success)
+      console.log("识别成功次数: " + this.successCount)
     },
     handleSuccessCount(success) {
       if (success) {
