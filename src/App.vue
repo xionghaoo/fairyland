@@ -49,7 +49,7 @@ export default {
     return {
       pageName: name,
       window: window,
-      ws: null,
+      requestCompleted: true,
       camera: null,
       ipc: null,
       progress: 0,
@@ -302,6 +302,7 @@ export default {
         let imgData = _this.camera.capture();
         // console.log(imgData)
         // _this.ws.send("chinese_ocr", imgData)
+        // _this.requestCompleted = true
         _this.requestTextRec(imgData)
       }, Config.recognizeInterval);
     },
