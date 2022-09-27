@@ -1,6 +1,6 @@
 {
   "name": "fairyland",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "main": "main.js",
   "author": {
@@ -81,7 +81,8 @@
     },
     "files": [
       "**/*",
-      "!build"
+      "!build",
+      "!out"
     ],
     "asar": true,
     "win": {
@@ -100,7 +101,7 @@
       ]
     },
     "nsis": {
-      "shortcutName": "Fairyland"
+      "shortcutName": "幻境"
     },
     "mac": {
       "publish": [

@@ -125,6 +125,11 @@ class IPC {
             callback(args)
         })
     }
+    onLogout(callback) {
+        this.ipc.on('logout', (e, args) => {
+            callback(args)
+        })
+    }
 }
 
 export default IPC

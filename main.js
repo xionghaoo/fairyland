@@ -219,6 +219,22 @@ function removeDir(dir) {
  * 按顺序下载多文件
  */
 ipc.on('downloadMultiFile', function (e, urls) {
+    // let contents_dir = path.join(app.getPath('documents'), 'Fairyland')
+    // if (fs.existsSync(contents_dir)) {
+    //     let exitFiles = fs.readdirSync(contents_dir)
+    //     // log.info('urls', urls)
+    //     // log.info('exit files', exitFiles)
+    //     for (let i = 0; i < exitFiles.length; i++) {
+    //         if (!urls.includes(exitFiles[i])) {
+    //             // 删除文件
+    //             let f = exitFiles[i];
+    //             fs.unlinkSync(path.join(contents_dir, f));
+    //             log.info('delete: ' + f)
+    //         }
+    //     }
+    //
+    // }
+
     let win = windowList[0]
     downloadSingleFile(win, urls, 0)
 })
@@ -458,12 +474,22 @@ function registerKeys() {
         if (contentIndex < 0) {
             contentIndex = sliceTotal - 1
         }
+
+        showMessage({
+            message: '上一页',
+            type: 'info'
+        })
     })
     globalShortcut.register('DOWN', () => {
         contentIndex ++;
         if (contentIndex >= sliceTotal) {
             contentIndex = 0
         }
+
+        showMessage({
+            message: '下一页',
+            type: 'info'
+        })
     })
 
     for (let i = 0; i < windowList.length; i++) {
@@ -474,21 +500,59 @@ function registerKeys() {
     }
 
     globalShortcut.register('Space', () => {
+        log.info('Space')
         for (let i = 0; i < windowList.length; i++) {
             // 视频控制
             windowList[i].webContents.postMessage('toggleAllVideo', null, [])
         }
     })
 
-    // 清除本地缓存
-    globalShortcut.register('CommandOrCtrl+SHIFT+DELETE', () => {
-        const clearObj = {
-            storages: ['appcache', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage'],
-        };
-        for (let i = 0; i < windowList.length; i++) {
-            windowList[i].webContents.session.clearStorageData(clearObj)
+    globalShortcut.register('E', () => {
+        log.info('logout')
+        if (windowList.length > 0) {
+            windowList[0].webContents.postMessage('logout', null, [])
         }
+        unregisterKeys()
+        registerExitKey()
+        cleanCache()
+
+        destroyTimers()
+        app.exit()
     })
+
+    // 清除本地缓存
+    globalShortcut.register('C', () => {
+        showMessage({
+            message: '清除缓存',
+            type: 'info'
+        })
+        cleanCache()
+    })
+}
+
+function cleanCache() {
+    const clearObj = {
+        storages: ['appcache', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage'],
+    };
+    for (let i = 0; i < windowList.length; i++) {
+        windowList[i].webContents.session.clearStorageData(clearObj)
+    }
+}
+
+function unregisterKeys() {
+    globalShortcut.unregisterAll()
+}
+
+function registerExitKey() {
+    // 退出应用
+    const ret = globalShortcut.register('CommandOrControl+Q', () => {
+        // 退出应用时清除定时器
+        destroyTimers()
+        app.exit()
+    })
+    if (!ret) {
+        log.info('registration failed')
+    }
 }
 
 app.whenReady().then(() => {
@@ -520,15 +584,7 @@ app.whenReady().then(() => {
         globalShortcut.unregisterAll()
     })
 
-    // 退出应用
-    const ret = globalShortcut.register('CommandOrControl+Q', () => {
-        // 退出应用时清除定时器
-        destroyTimers()
-        app.exit()
-    })
-    if (!ret) {
-        log.info('registration failed')
-    }
+    registerExitKey()
 })
 
 

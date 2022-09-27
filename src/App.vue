@@ -5,12 +5,12 @@
     </div>
     <div v-else-if="hasUpdate" id="app">
       <my-update v-if="window.currentIndex === 0" :value="progress" :total="totalDownload" :index="downloadIndex"/>
-      <div v-else style="width: 100%; height: 100%">
-        <div style="display: block;margin-top: 100px;font-size: 20px;background: #2c3e50">等待更新</div>
+      <div v-else style="width: 100%; height: 100%;background: #2c3e50;display: flex;justify-content: center;align-items: center">
+        <div style="display: block;margin-top: 100px;font-size: 20px;color: white">等待更新</div>
       </div>
     </div>
     <div v-else id="app">
-      <div v-if="company_id">
+      <div v-if="company_id > 0">
         <my-content :index="window.currentIndex"/>
         <video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
       </div>
@@ -89,6 +89,7 @@ export default {
 
     if (this.company_id) {
       if (window.currentIndex === 0) {
+        this.logoutListen()
         console.log('has login')
         // 已登录
         this.getCardList(this.company_id)
@@ -102,7 +103,7 @@ export default {
       this.isInit = false
     }
     this.ipc.onShowMessage((args) => {
-      this.$message(args);
+      _this.$message(args);
     })
     this.ipc.onInitChange((status) => {
       _this.isInit = status
@@ -112,7 +113,7 @@ export default {
     })
     this.ipc.onCompanyIdUpdate((id) => {
       // 更新下每个窗口的状态
-      this.company_id = id;
+      _this.company_id = id;
     })
   },
   methods: {
@@ -133,6 +134,15 @@ export default {
       window.addEventListener('offline', updateOnlineStatus)
 
       updateOnlineStatus()
+    },
+    logoutListen() {
+      let _this = this;
+      this.ipc.onLogout(() => {
+        console.log('logout')
+        _this.hasUpdate = false
+        _this.isInit = false
+        _this.ipc.setCompanyId(null)
+      })
     },
     loginCallback() {
       this.company_id = localStorage.getItem('company_id');
@@ -241,17 +251,17 @@ export default {
               _this.sections = rd.sections
               // 保存资源版本号
               localStorage.setItem('version', rd.version_code)
-              // 删除多余资源
-              // _this.ipc.deleteFiles(_this.sections)
+              console.log('没有新的资源')
               _this.startTextRecognize()
             }
           } else {
             // 没有发现新版本
+            console.log('没有新版本')
             _this.startTextRecognize()
           }
         }, 100)
       }).catch((e) => {
-        console.log(e)
+        console.error(e)
         _this.startTextRecognize()
       })
     },

@@ -101,7 +101,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: antiquewhite;
+  background: #2c3e50;
   /*background-image: url('./assets/img/login_bg.jpg');*/
 }
 .login-div {
