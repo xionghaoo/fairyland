@@ -219,21 +219,21 @@ function removeDir(dir) {
  * 按顺序下载多文件
  */
 ipc.on('downloadMultiFile', function (e, urls) {
-    let contents_dir = path.join(app.getPath('documents'), 'Fairyland')
-    if (fs.existsSync(contents_dir)) {
-        let exitFiles = fs.readdirSync(contents_dir)
-        // log.info('urls', urls)
-        // log.info('exit files', exitFiles)
-        for (let i = 0; i < exitFiles.length; i++) {
-            if (!urls.includes(exitFiles[i])) {
-                // 删除文件
-                let f = exitFiles[i];
-                fs.unlinkSync(path.join(contents_dir, f));
-                log.info('delete: ' + f)
-            }
-        }
-
-    }
+    // let contents_dir = path.join(app.getPath('documents'), 'Fairyland')
+    // if (fs.existsSync(contents_dir)) {
+    //     let exitFiles = fs.readdirSync(contents_dir)
+    //     // log.info('urls', urls)
+    //     // log.info('exit files', exitFiles)
+    //     for (let i = 0; i < exitFiles.length; i++) {
+    //         if (!urls.includes(exitFiles[i])) {
+    //             // 删除文件
+    //             let f = exitFiles[i];
+    //             fs.unlinkSync(path.join(contents_dir, f));
+    //             log.info('delete: ' + f)
+    //         }
+    //     }
+    //
+    // }
 
     let win = windowList[0]
     downloadSingleFile(win, urls, 0)
