@@ -1,6 +1,6 @@
 // WebSocket
 class WebSocketManager {
-    constructor(uri, onMessage) {
+    constructor(uri, onMessage, onError, onClose) {
         // 变量初始化
         this.hasReceivedResponse = true;
 
@@ -32,6 +32,15 @@ class WebSocketManager {
             let obj = JSON.parse(data);
             onMessage(obj)
         }
+        this.ws.onerror = function (e) {
+            console.log(e.data)
+            onError(e.data)
+        }
+        this.ws.onclose = function (e) {
+            console.log('websocket disconnect: ' + e)
+            onClose()
+        }
+
     }
 
     send(model, img) {

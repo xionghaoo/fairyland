@@ -75,6 +75,16 @@ export default {
     this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
       // 收到websocket消息
       _this.handleResult(data)
+    }, (err) => {
+      this.$message({
+        message: 'AI服务错误: ' + err,
+        type: 'error'
+      })
+    }, () => {
+      this.$message({
+        message: 'AI服务已关闭',
+        type: 'error'
+      })
     })
 
     if (this.company_id) {
