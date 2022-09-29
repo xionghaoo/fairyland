@@ -507,7 +507,7 @@ function registerKeys() {
         }
     })
 
-    globalShortcut.register('E', () => {
+    globalShortcut.register('CommandOrControl+E', () => {
         log.info('logout')
         if (windowList.length > 0) {
             windowList[0].webContents.postMessage('logout', null, [])
@@ -521,7 +521,7 @@ function registerKeys() {
     })
 
     // 清除本地缓存
-    globalShortcut.register('C', () => {
+    globalShortcut.register('CommandOrControl+ALT+C', () => {
         showMessage({
             message: '清除缓存',
             type: 'info'
