@@ -29,7 +29,7 @@ const Config = (() => {
     ossHost: 'https://roboland-deliv.ubtrobot.com/',
     recognizeThreshold: 5,
     deviceId: "wuhan01",
-    api_text_recognize: "https://rvi.ubtrobot.com/aipocket_test/ocr/zh_en"
+    api_text_recognize: "https://rvi.ubtrobot.com/aipocket_new_test/ocr/zh_en/recognition"
     // deviceId: "sz001"
     // recognizeApi: "ws://119.23.154.148:9006"
   }
