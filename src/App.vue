@@ -335,9 +335,10 @@ export default {
 		requestTextRec() {
 			let _this = this;
 			let imgData = _this.camera.capture();
+      const startTime = Date.now();
 			return Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
 				res => {
-          console.log('recursion');
+          console.log('recursion: ', Date.now() - startTime);
 					_this.requestTextRec();
 					if (res.code === 0) {
 						_this.handleNewResult(res.data);
