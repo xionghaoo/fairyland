@@ -60,6 +60,8 @@ import Config from '@/utils/config';
 import Update from '@/view/Update';
 import Updater from '@/components/Updater';
 
+let timer;
+let delays = 1000;
 export default {
 	name: 'App',
 	components: {
@@ -87,6 +89,7 @@ export default {
 			company_id: null,
 		};
 	},
+
 	mounted() {
 		this.networkCheck();
 
@@ -138,6 +141,9 @@ export default {
 			// 更新下每个窗口的状态
 			_this.company_id = id;
 		});
+	},
+	beforeUnmount() {
+		clearTimeout(timer);
 	},
 	methods: {
 		networkCheck() {
@@ -335,20 +341,27 @@ export default {
 		requestTextRec() {
 			let _this = this;
 			let imgData = _this.camera.capture();
-      const startTime = Date.now();
-			return Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
+			const startTime = Date.now();
+			Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
 				res => {
-          console.log('recursion: ', Date.now() - startTime);
-					_this.requestTextRec();
+					setDelays();
 					if (res.code === 0) {
 						_this.handleNewResult(res.data);
 					}
 				},
 				err => {
-					_this.requestTextRec();
+					setDelays();
 					console.log(err);
 				},
 			);
+
+			function setDelays() {
+				const times = Date.now() - startTime;
+				console.log('Reply Time: ', times);
+				delays = times < 1000 ? 1000 : times;
+			}
+
+			timer = setTimeout(_this.requestTextRec.bind(_this), delays);
 		},
 		handleNewResult(data) {
 			let sections = this.sections;
