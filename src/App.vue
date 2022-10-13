@@ -379,6 +379,7 @@ export default {
 					txt += res[i].text;
 				}
 				if (txt !== '') {
+          // 文字比对
 					this.handleTextRecognize(txt, sections);
 				} else {
 					this.handleSuccessCount(false);
@@ -393,6 +394,8 @@ export default {
 		handleTextRecognize(recTxt, sections) {
 			let success = false;
 			// 文字识别
+      let successSections = [];
+      let unConfigText = null;
 			for (let j = 0; j < sections.length; j++) {
 				let section = sections[j];
 				// 检查识别类型
@@ -401,29 +404,49 @@ export default {
 					// 检查识别结果
 					recTxt.toLowerCase().includes(section.recognize_txt.toLowerCase())
 				) {
-					console.log('识别到文字：' + section.recognize_txt);
-					// 匹配到卡片
-					success = true;
-					// 匹配到直接把容忍值加满
-					this.successCount = Config.recognizeThreshold;
-					// 重置播放模式
-					this.play_mode = section.play_mode;
-					console.log('play_mode: ', section.play_mode);
-					// 开始播放
-					this.ipc.playContent(section.screens, section.id, this.play_mode);
+          successSections.push(section)
 				} else if (section.recognize_type === 0) {
 					// 检查卡片列表中的其他文本
 					let cards = localStorage.getItem('card_list').split(',');
 					for (let k = 0; k < cards.length; k++) {
-						if (recTxt.toLowerCase() === cards[k].toLowerCase()) {
-							success = true;
-							this.successCount = 2;
-							this.ipc.playContent(null, null, 0);
+						if (recTxt.toLowerCase().includes(cards[k].toLowerCase())) {
+              unConfigText = cards[k]
 							break;
 						}
 					}
 				}
 			}
+
+      // 检查识别结果
+      if (successSections.length > 0) {
+        // 找出最长的匹配文本
+        let section = null;
+        let txt = "";
+        for (let i = 0; i < successSections.length; i++) {
+          if (txt.length < successSections[i].recognize_txt.length) {
+            section = successSections[i];
+            txt = successSections[i].recognize_txt;
+          }
+        }
+        console.log('识别到文字：' + section.recognize_txt);
+        // 匹配到卡片
+        success = true;
+        // 匹配到直接把容忍值加满
+        this.successCount = Config.recognizeThreshold;
+        // 重置播放模式
+        this.play_mode = section.play_mode;
+        console.log('play_mode: ', section.play_mode);
+        // 开始播放
+        this.ipc.playContent(section.screens, section.id, this.play_mode);
+      } else {
+        // 未匹配到
+        if (unConfigText !== null) {
+          // 匹配到未配置卡片
+          success = true;
+          this.successCount = Config.unConfigThreshold;
+          this.ipc.playContent(null, null, 0);
+        }
+      }
 			this.handleSuccessCount(success);
 			console.log('识别成功次数: ' + this.successCount);
 		},
