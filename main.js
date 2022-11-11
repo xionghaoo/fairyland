@@ -574,13 +574,13 @@ function registerKeys() {
     })
 
     // 清除本地缓存
-    globalShortcut.register('CommandOrControl+ALT+C', () => {
-        showMessage({
-            message: '清除缓存',
-            type: 'info'
-        })
-        cleanCache()
-    })
+    // globalShortcut.register('CommandOrControl+ALT+C', () => {
+    //     showMessage({
+    //         message: '清除缓存',
+    //         type: 'info'
+    //     })
+    //     cleanCache()
+    // })
 }
 
 function cleanCache() {
