@@ -25,7 +25,7 @@
 			</div>
 		</div>
 		<div v-else id="app">
-			<div v-if="company_id > 0">
+			<div v-if="company_id > 0" style="height: 100%">
 				<my-content :index="window.currentIndex" />
 				<video v-if="window.currentIndex === 0" id="video" class="camera" autoplay></video>
 			</div>
@@ -342,10 +342,11 @@ export default {
 			let _this = this;
 			let imgData = _this.camera.capture();
 			const startTime = Date.now();
+      console.log('request text api at ' + startTime)
 			Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
 				res => {
 					setDelays();
-					if (res.code === 0) {
+					if (res.code === 0 && res.data) {
 						_this.handleNewResult(res.data);
 					}
 				},
@@ -364,7 +365,7 @@ export default {
 			timer = setTimeout(_this.requestTextRec.bind(_this), delays);
 		},
 		handleNewResult(data) {
-			let sections = this.sections;
+      let sections = this.sections;
 
 			let txt = '';
 			for (let i = 0; i < data.length; i++) {
@@ -405,6 +406,7 @@ export default {
 		},
 		// 文字识别
 		handleTextRecognize(recTxt, sections) {
+      if (sections === null) return
 			let success = false;
 			// 文字识别
       let successSections = [];
@@ -422,7 +424,7 @@ export default {
 					// 检查卡片列表中的其他文本
 					let cards = localStorage.getItem('card_list').split(',');
 					for (let k = 0; k < cards.length; k++) {
-						if (recTxt.toLowerCase().includes(cards[k].toLowerCase())) {
+						if (recTxt.toLowerCase() === cards[k].toLowerCase()) {
               unConfigText = cards[k]
 							break;
 						}
@@ -449,6 +451,10 @@ export default {
         // 重置播放模式
         this.play_mode = section.play_mode;
         console.log('play_mode: ', section.play_mode);
+        // 给页面添加自动播放模式
+        for (let i = 0; i < section.screens.length; i++) {
+          section.screens[i].auto_play = section.auto_play;
+        }
         // 开始播放
         this.ipc.playContent(section.screens, section.id, this.play_mode);
       } else {

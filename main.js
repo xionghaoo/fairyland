@@ -63,6 +63,10 @@ function showMessage(msg) {
     }
 }
 
+// 缓存当前播放的章节
+let cacheScreens = null;
+let cacheSectionId = null;
+let cacheInterval = null
 // 定时器id
 let tIds = []
 let contentIndex = null
@@ -72,6 +76,32 @@ let lastSectionId = null
 let lastContentIndex = null
 // 显示屏幕内容
 ipc.on('showContent', async function (e, screens, sectionId, interval) {
+    // 章节id发生变化时才显示内容，其他时间使用缓存内容
+    if (cacheSectionId !== sectionId) {
+        cacheScreens = screens;
+        cacheSectionId = sectionId;
+        cacheInterval = interval;
+        await playContent(screens, sectionId, interval);
+    }
+})
+
+// 按键操作缓存内容
+function operationWithContent() {
+    if (cacheSectionId === lastSectionId) {
+        playContent(cacheScreens, cacheSectionId, cacheInterval).then(() => {
+
+        })
+    }
+}
+
+/**
+ * 播放章节
+ * @param screens 章节的屏幕内容
+ * @param sectionId 章节id
+ * @param interval 延迟显示时间
+ * @returns {Promise<void>}
+ */
+async function playContent(screens, sectionId, interval) {
     if (sectionId === null && screens === null) {
         for (let i = 0; i < windowList.length; i++) {
             windowList[i].webContents.postMessage('onShowContent', "showNoCard", [])
@@ -97,28 +127,27 @@ ipc.on('showContent', async function (e, screens, sectionId, interval) {
         sliceScreens.push(screens.slice(sliceIndex, end))
         sliceIndex += windowList.length
     }
-
-    // 分片
+    log.info("show slice screen index: " + contentIndex)
+    // 把章节的屏幕分片
     let single_screens = sliceScreens[contentIndex]
     if (!single_screens) single_screens = []
 
-    // 切换卡片
+    // 切换卡片，清空延迟Timer
     if (lastSectionId !== sectionId || lastContentIndex !== contentIndex) {
         for (let j = 0; j < tIds.length; j++) {
             clearTimeout(tIds[j])
         }
         tIds = []
     }
-    // TODO 切换卡片时白屏
+    // 切换卡片时白屏
     if (lastContentIndex !== contentIndex) {
-        // log.info("翻页时白屏", single_screens)
         for (let i = 0; i < windowList.length; i++) {
             windowList[i].webContents.postMessage('onShowContent', null, [])
         }
-        await new Promise((resolve)=>setTimeout(() => {
+        await new Promise((resolve)=> setTimeout(() => {
             log.info("等待白屏");
             resolve();
-        }, 200));
+        }, 100));
     }
     lastSectionId = sectionId
     lastContentIndex = contentIndex
@@ -146,7 +175,8 @@ ipc.on('showContent', async function (e, screens, sectionId, interval) {
             windowList[i].webContents.postMessage('onShowContent', single_screens, [])
         }
     }
-})
+}
+
 ipc.on('stopContent', function (e, args) {
     // 给渲染窗口发送消息
     for (let i = 0; i < windowList.length; i++) {
@@ -315,7 +345,7 @@ const downloadSingleFile = (win, urls, index) => {
 const createMultiWindow = () => {
     let displays = screen.getAllDisplays()
     let screenWidth = 800;
-    let screenHeight = 600;
+    let screenHeight = 450;
     let isFullscreen = true;
     if (isDev) {
         // 模拟多屏的情况
@@ -475,10 +505,14 @@ function registerKeys() {
             contentIndex = sliceTotal - 1
         }
 
-        showMessage({
-            message: '上一页',
-            type: 'info'
-        })
+        operationWithContent()
+
+        if (sliceTotal === 1) {
+            showMessage({
+                message: '当前只有一页',
+                type: 'info'
+            })
+        }
     })
     globalShortcut.register('DOWN', () => {
         contentIndex ++;
@@ -486,12 +520,24 @@ function registerKeys() {
             contentIndex = 0
         }
 
-        showMessage({
-            message: '下一页',
-            type: 'info'
-        })
+        operationWithContent()
+
+        if (sliceTotal === 1) {
+            showMessage({
+                message: '当前只有一页',
+                type: 'info'
+            })
+        }
     })
 
+    for (let i = 0; i < windowList.length; i++) {
+        globalShortcut.register(`CommandOrControl+${i+1}`, () => {
+            // 视频控制
+            windowList[i].webContents.postMessage('muteVideo', null, [])
+        })
+    }
+
+    // 暂停播放单个视频
     for (let i = 0; i < windowList.length; i++) {
         globalShortcut.register(`${i+1}`, () => {
             // 视频控制
@@ -499,6 +545,7 @@ function registerKeys() {
         })
     }
 
+    // 空格键暂停/播放全部视频
     globalShortcut.register('Space', () => {
         log.info('Space')
         for (let i = 0; i < windowList.length; i++) {
@@ -507,6 +554,7 @@ function registerKeys() {
         }
     })
 
+    // 退出登录
     globalShortcut.register('CommandOrControl+E', () => {
         log.info('logout')
         if (windowList.length > 0) {

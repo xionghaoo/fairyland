@@ -30,7 +30,7 @@ const Config = (() => {
     recognizeThreshold: 600,
     unConfigThreshold: 5,
     deviceId: "wuhan01",
-    api_text_recognize: "https://rvi.ubtrobot.com/aipocket_new_test/ocr/zh_en/recognition"
+    api_text_recognize: "https://rvi.ubtrobot.com/aipocket_new/ocr/zh_en/recognition"
     // deviceId: "sz001"
     // recognizeApi: "ws://119.23.154.148:9006"
   }

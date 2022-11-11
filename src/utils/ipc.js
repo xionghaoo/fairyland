@@ -90,6 +90,11 @@ class IPC {
             callback(args)
         })
     }
+    muteVideo(callback) {
+        this.ipc.on('muteVideo', () => {
+            callback()
+        })
+    }
     toggleVideo(callback) {
         const ipc = window.require('electron').ipcRenderer
         ipc.on('toggleVideo', () => {

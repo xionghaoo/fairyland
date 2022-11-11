@@ -13,12 +13,18 @@
             </el-input>
           </el-form-item>
           <el-form-item label="" prop="password">
-            <el-input placeholder="请输入密码" v-model="loginData.password" type="password">
+            <el-input placeholder="请输入密码" v-model="loginData.password" type="password" @keyup.enter.native="submitLogin">
               <i slot="prefix" class="el-input__icon el-icon-edit"></i>
             </el-input>
           </el-form-item>
         </el-form>
-        <el-button type="primary" size="large" @click.native="submitLogin" class="btn-submit">登录</el-button>
+        <el-button
+            type="primary"
+            size="large"
+            @click.native="submitLogin"
+            @keyup.enter.native="submitLogin"
+            class="btn-submit"
+        >登录</el-button>
       </div>
     </div>
     <div class="foot-div"></div>

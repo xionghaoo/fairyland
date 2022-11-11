@@ -17,7 +17,15 @@
       Your browser does not support the video tag.
     </video>
     <iframe width="100%" height="100%" v-else-if="file_type >= 1000" :src="remote_url" title="remote"></iframe>
-    <div v-else-if="file_type === 2">
+    <div v-else-if="file_type === 2"
+         style="
+					width: 100%;
+					height: 100%;
+					background: #2c3e50;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+				">
     <!-- 多余屏幕填充内容 -->
     </div>
     <div v-else-if="file_type === 3">
@@ -60,7 +68,6 @@ export default {
       file_prefix: '',
       file_type: 0,
       auto_play: false,
-      is_play_all: false,
       img_no_bind_card: img_no_bind_card
     }
   },
@@ -90,7 +97,6 @@ export default {
             // 这是最后一个屏幕
             index = _this.ipc.getScreenNum() * Math.floor(screens.length / _this.ipc.getScreenNum())
           }
-          // console.log('index = ', index)
           if (index === _this.index + 1) {
             hasMatched = true
             let file_uri = ''
@@ -103,14 +109,12 @@ export default {
             } else {
               file_uri = s.item_uri
             }
-            console.log("文件 uri: " + file_uri)
-            console.log("file_type: " + this.file_type)
+            console.log('play content', s)
             // 把uri赋值给组件
             if (this.last_res_url !== file_uri) {
               let needNext = !_this.isShowNext
               _this.showContent(_this.file_type, file_uri, needNext)
               _this.isShowNext = needNext
-              console.log("给文件uri赋值: " + file_uri)
               _this.last_res_url = file_uri
             }
           }
@@ -129,7 +133,10 @@ export default {
         }
       }
     });
-
+    this.ipc.muteVideo(() => {
+      let video = document.getElementById("content_video");
+      video.muted = !video.muted
+    })
     this.ipc.toggleVideo(() => {
       // 视频播放暂停
       let video = document.getElementById("content_video");
@@ -142,16 +149,21 @@ export default {
       }
     })
     this.ipc.toggleAllVideo(() => {
-      _this.is_play_all = !_this.is_play_all;
+      // _this.is_play_all = !_this.is_play_all;
       // 视频播放暂停
       let video = document.getElementById("content_video");
       if (video) {
-        if (_this.is_play_all) {
-          if (video.paused) {
-            video.play();
-          }
+        // if (_this.is_play_all) {
+        //   if (video.paused) {
+        //     video.play();
+        //   }
+        // } else {
+        //   video.pause()
+        // }
+        if (video.paused) {
+          video.play();
         } else {
-          video.pause()
+          video.pause();
         }
       }
     })
