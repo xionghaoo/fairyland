@@ -87,7 +87,7 @@ ipc.on('showContent', async function (e, screens, sectionId, interval) {
 
 // 按键操作缓存内容
 function operationWithContent() {
-    if (cacheSectionId === lastSectionId) {
+    if (cacheSectionId === lastSectionId && cacheSectionId != null) {
         playContent(cacheScreens, cacheSectionId, cacheInterval).then(() => {
 
         })
@@ -102,7 +102,7 @@ function operationWithContent() {
  * @returns {Promise<void>}
  */
 async function playContent(screens, sectionId, interval) {
-    if (sectionId === null && screens === null) {
+    if (sectionId === -1) {
         for (let i = 0; i < windowList.length; i++) {
             windowList[i].webContents.postMessage('onShowContent', "showNoCard", [])
         }
@@ -540,6 +540,11 @@ function registerKeys() {
     // 暂停播放单个视频
     for (let i = 0; i < windowList.length; i++) {
         globalShortcut.register(`${i+1}`, () => {
+            // 视频控制
+            windowList[i].webContents.postMessage('toggleVideo', null, [])
+        })
+        // 小键盘
+        globalShortcut.register(`num${i+1}`, () => {
             // 视频控制
             windowList[i].webContents.postMessage('toggleVideo', null, [])
         })

@@ -149,17 +149,9 @@ export default {
       }
     })
     this.ipc.toggleAllVideo(() => {
-      // _this.is_play_all = !_this.is_play_all;
       // 视频播放暂停
       let video = document.getElementById("content_video");
       if (video) {
-        // if (_this.is_play_all) {
-        //   if (video.paused) {
-        //     video.play();
-        //   }
-        // } else {
-        //   video.pause()
-        // }
         if (video.paused) {
           video.play();
         } else {

@@ -342,17 +342,23 @@ export default {
 			let _this = this;
 			let imgData = _this.camera.capture();
 			const startTime = Date.now();
-      console.log('request text api at ' + startTime)
+      // console.log('request text api at ' + startTime)
 			Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
 				res => {
 					setDelays();
 					if (res.code === 0 && res.data) {
 						_this.handleNewResult(res.data);
-					}
+					} else {
+            _this.handleSuccessCount(false);
+          }
 				},
 				err => {
 					setDelays();
 					console.log(err);
+          _this.$message({
+            type: 'error',
+            message: err,
+          });
 				},
 			);
 
@@ -376,32 +382,6 @@ export default {
 				this.handleTextRecognize(txt, sections);
 			} else {
 				this.handleSuccessCount(false);
-			}
-			if (this.successCount === 0) {
-				// 取消播放
-				this.ipc.playContent([], null, this.play_mode);
-			}
-		},
-		handleResult(obj) {
-			console.log('处理识别结果', obj);
-			// let _this = this;
-			let sections = this.sections;
-			let res = obj.result;
-			if (res) {
-				let txt = '';
-				for (let i = 0; i < res.length; i++) {
-					txt += res[i].text;
-				}
-				if (txt !== '') {
-          // 文字比对
-					this.handleTextRecognize(txt, sections);
-				} else {
-					this.handleSuccessCount(false);
-				}
-				if (this.successCount === 0) {
-					// 取消播放
-					this.ipc.playContent([], null, this.play_mode);
-				}
 			}
 		},
 		// 文字识别
@@ -450,7 +430,6 @@ export default {
         this.successCount = Config.recognizeThreshold;
         // 重置播放模式
         this.play_mode = section.play_mode;
-        console.log('play_mode: ', section.play_mode);
         // 给页面添加自动播放模式
         for (let i = 0; i < section.screens.length; i++) {
           section.screens[i].auto_play = section.auto_play;
@@ -463,11 +442,11 @@ export default {
           // 匹配到未配置卡片
           success = true;
           this.successCount = Config.unConfigThreshold;
-          this.ipc.playContent(null, null, 0);
+          console.log("匹配到未配置卡片: " + unConfigText)
+          this.ipc.playContent(null, -1, 0);
         }
       }
 			this.handleSuccessCount(success);
-			console.log('识别成功次数: ' + this.successCount);
 		},
 		handleSuccessCount(success) {
 			if (success) {
@@ -481,7 +460,13 @@ export default {
 					this.successCount = 0;
 				}
 			}
-		},
+
+      if (this.successCount === 0) {
+        // 取消播放
+        this.ipc.playContent([], null, this.play_mode);
+      }
+      console.log('识别成功消耗值: ' + this.successCount);
+    },
 	},
 };
 </script>
