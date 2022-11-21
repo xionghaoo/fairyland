@@ -62,6 +62,19 @@ class Camera {
         }
         return null
     }
+    image() {
+        let canvas = document.createElement('canvas');
+        let { width, height } = this;
+        if (width && height) {
+            let ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+            console.log(`拍照: width: ${width} x ${height}`)
+            ctx.drawImage(this.camera, 0, 0, width, height);
+            return canvas.toDataURL("image/jpeg")
+        }
+        return null
+    }
 }
 
 export default Camera

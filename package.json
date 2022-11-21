@@ -17,7 +17,8 @@
     "lint": "vue-cli-service lint",
     "pack": "vue-cli-service build && electron-builder --dir",
     "publish": "electron-builder --p always",
-    "dist": "vue-cli-service build && electron-builder"
+    "dist": "vue-cli-service build && electron-builder",
+    "fix-memory-limit": "cross-env LIMIT=20384 increase-memory-limit"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",

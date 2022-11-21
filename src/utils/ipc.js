@@ -135,6 +135,9 @@ class IPC {
             callback(args)
         })
     }
+    detectAruco(img) {
+        this.ipc.send('detectAruco', img)
+    }
 }
 
 export default IPC

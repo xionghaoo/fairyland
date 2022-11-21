@@ -59,7 +59,6 @@ import Request from '@/utils/request';
 import Config from '@/utils/config';
 import Update from '@/view/Update';
 import Updater from '@/components/Updater';
-import Aruco from '@/utils/aruco'
 
 let timer;
 let delays = 1000;
@@ -79,6 +78,7 @@ export default {
 			requestCompleted: true,
 			camera: null,
 			ipc: null,
+      arucoDetector: null,
 			progress: 0,
 			totalDownload: 0,
 			downloadIndex: 0,
@@ -93,7 +93,7 @@ export default {
 
 	mounted() {
 		this.networkCheck();
-    new Aruco();
+    // this.arucoDetector = new ArucoDetector("video")
 		let _this = this;
 		this.company_id = localStorage.getItem('company_id');
 
@@ -342,6 +342,7 @@ export default {
 		requestTextRec() {
 			let _this = this;
 			let imgData = _this.camera.capture();
+      this.ipc.detectAruco(_this.camera.image());
 			const startTime = Date.now();
       // console.log('request text api at ' + startTime)
 			Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(

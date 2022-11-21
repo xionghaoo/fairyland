@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="">
+<html>
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <!--      <meta http-equiv="Content-Security-Policy"-->
 <!--            content="default-src 'self'; img-src https://*; child-src 'none';">-->
@@ -16,30 +16,17 @@
     </style>
   </head>
   <body>
-    <noscript>
+  <script>
+      function onOpenCVReady() {
+          console.log('cv 2',cv);
+      }
+  </script>
+
+<!--  <script async src="opencv.js" onload="onOpenCVReady();" id="opencvjs"></script>-->
+  <script async src="test.js" id="test"></script>
+  <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <script async src="opencv.js" id="opencvjs"></script>
-    <script async src="test.js" id="test"></script>
-    <script>
-        if (typeof cv !== 'undefined') {
-            console.log('cv',cv);
-        } else {
-            document.getElementById("opencvjs").onload = function (){
-                console.log('cv',cv);
-            };
-        }
-//
-//         document.getElementById("test").onload = function () {
-//             console.log('test1', TestA);
-//         };
-//
-//         export default {
-//
-//         }
-
-
-    </script>
-    <div id="app"></div>
+  </noscript>
+  <div id="app"></div>
   </body>
 </html>
