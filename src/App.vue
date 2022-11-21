@@ -59,7 +59,7 @@ import Request from '@/utils/request';
 import Config from '@/utils/config';
 import Update from '@/view/Update';
 import Updater from '@/components/Updater';
-import aruco from '@/utils/aruco'
+import Aruco from '@/utils/aruco'
 
 let timer;
 let delays = 1000;
@@ -93,7 +93,7 @@ export default {
 
 	mounted() {
 		this.networkCheck();
-    aruco;
+    new Aruco();
 		let _this = this;
 		this.company_id = localStorage.getItem('company_id');
 
