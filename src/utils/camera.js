@@ -49,7 +49,7 @@ class Camera {
             }
         }, false)
     }
-    capture() {
+    capture(cb) {
         let canvas = document.createElement('canvas');
         let { width, height } = this;
         if (width && height) {
@@ -58,23 +58,24 @@ class Camera {
             canvas.height = height;
             console.log(`拍照: width: ${width} x ${height}`)
             ctx.drawImage(this.camera, 0, 0, width, height);
+            cb(canvas)
             return canvas.toDataURL("image/jpeg").replace('data:image/jpeg;base64,', '')
         }
         return null
     }
-    image() {
-        let canvas = document.createElement('canvas');
-        let { width, height } = this;
-        if (width && height) {
-            let ctx = canvas.getContext('2d');
-            canvas.width = width;
-            canvas.height = height;
-            console.log(`拍照: width: ${width} x ${height}`)
-            ctx.drawImage(this.camera, 0, 0, width, height);
-            return canvas.toDataURL("image/jpeg")
-        }
-        return null
-    }
+    // image() {
+    //     let canvas = document.getElementById('canvas');
+    //     let { width, height } = this;
+    //     if (width && height) {
+    //         let ctx = canvas.getContext('2d');
+    //         canvas.width = width;
+    //         canvas.height = height;
+    //         console.log(`拍照: width: ${width} x ${height}`)
+    //         ctx.drawImage(this.camera, 0, 0, width, height);
+    //         return canvas
+    //     }
+    //     return null
+    // }
 }
 
 export default Camera

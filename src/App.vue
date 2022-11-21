@@ -59,6 +59,7 @@ import Request from '@/utils/request';
 import Config from '@/utils/config';
 import Update from '@/view/Update';
 import Updater from '@/components/Updater';
+import detector from '@/utils/arucoDetector';
 
 let timer;
 let delays = 1000;
@@ -341,8 +342,9 @@ export default {
 		},
 		requestTextRec() {
 			let _this = this;
-			let imgData = _this.camera.capture();
-      this.ipc.detectAruco(_this.camera.image());
+			let imgData = _this.camera.capture((canvas) => {
+        detector.detect(canvas);
+      });
 			const startTime = Date.now();
       // console.log('request text api at ' + startTime)
 			Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(

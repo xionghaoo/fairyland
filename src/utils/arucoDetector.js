@@ -1,4 +1,6 @@
-const cv = require('./opencv')
+// const cv = require('./opencv')
+
+const cv = window.cv
 
 let width = 640;
 let height = 480;
@@ -92,13 +94,18 @@ class ArucoDetector {
 //             }, 500);
     }
     detect(img) {
-        let inputImage = cv.imread(img);
+        // console.log('img', img)
+        inputImage = cv.imread(img);
         cv.cvtColor(inputImage, RgbImage, cv.COLOR_RGBA2RGB, 0);
         cv.detectMarkers(RgbImage, dictionary, markerCorners, markerIds, parameter);
-        console.log('detect: ', markerIds)
+        if (markerIds.rows > 0) {
+            console.log('detect: ', markerIds[0])
+        }
     }
 }
 
 const detector = new ArucoDetector();
 
-module.exports = detector
+export default detector;
+
+// module.exports = detector

@@ -8,7 +8,7 @@ const isDev = require('electron-is-dev');
 // const { autoUpdater } = require("electron-updater");
 const updater = require("./src/utils/updater")
 
-const detector = require("./opencv/arucoDetector")
+// const detector = require("./opencv/arucoDetector")
 
 if (isDev) {
     // Object.defineProperty(app, 'isPackaged', {
@@ -60,7 +60,7 @@ ipc.on('registerShortcutKey', function () {
 })
 
 ipc.on('detectAruco', function (e, canvas) {
-    detector.detect(canvas)
+    // detector.detect(canvas)
 })
 
 function showMessage(msg) {
