@@ -33,7 +33,7 @@ class ArucoDetector {
 //dictionary.bytesList.delete();
 //// dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [197, 71,  81, 248, 226, 163, 31, 138]);
 //dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [177, 0, 135, 0, 70, 1, 112, 1]);
-        dictionary = new cv.Dictionary(cv.DICT_6X6_250);
+        dictionary = new cv.Dictionary(cv.DICT_5X5_250);
         parameter = new cv.DetectorParameters();
 
 // parameter.adaptiveThreshWinSizeMin = 3,
@@ -80,26 +80,40 @@ class ArucoDetector {
 //
 //                 console.log('markerIds', markerIds)
 //
-//                 // if (markerIds.rows > 0) {
-//                 //     cv.drawDetectedMarkers(RgbImage, markerCorners, markerIds);
-//                 //     cv.estimatePoseSingleMarkers(markerCorners, 0.1, cameraMatrix, distCoeffs, rvecs, tvecs);
-//                 //     for(let i=0; i < markerIds.rows; ++i) {
-//                 //         let rvec = cv.matFromArray(3, 1, cv.CV_64F, [rvecs.doublePtr(0, i)[0], rvecs.doublePtr(0, i)[1], rvecs.doublePtr(0, i)[2]]);
-//                 //         let tvec = cv.matFromArray(3, 1, cv.CV_64F, [tvecs.doublePtr(0, i)[0], tvecs.doublePtr(0, i)[1], tvecs.doublePtr(0, i)[2]]);
-//                 //         cv.drawAxis(RgbImage, cameraMatrix, distCoeffs, rvec, tvec, 0.1);
-//                 //         rvec.delete();
-//                 //         tvec.delete();
-//                 //     }
-//                 // }
+//                 if (markerIds.rows > 0) {
+//                     cv.drawDetectedMarkers(RgbImage, markerCorners, markerIds);
+//                     cv.estimatePoseSingleMarkers(markerCorners, 0.1, cameraMatrix, distCoeffs, rvecs, tvecs);
+//                     for(let i=0; i < markerIds.rows; ++i) {
+//                         let rvec = cv.matFromArray(3, 1, cv.CV_64F, [rvecs.doublePtr(0, i)[0], rvecs.doublePtr(0, i)[1], rvecs.doublePtr(0, i)[2]]);
+//                         let tvec = cv.matFromArray(3, 1, cv.CV_64F, [tvecs.doublePtr(0, i)[0], tvecs.doublePtr(0, i)[1], tvecs.doublePtr(0, i)[2]]);
+//                         cv.drawAxis(RgbImage, cameraMatrix, distCoeffs, rvec, tvec, 0.1);
+//                         rvec.delete();
+//                         tvec.delete();
+//                     }
+//                 }
 //             }, 500);
     }
     detect(img) {
-        // console.log('img', img)
+        console.log('aruco code detect', dictionary)
         inputImage = cv.imread(img);
         cv.cvtColor(inputImage, RgbImage, cv.COLOR_RGBA2RGB, 0);
         cv.detectMarkers(RgbImage, dictionary, markerCorners, markerIds, parameter);
         if (markerIds.rows > 0) {
-            console.log('detect: ', markerIds[0])
+            // for (let i = 0; i < markerIds.data.length; i++) {
+            //     // data是一个 n x 4 矩阵
+            //     console.log('detect: ', markerCorners, markerIds.data[i]);
+            // }
+            // 取第一个值就行
+            console.log('find code: ', markerCorners, markerIds.data[0]);
+            // cv.drawDetectedMarkers(RgbImage, markerCorners, markerIds);
+            // cv.estimatePoseSingleMarkers(markerCorners, 0.1, cameraMatrix, distCoeffs, rvecs, tvecs);
+            // for(let i=0; i < markerIds.rows; ++i) {
+            //     let rvec = cv.matFromArray(3, 1, cv.CV_64F, [rvecs.doublePtr(0, i)[0], rvecs.doublePtr(0, i)[1], rvecs.doublePtr(0, i)[2]]);
+            //     let tvec = cv.matFromArray(3, 1, cv.CV_64F, [tvecs.doublePtr(0, i)[0], tvecs.doublePtr(0, i)[1], tvecs.doublePtr(0, i)[2]]);
+            //     cv.drawAxis(RgbImage, cameraMatrix, distCoeffs, rvec, tvec, 0.1);
+            //     rvec.delete();
+            //     tvec.delete();
+            // }
         }
     }
 }
