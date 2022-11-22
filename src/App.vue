@@ -59,7 +59,7 @@ import Request from '@/utils/request';
 import Config from '@/utils/config';
 import Update from '@/view/Update';
 import Updater from '@/components/Updater';
-import detector from '@/utils/arucoDetector';
+import ArucoDetector from '@/utils/arucoDetector';
 
 let timer;
 let delays = 1000;
@@ -79,6 +79,7 @@ export default {
 			requestCompleted: true,
 			camera: null,
 			ipc: null,
+      detector: null,
       arucoDetector: null,
 			progress: 0,
 			totalDownload: 0,
@@ -94,29 +95,16 @@ export default {
 
 	mounted() {
 		this.networkCheck();
-    // this.arucoDetector = new ArucoDetector("video")
 		let _this = this;
 		this.company_id = localStorage.getItem('company_id');
 
 		this.ipc = new IPC();
 		this.sections = JSON.parse(localStorage.getItem('sections'));
-		// this.ws = new WebSocketManager(Config.recognizeApi, (data) => {
-		//   // 收到websocket消息
-		//   _this.handleResult(data)
-		// }, (err) => {
-		//   this.$message({
-		//     message: 'AI服务错误: ' + err,
-		//     type: 'error'
-		//   })
-		// }, () => {
-		//   this.$message({
-		//     message: 'AI服务已关闭',
-		//     type: 'error'
-		//   })
-		// })
 
 		if (this.company_id) {
 			if (window.currentIndex === 0) {
+        this.detector = new ArucoDetector();
+
 				this.logoutListen();
 				console.log('has login');
 				// 已登录
@@ -204,8 +192,7 @@ export default {
 				version: local_version,
 				// device_uuid: 'wuhan01'
 				company_id: company_id,
-			})
-				.then(res => {
+			}).then(res => {
 					console.log('请求更新', res);
 					// _this.isInit = false
 					_this.ipc.setInitStatus(false);
@@ -314,66 +301,56 @@ export default {
 		startScan() {
 			console.log('开始识别');
 			let _this = this;
-			// setInterval(() => {
-			// let sections = this.sections
-			// if (sections.length > 0) {
-			//   let imgData = _this.camera.capture();
-			//   let model = 'chinese_ocr'
-			//   if (imgData) {
-			//     switch (sections[0].recognize_type) {
-			//       case 0:
-			//         model = 'chinese_ocr'
-			//         break;
-			//       case 1:
-			//         model = 'aruco'
-			//         break;
-			//     }
-			//   }
-			// }
-			// let imgData = _this.camera.capture();
-			// console.log(imgData)
-			// _this.ws.send("chinese_ocr", imgData)
-			// _this.requestCompleted = true
-			// _this.requestTextRec(imgData)
-
-			// }, Config.recognizeInterval);
-
-			_this.requestTextRec();
+      _this.requestTextRec();
 		},
 		requestTextRec() {
 			let _this = this;
-			let imgData = _this.camera.capture((canvas) => {
-        detector.detect(canvas);
-      });
-			const startTime = Date.now();
-      // console.log('request text api at ' + startTime)
-			Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
-				res => {
-					setDelays();
-					if (res.code === 0 && res.data) {
-						_this.handleNewResult(res.data);
-					} else {
-            _this.handleSuccessCount(false);
-          }
-				},
-				err => {
-					setDelays();
-					console.log(err);
-          _this.$message({
-            type: 'error',
-            message: err,
-          });
-				},
-			);
+      _this.camera.capture((imgData, canvas) => {
+        const startTime = Date.now();
+        // aruco码检测
+        let code = _this.detector.detect(canvas)
+        console.log('code = ', code)
+        if (code > 0) {
+          // 识别到aruco码
+          setDelays()
+          this.handleArucoCode(code)
+        } else {
+          // 文字检测
+          Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
+              res => {
+                setDelays();
+                if (res.code === 0 && res.data) {
+                  _this.handleNewResult(res.data);
+                } else {
+                  _this.handleSuccessCount(false);
+                }
+              },
+              err => {
+                setDelays();
+                console.log(err);
+                _this.$message({
+                  type: 'error',
+                  message: err,
+                });
+              },
+          );
+        }
 
-			function setDelays() {
-				const times = Date.now() - startTime;
-				console.log('Reply Time: ', times);
-				delays = times < 1000 ? 1000 : times;
-			}
+        function setDelays() {
+          const times = Date.now() - startTime;
+          console.log('Reply Time: ', times);
+          delays = times < 1000 ? 1000 : times;
+        }
+      });
 
 			timer = setTimeout(_this.requestTextRec.bind(_this), delays);
 		},
+    // Aruco码处理
+    handleArucoCode(code) {
+      console.log('find aruco code: ', code)
+      let sections = this.sections;
+      this.handleTextRecognize(code, sections);
+    },
 		handleNewResult(data) {
       let sections = this.sections;
 

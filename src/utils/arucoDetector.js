@@ -103,8 +103,9 @@ class ArucoDetector {
             //     // data是一个 n x 4 矩阵
             //     console.log('detect: ', markerCorners, markerIds.data[i]);
             // }
+            let code = markerIds.data[0];
             // 取第一个值就行
-            console.log('find code: ', markerCorners, markerIds.data[0]);
+            return code + ''
             // cv.drawDetectedMarkers(RgbImage, markerCorners, markerIds);
             // cv.estimatePoseSingleMarkers(markerCorners, 0.1, cameraMatrix, distCoeffs, rvecs, tvecs);
             // for(let i=0; i < markerIds.rows; ++i) {
@@ -115,11 +116,12 @@ class ArucoDetector {
             //     tvec.delete();
             // }
         }
+        return null
     }
 }
 
-const detector = new ArucoDetector();
+// const detector = new ArucoDetector();
 
-export default detector;
+export default ArucoDetector;
 
 // module.exports = detector

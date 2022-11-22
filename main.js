@@ -59,10 +59,6 @@ ipc.on('registerShortcutKey', function () {
     registerKeys()
 })
 
-ipc.on('detectAruco', function (e, canvas) {
-    // detector.detect(canvas)
-})
-
 function showMessage(msg) {
     if (windowList.length > 0) {
         windowList[0].webContents.postMessage('showMessage', msg, [])

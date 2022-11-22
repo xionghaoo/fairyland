@@ -13,6 +13,7 @@ const Config = (() => {
   }
   // baseUrl = 'http://192.168.8.130:5002' // TODO 测试
   let api = baseUrl + '/api'
+  console.log('host: ' + api)
   return {
     // ajax_http请求url
     host: api,
