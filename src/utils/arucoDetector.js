@@ -7,25 +7,22 @@ let height = 480;
 
 // let loopIndex = 0;
 
-let inputImage = null;
+// let inputImage = null;
 // let markerImage = null;
 // let dictionary = null;
 // let parameter = null;
-let markerIds = null;
-let markerCorners = null;
+// let markerIds = null;
+// let markerCorners = null;
 // let rvecs  = null;
 // let tvecs = null;
-let RgbImage = null;
+// let RgbImage = null;
 // let cameraMatrix  = null;
 // let distCoeffs = null;
-let dictionary = null;
-let parameter = null;
-
 
 class ArucoDetector {
     constructor() {
         // inputImage are declared and deleted elsewhere
-        inputImage = new cv.Mat(height, width, cv.CV_8UC4);
+
         // markerImage = new cv.Mat();
 //dictionary = new cv.Dictionary(0);
 //dictionary.markerSize = 3;
@@ -33,8 +30,8 @@ class ArucoDetector {
 //dictionary.bytesList.delete();
 //// dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [197, 71,  81, 248, 226, 163, 31, 138]);
 //dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [177, 0, 135, 0, 70, 1, 112, 1]);
-        dictionary = new cv.Dictionary(cv.DICT_5X5_250);
-        parameter = new cv.DetectorParameters();
+        this.dictionary = new cv.Dictionary(cv.DICT_5X5_250);
+        this.parameter = new cv.DetectorParameters();
 
 // parameter.adaptiveThreshWinSizeMin = 3,
         parameter.adaptiveThreshWinSizeMin = 23;
@@ -61,11 +58,11 @@ class ArucoDetector {
         parameter.minOtsuStdDev = 5.0;
         parameter.errorCorrectionRate = 0.6;
 
-        markerIds = new cv.Mat();
-        markerCorners  = new cv.MatVector();
-        // rvecs = new cv.Mat();
-        // tvecs = new cv.Mat();
-        RgbImage = new cv.Mat();
+        // markerIds = new cv.Mat();
+        // markerCorners  = new cv.MatVector();
+        // // rvecs = new cv.Mat();
+        // // tvecs = new cv.Mat();
+        // RgbImage = new cv.Mat();
         // cameraMatrix = cv.matFromArray(3, 3, cv.CV_64F, [9.6635571716090658e+02, 0., 2.0679307818305685e+02, 0.,
         //     9.6635571716090658e+02, 2.9370020600555273e+02, 0., 0., 1.]);
         // distCoeffs = cv.matFromArray(5, 1, cv.CV_64F, [-1.5007354215536557e-03, 9.8722389825801837e-01,
@@ -94,10 +91,16 @@ class ArucoDetector {
 //             }, 500);
     }
     detect(img) {
-        console.log('aruco code detect', dictionary)
-        inputImage = cv.imread(img);
+        // console.log('aruco code detect', dictionary)
+        let markerIds = new cv.Mat();
+        let markerCorners  = new cv.MatVector();
+        // rvecs = new cv.Mat();
+        // tvecs = new cv.Mat();
+        let RgbImage = new cv.Mat();
+
+        let inputImage = cv.imread(img);
         cv.cvtColor(inputImage, RgbImage, cv.COLOR_RGBA2RGB, 0);
-        cv.detectMarkers(RgbImage, dictionary, markerCorners, markerIds, parameter);
+        cv.detectMarkers(RgbImage, this.dictionary, markerCorners, markerIds, this.parameter);
         if (markerIds.rows > 0) {
             // for (let i = 0; i < markerIds.data.length; i++) {
             //     // data是一个 n x 4 矩阵
@@ -116,6 +119,10 @@ class ArucoDetector {
             //     tvec.delete();
             // }
         }
+        markerIds.delete();
+        markerCorners.delete();
+        RgbImage.delete();
+        inputImage.delete();
         return null
     }
 }
