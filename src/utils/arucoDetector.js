@@ -30,9 +30,8 @@ class ArucoDetector {
 //dictionary.bytesList.delete();
 //// dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [197, 71,  81, 248, 226, 163, 31, 138]);
 //dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [177, 0, 135, 0, 70, 1, 112, 1]);
-        this.dictionary = new cv.Dictionary(cv.DICT_5X5_250);
-        this.parameter = new cv.DetectorParameters();
-
+        let dictionary = new cv.Dictionary(cv.DICT_5X5_250);
+        let parameter = new cv.DetectorParameters();
 // parameter.adaptiveThreshWinSizeMin = 3,
         parameter.adaptiveThreshWinSizeMin = 23;
 // parameter.adaptiveThreshWinSizeMax = 23,
@@ -57,6 +56,9 @@ class ArucoDetector {
         parameter.maxErroneousBitsInBorderRate = 0.35;
         parameter.minOtsuStdDev = 5.0;
         parameter.errorCorrectionRate = 0.6;
+
+        this.dictionary = dictionary;
+        this.parameter = parameter;
 
         // markerIds = new cv.Mat();
         // markerCorners  = new cv.MatVector();
@@ -97,8 +99,8 @@ class ArucoDetector {
         // rvecs = new cv.Mat();
         // tvecs = new cv.Mat();
         let RgbImage = new cv.Mat();
-
-        let inputImage = cv.imread(img);
+        let inputImage = new cv.Mat(height, width, cv.CV_8UC4);
+        inputImage = cv.imread(img);
         cv.cvtColor(inputImage, RgbImage, cv.COLOR_RGBA2RGB, 0);
         cv.detectMarkers(RgbImage, this.dictionary, markerCorners, markerIds, this.parameter);
         if (markerIds.rows > 0) {
