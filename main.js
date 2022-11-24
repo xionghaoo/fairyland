@@ -5,10 +5,7 @@ require('@electron/remote/main').initialize()
 const ipc = require('electron').ipcMain
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
-// const { autoUpdater } = require("electron-updater");
 const updater = require("./src/utils/updater")
-
-// const detector = require("./opencv/arucoDetector")
 
 if (isDev) {
     // Object.defineProperty(app, 'isPackaged', {
@@ -333,11 +330,6 @@ const downloadSingleFile = (win, urls, index) => {
             });
         })
     }
-    // if (urls[index].startsWith("https://roboland-deliv.ubtrobot.com")) {
-    //     log.info(`下载资源: ${urls[index]}`)
-    //     // 只下载阿里云的资源
-    //     win.webContents.downloadURL(urls[index])
-    // }
     log.info(`下载资源: ${urls[index]}`)
     // 只下载阿里云的资源
     win.webContents.downloadURL(urls[index])

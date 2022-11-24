@@ -1,6 +1,6 @@
 {
   "name": "fairyland",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "private": true,
   "main": "main.js",
   "author": {
@@ -17,8 +17,7 @@
     "lint": "vue-cli-service lint",
     "pack": "vue-cli-service build && electron-builder --dir",
     "publish": "electron-builder --p always",
-    "dist": "vue-cli-service build && electron-builder",
-    "fix-memory-limit": "cross-env LIMIT=20384 increase-memory-limit"
+    "dist": "vue-cli-service build && electron-builder"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",

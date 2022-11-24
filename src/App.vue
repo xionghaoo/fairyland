@@ -80,7 +80,6 @@ export default {
 			camera: null,
 			ipc: null,
       detector: null,
-      arucoDetector: null,
 			progress: 0,
 			totalDownload: 0,
 			downloadIndex: 0,
@@ -101,10 +100,12 @@ export default {
 		this.ipc = new IPC();
 		this.sections = JSON.parse(localStorage.getItem('sections'));
 
+    if (window.currentIndex === 0) {
+      this.detector = new ArucoDetector();
+    }
+
 		if (this.company_id) {
 			if (window.currentIndex === 0) {
-        this.detector = new ArucoDetector();
-
 				this.logoutListen();
 				console.log('has login');
 				// 已登录
@@ -155,12 +156,12 @@ export default {
 			updateOnlineStatus();
 		},
 		logoutListen() {
-			let _this = this;
+			// let _this = this;
 			this.ipc.onLogout(() => {
-				console.log('logout');
-				_this.hasUpdate = false;
-				_this.isInit = false;
-				_this.ipc.setCompanyId(null);
+				// console.log('logout');
+				// _this.hasUpdate = false;
+				// _this.isInit = false;
+				// _this.ipc.setCompanyId(null);
 			});
 		},
 		loginCallback() {
@@ -309,7 +310,6 @@ export default {
         const startTime = Date.now();
         // aruco码检测
         let code = _this.detector.detect(canvas)
-        console.log('code = ', code)
         if (code > 0) {
           // 识别到aruco码
           setDelays()
@@ -320,7 +320,7 @@ export default {
               res => {
                 setDelays();
                 if (res.code === 0 && res.data) {
-                  _this.handleNewResult(res.data);
+                  _this.handleTwoLineRecognizeText(res.data);
                 } else {
                   _this.handleSuccessCount(false);
                 }
@@ -348,8 +348,11 @@ export default {
     // Aruco码处理
     handleArucoCode(code) {
       console.log('find aruco code: ', code)
-      let sections = this.sections;
-      this.handleTextRecognize(code, sections);
+      // let sections = this.sections;
+      this.handleTwoLineRecognizeText([
+        {text: code}
+      ])
+      // this.handleTextRecognize(code, sections);
     },
 		handleNewResult(data) {
       let sections = this.sections;
@@ -365,6 +368,93 @@ export default {
 				this.handleSuccessCount(false);
 			}
 		},
+    handleTwoLineRecognizeText(data) {
+      console.log('待匹配文本', data)
+      let success = false;
+      let section = this.matchSection(data);
+      if (section) {
+        success = true;
+
+        // 匹配到直接把容忍值加满
+        this.successCount = Config.recognizeThreshold;
+        // 重置播放模式
+        this.play_mode = section.play_mode;
+        // 给页面添加自动播放模式
+        for (let i = 0; i < section.screens.length; i++) {
+          section.screens[i].auto_play = section.auto_play;
+        }
+        // 开始播放
+        this.ipc.playContent(section.screens, section.id, this.play_mode);
+      } else {
+        // 识别未配置卡片
+        let card = this.matchUnConfigCard(data);
+        if (card) {
+          // 匹配到未配置卡片
+          success = true;
+          this.successCount = Config.unConfigThreshold;
+          console.log("匹配到未配置卡片: " + card)
+          this.ipc.playContent(null, -1, 0);
+        }
+      }
+      this.handleSuccessCount(success);
+    },
+    /**
+     * 两行文本匹配，识别以章节标识为主要匹配顺序，卡片文本为次要匹配顺序
+     * 场景一：卡片<优必选>和<华师>同时放置在摄像头下，当章节标识顺序为<华师><优必选>时，会命中<华师>
+     * @param data
+     * @returns {null|*}
+     */
+    matchSection(data) {
+      let sections = this.sections;
+      for (let i = 0; i < sections.length; i++) {
+        let section = sections[i];
+        // 章节标识文本
+        let sectionTxt = sections[i].recognize_txt.toLowerCase();
+        // 识别到的文本列表
+        for (let j = 0; j < data.length; j++) {
+          let line = data[j].text.toLowerCase();
+          if (section.recognize_type === 0 && sectionTxt === line) {
+            // 匹配到章节
+            return section;
+          } else if (sectionTxt.includes(line) && j < data.length - 1) {
+            // 章节标识文本包含行，尝试继续匹配下一行
+            let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+            if (section.recognize_type === 0 && sectionTxt === mergeLine) {
+              // 匹配到章节
+              return section;
+            }
+          }
+        }
+      }
+      return null;
+    },
+    /**
+     * 匹配未配置文本
+     * @param data
+     * @returns {string|null}
+     */
+    matchUnConfigCard(data) {
+      let cards = localStorage.getItem('card_list').split(',');
+      for (let i = 0; i < cards.length; i++) {
+        let cardTxt = cards[i].toLowerCase();
+        // 识别到的文本列表
+        for (let j = 0; j < data.length; j++) {
+          let line = data[j].text.toLowerCase();
+          if (cardTxt === line) {
+            // 匹配到章节
+            return cardTxt;
+          } else if (cardTxt.includes(line) && j < data.length - 1) {
+            // 章节标识文本包含行，尝试继续匹配下一行
+            let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+            if (cardTxt === mergeLine) {
+              // 匹配到章节
+              return cardTxt;
+            }
+          }
+        }
+      }
+      return null;
+    },
 		// 文字识别
 		handleTextRecognize(recTxt, sections) {
       if (sections === null) return
