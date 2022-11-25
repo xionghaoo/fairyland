@@ -101,24 +101,28 @@ export default {
 		this.sections = JSON.parse(localStorage.getItem('sections'));
 
     if (window.currentIndex === 0) {
-      this.detector = new ArucoDetector();
+      window.cvLoader.then((cv) => {
+        this.detector = new ArucoDetector(cv);
+        console.log('cv', cv)
+      })
     }
 
-		if (this.company_id) {
-			if (window.currentIndex === 0) {
-				this.logoutListen();
-				console.log('has login');
-				// 已登录
-				this.getCardList(this.company_id);
-				this.checkVersionUpdate(this.company_id);
-				this.ipc.registerShortcutKey();
-			}
-		} else {
-			// 当前未登录
-			console.log('need login');
-			this.hasUpdate = false;
-			this.isInit = false;
-		}
+    if (this.company_id) {
+      if (window.currentIndex === 0) {
+        this.logoutListen();
+        console.log('has login');
+        // 已登录
+        this.getCardList(this.company_id);
+        this.checkVersionUpdate(this.company_id);
+        this.ipc.registerShortcutKey();
+      }
+    } else {
+      // 当前未登录
+      console.log('need login');
+      this.hasUpdate = false;
+      this.isInit = false;
+    }
+
 		this.ipc.onShowMessage(args => {
 			_this.$message(args);
 		});
@@ -309,7 +313,7 @@ export default {
       _this.camera.capture((imgData, canvas) => {
         const startTime = Date.now();
         // aruco码检测
-        let code = _this.detector.detect(canvas)
+        let code = _this.detector ? _this.detector.detect(canvas) : null
         if (code > 0) {
           // 识别到aruco码
           setDelays()

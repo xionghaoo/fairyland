@@ -25,6 +25,8 @@ const Config = (() => {
       cardList: api + '/fairyland/card_list',
 
     },
+    imageWidth: 1280,
+    imageHeight: 720,
     recognizeInterval: 3000,
     recognizeApi: "ws://120.76.175.224:9001",
     ossHost: 'https://roboland-deliv.ubtrobot.com/',

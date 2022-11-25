@@ -1,37 +1,13 @@
-// const cv = require('./opencv')
+import Config from "@/utils/config";
 
-const cv = window.cv
-
-let width = 640;
-let height = 480;
-
-// let loopIndex = 0;
-
-// let inputImage = null;
-// let markerImage = null;
-// let dictionary = null;
-// let parameter = null;
-// let markerIds = null;
-// let markerCorners = null;
-// let rvecs  = null;
-// let tvecs = null;
-// let RgbImage = null;
-// let cameraMatrix  = null;
-// let distCoeffs = null;
+let width = Config.imageWidth;
+let height = Config.imageHeight;
 
 class ArucoDetector {
-    constructor() {
-        // inputImage are declared and deleted elsewhere
-
-        // markerImage = new cv.Mat();
-//dictionary = new cv.Dictionary(0);
-//dictionary.markerSize = 3;
-//dictionary.maxCorrectionBits = 1;
-//dictionary.bytesList.delete();
-//// dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [197, 71,  81, 248, 226, 163, 31, 138]);
-//dictionary.bytesList = cv.matFromArray(1, 2, cv.CV_8UC4, [177, 0, 135, 0, 70, 1, 112, 1]);
-        let dictionary = new cv.Dictionary(cv.DICT_5X5_250);
-        let parameter = new cv.DetectorParameters();
+    constructor(cv) {
+        this.cv = cv
+        let dictionary = new cv.aruco_Dictionary(cv.DICT_5X5_250);
+        let parameter = new cv.aruco_DetectorParameters();
 // parameter.adaptiveThreshWinSizeMin = 3,
         parameter.adaptiveThreshWinSizeMin = 23;
 // parameter.adaptiveThreshWinSizeMax = 23,
@@ -59,45 +35,11 @@ class ArucoDetector {
 
         this.dictionary = dictionary;
         this.parameter = parameter;
-
-        // markerIds = new cv.Mat();
-        // markerCorners  = new cv.MatVector();
-        // // rvecs = new cv.Mat();
-        // // tvecs = new cv.Mat();
-        // RgbImage = new cv.Mat();
-        // cameraMatrix = cv.matFromArray(3, 3, cv.CV_64F, [9.6635571716090658e+02, 0., 2.0679307818305685e+02, 0.,
-        //     9.6635571716090658e+02, 2.9370020600555273e+02, 0., 0., 1.]);
-        // distCoeffs = cv.matFromArray(5, 1, cv.CV_64F, [-1.5007354215536557e-03, 9.8722389825801837e-01,
-        //     1.7188452542408809e-02, -2.6805958820424611e-02,-2.3313928379240205e+00]);
-// "video" is the id of the video tag
-//         let cap = new cv.VideoCapture(videoId);
-//         setInterval(
-//             function(){
-//                 cap.read(inputImage);
-//                 cv.cvtColor(inputImage, RgbImage, cv.COLOR_RGBA2RGB, 0);
-//                 cv.detectMarkers(RgbImage, dictionary, markerCorners, markerIds, parameter);
-//
-//                 console.log('markerIds', markerIds)
-//
-//                 if (markerIds.rows > 0) {
-//                     cv.drawDetectedMarkers(RgbImage, markerCorners, markerIds);
-//                     cv.estimatePoseSingleMarkers(markerCorners, 0.1, cameraMatrix, distCoeffs, rvecs, tvecs);
-//                     for(let i=0; i < markerIds.rows; ++i) {
-//                         let rvec = cv.matFromArray(3, 1, cv.CV_64F, [rvecs.doublePtr(0, i)[0], rvecs.doublePtr(0, i)[1], rvecs.doublePtr(0, i)[2]]);
-//                         let tvec = cv.matFromArray(3, 1, cv.CV_64F, [tvecs.doublePtr(0, i)[0], tvecs.doublePtr(0, i)[1], tvecs.doublePtr(0, i)[2]]);
-//                         cv.drawAxis(RgbImage, cameraMatrix, distCoeffs, rvec, tvec, 0.1);
-//                         rvec.delete();
-//                         tvec.delete();
-//                     }
-//                 }
-//             }, 500);
     }
     detect(img) {
-        // console.log('aruco code detect', dictionary)
+        let cv = this.cv;
         let markerIds = new cv.Mat();
         let markerCorners  = new cv.MatVector();
-        // rvecs = new cv.Mat();
-        // tvecs = new cv.Mat();
         let RgbImage = new cv.Mat();
         let inputImage = new cv.Mat(height, width, cv.CV_8UC4);
         inputImage = cv.imread(img);
@@ -111,15 +53,6 @@ class ArucoDetector {
             let code = markerIds.data[0];
             // 取第一个值就行
             return code + ''
-            // cv.drawDetectedMarkers(RgbImage, markerCorners, markerIds);
-            // cv.estimatePoseSingleMarkers(markerCorners, 0.1, cameraMatrix, distCoeffs, rvecs, tvecs);
-            // for(let i=0; i < markerIds.rows; ++i) {
-            //     let rvec = cv.matFromArray(3, 1, cv.CV_64F, [rvecs.doublePtr(0, i)[0], rvecs.doublePtr(0, i)[1], rvecs.doublePtr(0, i)[2]]);
-            //     let tvec = cv.matFromArray(3, 1, cv.CV_64F, [tvecs.doublePtr(0, i)[0], tvecs.doublePtr(0, i)[1], tvecs.doublePtr(0, i)[2]]);
-            //     cv.drawAxis(RgbImage, cameraMatrix, distCoeffs, rvec, tvec, 0.1);
-            //     rvec.delete();
-            //     tvec.delete();
-            // }
         }
         markerIds.delete();
         markerCorners.delete();

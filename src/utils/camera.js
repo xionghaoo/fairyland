@@ -1,10 +1,11 @@
 import IPC from "@/utils/ipc";
+import Config from "@/utils/config";
 
 class Camera {
     constructor(element) {
         this.ipc = new IPC()
         // 照片的大小
-        this.width = 640
+        this.width = Config.imageWidth
         this.camera = element
         this.isHide = true
     }
@@ -13,8 +14,8 @@ class Camera {
         let constraints = {
             audio: false,
             video: true,
-            width: 640,
-            height: 480
+            width: Config.imageWidth,
+            height: Config.imageHeight
         };
         navigator.mediaDevices
             .getUserMedia(constraints)
@@ -43,7 +44,7 @@ class Camera {
                     _this.camera.setAttribute('height', '0');
                 } else {
                     _this.camera.setAttribute('width', '50');
-                    _this.camera.setAttribute('height', `${Math.round(50 * 480 / 640)}`);
+                    _this.camera.setAttribute('height', `${Math.round(50 * Config.imageHeight / Config.imageWidth)}`);
                 }
                 _this.streaming = true;
             }
