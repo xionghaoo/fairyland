@@ -26,7 +26,7 @@ const Config = (() => {
 
     },
     imageWidth: 1280,
-    imageHeight: 720,
+    imageHeight: 960,
     recognizeInterval: 3000,
     recognizeApi: "ws://120.76.175.224:9001",
     ossHost: 'https://roboland-deliv.ubtrobot.com/',

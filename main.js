@@ -615,6 +615,9 @@ app.whenReady().then(() => {
     } else {
         createMultiWindow()
     }
+    process.on('uncaughtException', function (e) {
+        log.info('uncaughtException: ', e)
+    })
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createMultiWindow()

@@ -85,6 +85,7 @@
     ],
     "asar": true,
     "win": {
+      "icon": "./resources/icons/icon.ico",
       "publish": {
         "provider": "generic",
         "url": "https://roboland-deliv.ubtrobot.com/vision/fairyland/update/",
