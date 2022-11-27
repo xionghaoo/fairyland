@@ -435,6 +435,8 @@ export default {
     /**
      * 两行文本匹配，识别以章节标识为主要匹配顺序，卡片文本为次要匹配顺序
      * 场景一：卡片<优必选>和<华师>同时放置在摄像头下，当章节标识顺序为<华师><优必选>时，会命中<华师>
+     * 精确匹配：选一行或两行进行精确匹配，比如：优必选 -> 优必选，优必选 -> 优必\n选
+     * 模糊匹配：选一行或两行进行模糊匹配，比如: 优必选 -> 深圳优必选公司，优必选科技 -> 深圳优必选\n科技公司
      * @param data
      * @returns {null|*}
      */
@@ -447,15 +449,29 @@ export default {
         // 识别到的文本列表
         for (let j = 0; j < data.length; j++) {
           let line = data[j].text.toLowerCase();
-          if (section.recognize_type === 0 && sectionTxt === line) {
-            // 匹配到章节
-            return section;
-          } else if (sectionTxt.includes(line) && j < data.length - 1) {
-            // 章节标识文本包含行，尝试继续匹配下一行
-            let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
-            if (section.recognize_type === 0 && sectionTxt === mergeLine) {
-              // 匹配到章节
+          if (section.recognize_type === 0) {
+            // 精确匹配
+            if (sectionTxt === line) {
+              // 单行精确命中
               return section;
+            } else if (sectionTxt.includes(line) && j < data.length - 1) {
+              // 章节标识文本包含行，尝试继续匹配下一行
+              let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+              if (sectionTxt === mergeLine) {
+                // 两行精确命中
+                return section;
+              }
+            }
+            // 模糊匹配
+            if (line.includes(sectionTxt)) {
+              // 单行模糊命中
+              return section
+            } else if (j < data.length - 1) {
+              let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+              if (mergeLine.includes(sectionTxt)) {
+                // 两行模糊命中
+                return section;
+              }
             }
           }
         }
@@ -482,6 +498,18 @@ export default {
             let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
             if (cardTxt === mergeLine) {
               // 匹配到章节
+              return cardTxt;
+            }
+          }
+
+          // 模糊匹配
+          if (line.includes(cardTxt)) {
+            // 单行模糊命中
+            return cardTxt
+          } else if (j < data.length - 1) {
+            let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+            if (mergeLine.includes(cardTxt)) {
+              // 两行模糊命中
               return cardTxt;
             }
           }
