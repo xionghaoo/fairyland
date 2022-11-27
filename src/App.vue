@@ -463,7 +463,7 @@ export default {
               }
             }
             // 模糊匹配
-            if (line.includes(sectionTxt)) {
+           /* if (line.includes(sectionTxt)) {
               // 单行模糊命中
               return section
             } else if (j < data.length - 1) {
@@ -472,7 +472,7 @@ export default {
                 // 两行模糊命中
                 return section;
               }
-            }
+            }*/
           }
         }
       }
@@ -503,7 +503,7 @@ export default {
           }
 
           // 模糊匹配
-          if (line.includes(cardTxt)) {
+          /*if (line.includes(cardTxt)) {
             // 单行模糊命中
             return cardTxt
           } else if (j < data.length - 1) {
@@ -512,7 +512,7 @@ export default {
               // 两行模糊命中
               return cardTxt;
             }
-          }
+          }*/
         }
       }
       return null;
