@@ -1,27 +1,22 @@
 # fairyland
 
-## Project setup
+## 运行脚本
+测试环境
+```shell
+npm run start
 ```
-yarn install
+正式环境
+```shell
+npm run start_prod
 ```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
+## 打包脚本
+脚本位于`tools/`目录下
+```shell
+cd ./tools && sh ./build_dev.sh
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 参考
+[Aruco码生成](https://chev.me/arucogen/)
 
 ## 问题
 

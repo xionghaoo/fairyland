@@ -44,6 +44,9 @@
 					<div style="color: white">等待登录</div>
 				</div>
 			</div>
+      <div class="error" v-show="isShowError">
+        <div style="color: white">{{ errorMessage }}</div>
+      </div>
 		</div>
 		<!-- 检查安装包更新 -->
 		<my-updater v-if="window.currentIndex === 0" />
@@ -89,6 +92,8 @@ export default {
 			successCount: 0,
 			play_mode: 0,
 			company_id: null,
+      isShowError: false,
+      errorMessage: '',
       user_id: null,
 		};
 	},
@@ -105,6 +110,7 @@ export default {
     if (window.currentIndex === 0) {
       window.cvLoader.then((cv) => {
         this.detector = new ArucoDetector(cv);
+        // console.log('cv', cv)
       })
     }
 
@@ -143,15 +149,18 @@ export default {
 	},
 	methods: {
 		networkCheck() {
+      let _this = this;
 			const updateOnlineStatus = () => {
 				if (navigator.onLine) {
 					console.log('网络已连接');
+          _this.showErrorPage(false, '')
 				} else {
 					console.log('网络未连接');
-					this.$message({
+					_this.$message({
 						message: '网络连接已断开',
 						type: 'error',
 					});
+          _this.showErrorPage(true, '网络连接已断开')
 				}
 			};
 
@@ -184,10 +193,7 @@ export default {
 				if (res.code === 0) {
 					localStorage.setItem('card_list', res.data);
 				} else {
-					this.$message({
-						message: res.data.message,
-						type: 'error',
-					});
+          console.log(res.message)
 				}
 			});
 		},
@@ -290,22 +296,47 @@ export default {
 		startTextRecognize() {
 			let _this = this;
 			_this.ipc.setUpdateStatus(false);
-
-			setTimeout(() => {
-				_this.camera = new Camera(document.getElementById('video'));
-				_this.camera.open(
-					() => {
-						_this.startScan();
-					},
-					() => {
-						_this.$message({
-							type: 'error',
-							message: '摄像头连接失败',
-						});
-					},
-				);
-			}, 100);
+      _this.tryStartCamera(50)
+			// setTimeout(() => {
+      //   _this.camera = new Camera(document.getElementById('video'));
+      //   _this.camera.open(
+			// 		() => {
+			// 			_this.startScan();
+			// 		},
+			// 		() => {
+			// 			_this.$message({
+			// 				type: 'error',
+			// 				message: '摄像头连接失败',
+			// 			});
+      //       _this.showErrorPage(true, '摄像头连接错误')
+			// 		},
+			// 	);
+			// }, 50);
 		},
+    tryStartCamera(timeout) {
+      let _this = this;
+      setTimeout(() => {
+        _this.camera = new Camera(document.getElementById('video'));
+        _this.camera.open(
+            () => {
+              _this.showErrorPage(false, '')
+              _this.startScan();
+            },
+            () => {
+              _this.$message({
+                type: 'error',
+                message: '摄像头连接失败',
+              });
+              _this.showErrorPage(true, '摄像头连接错误')
+              _this.tryStartCamera(2000)
+            },
+        );
+      }, timeout);
+    },
+    showErrorPage(isShow, msg) {
+      this.isShowError = isShow;
+      this.errorMessage = msg;
+    },
 		startScan() {
 			console.log('开始识别');
 			let _this = this;
@@ -408,6 +439,8 @@ export default {
     /**
      * 两行文本匹配，识别以章节标识为主要匹配顺序，卡片文本为次要匹配顺序
      * 场景一：卡片<优必选>和<华师>同时放置在摄像头下，当章节标识顺序为<华师><优必选>时，会命中<华师>
+     * 精确匹配：选一行或两行进行精确匹配，比如：优必选 -> 优必选，优必选 -> 优必\n选
+     * 模糊匹配：选一行或两行进行模糊匹配，比如: 优必选 -> 深圳优必选公司，优必选科技 -> 深圳优必选\n科技公司
      * @param data
      * @returns {null|*}
      */
@@ -420,16 +453,30 @@ export default {
         // 识别到的文本列表
         for (let j = 0; j < data.length; j++) {
           let line = data[j].text.toLowerCase();
-          if (section.recognize_type === 0 && sectionTxt === line) {
-            // 匹配到章节
-            return section;
-          } else if (sectionTxt.includes(line) && j < data.length - 1) {
-            // 章节标识文本包含行，尝试继续匹配下一行
-            let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
-            if (section.recognize_type === 0 && sectionTxt === mergeLine) {
-              // 匹配到章节
+          if (section.recognize_type === 0) {
+            // 精确匹配
+            if (sectionTxt === line) {
+              // 单行精确命中
               return section;
+            } else if (sectionTxt.includes(line) && j < data.length - 1) {
+              // 章节标识文本包含行，尝试继续匹配下一行
+              let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+              if (sectionTxt === mergeLine) {
+                // 两行精确命中
+                return section;
+              }
             }
+            // 模糊匹配
+           /* if (line.includes(sectionTxt)) {
+              // 单行模糊命中
+              return section
+            } else if (j < data.length - 1) {
+              let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+              if (mergeLine.includes(sectionTxt)) {
+                // 两行模糊命中
+                return section;
+              }
+            }*/
           }
         }
       }
@@ -458,6 +505,18 @@ export default {
               return cardTxt;
             }
           }
+
+          // 模糊匹配
+          /*if (line.includes(cardTxt)) {
+            // 单行模糊命中
+            return cardTxt
+          } else if (j < data.length - 1) {
+            let mergeLine = (data[j].text + data[j + 1].text).toLowerCase();
+            if (mergeLine.includes(cardTxt)) {
+              // 两行模糊命中
+              return cardTxt;
+            }
+          }*/
         }
       }
       return null;
@@ -568,5 +627,17 @@ body {
 	position: absolute;
 	left: 0;
 	top: 0;
+}
+.error {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #cc4a5c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
 }
 </style>

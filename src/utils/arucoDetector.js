@@ -35,30 +35,29 @@ class ArucoDetector {
 
         this.dictionary = dictionary;
         this.parameter = parameter;
+
+        this.markerIds = new cv.Mat();
+        this.markerCorners  = new cv.MatVector();
+        this.RgbImage = new cv.Mat();
+        this.inputImage = new cv.Mat(height, width, cv.CV_8UC4);
     }
     detect(img) {
         let cv = this.cv;
-        let markerIds = new cv.Mat();
-        let markerCorners  = new cv.MatVector();
-        let RgbImage = new cv.Mat();
-        let inputImage = new cv.Mat(height, width, cv.CV_8UC4);
-        inputImage = cv.imread(img);
-        cv.cvtColor(inputImage, RgbImage, cv.COLOR_RGBA2RGB, 0);
-        cv.detectMarkers(RgbImage, this.dictionary, markerCorners, markerIds, this.parameter);
-        if (markerIds.rows > 0) {
+        this.inputImage = cv.imread(img);
+        cv.cvtColor(this.inputImage, this.RgbImage, cv.COLOR_RGBA2RGB, 0);
+        cv.detectMarkers(this.RgbImage, this.dictionary, this.markerCorners, this.markerIds, this.parameter);
+        let r = null;
+        if (this.markerIds.rows > 0) {
             // for (let i = 0; i < markerIds.data.length; i++) {
             //     // data是一个 n x 4 矩阵
             //     console.log('detect: ', markerCorners, markerIds.data[i]);
             // }
-            let code = markerIds.data[0];
+            let code = this.markerIds.data[0];
             // 取第一个值就行
-            return code + ''
+            r = code + ''
         }
-        markerIds.delete();
-        markerCorners.delete();
-        RgbImage.delete();
-        inputImage.delete();
-        return null
+        this.inputImage.delete();
+        return r
     }
 }
 
