@@ -89,6 +89,7 @@ export default {
 			successCount: 0,
 			play_mode: 0,
 			company_id: null,
+      user_id: null,
 		};
 	},
 
@@ -96,6 +97,7 @@ export default {
 		this.networkCheck();
 		let _this = this;
 		this.company_id = localStorage.getItem('company_id');
+		this.user_id = localStorage.getItem('user_id');
 
 		this.ipc = new IPC();
 		this.sections = JSON.parse(localStorage.getItem('sections'));
@@ -103,7 +105,6 @@ export default {
     if (window.currentIndex === 0) {
       window.cvLoader.then((cv) => {
         this.detector = new ArucoDetector(cv);
-        console.log('cv', cv)
       })
     }
 
@@ -113,7 +114,7 @@ export default {
         console.log('has login');
         // 已登录
         this.getCardList(this.company_id);
-        this.checkVersionUpdate(this.company_id);
+        this.checkVersionUpdate(this.company_id, this.user_id);
         this.ipc.registerShortcutKey();
       }
     } else {
@@ -170,9 +171,10 @@ export default {
 		},
 		loginCallback() {
 			this.company_id = localStorage.getItem('company_id');
+			this.user_id = localStorage.getItem('user_id');
 			this.ipc.setCompanyId(this.company_id);
 			this.getCardList(this.company_id);
-			this.checkVersionUpdate(this.company_id);
+			this.checkVersionUpdate(this.company_id, this.user_id);
 			this.ipc.registerShortcutKey();
 		},
 		getCardList(company_id) {
@@ -189,7 +191,7 @@ export default {
 				}
 			});
 		},
-		checkVersionUpdate(company_id) {
+		checkVersionUpdate(company_id, user_id) {
 			let _this = this;
 			let local_version = localStorage.getItem('version') ?? 0;
 			console.log('checkVersionUpdate', local_version);
@@ -197,6 +199,7 @@ export default {
 				version: local_version,
 				// device_uuid: 'wuhan01'
 				company_id: company_id,
+        user_id: user_id
 			}).then(res => {
 					console.log('请求更新', res);
 					// _this.isInit = false

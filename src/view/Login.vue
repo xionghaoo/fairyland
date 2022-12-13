@@ -81,6 +81,7 @@ export default {
           ).then((res) => {
             if (res.code === 0) {
               localStorage.setItem('company_id', res.data.company_id)
+              localStorage.setItem('user_id', res.data.user_id)
               _this.$attrs.callback();
               this.$message({
                 message: '登陆成功',
