@@ -3,7 +3,7 @@
     <div class="login-div">
       <div class="login-logo">
         <img :src="brand.brand_icon" alt=""/>
-        <span style="margin-left:10px">{{ brand.brand_name}}客户端</span>
+        <span style="margin-left:10px">{{ brand.brand_name}}</span>
       </div>
       <div class="login-form">
         <el-form label-position="right" :model="loginData" :rules="rules" ref="ruleForm">
@@ -50,7 +50,7 @@ export default {
     return {
       brand: {
         brand_icon: logo,
-        brand_name: '幻境'
+        brand_name: 'AIView'
       },
       loginData: {
         login_name: '',
