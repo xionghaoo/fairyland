@@ -8,7 +8,7 @@
     "email": "xionghao930316@gmail.com"
   },
   "description": "幻境客户端",
-  "productName": "fairyland-desktop",
+  "productName": "AIView-desktop",
   "scripts": {
     "start": "cross-env ELECTRON_IS_DEV=1 && vue-cli-service build && electron-forge start",
     "start_prod": "cross-env ELECTRON_IS_DEV=0 && vue-cli-service build && electron-forge start",
@@ -73,7 +73,7 @@
   ],
   "build": {
     "appId": "com.ubt.fairyland",
-    "productName": "fairyland",
+    "productName": "AIView",
     "directories": {
       "buildResources": "./resources",
       "output": "./build"
@@ -101,7 +101,7 @@
       ]
     },
     "nsis": {
-      "shortcutName": "幻境"
+      "shortcutName": "AIView"
     },
     "mac": {
       "publish": [
