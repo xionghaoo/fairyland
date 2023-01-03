@@ -32,6 +32,7 @@ const Config = (() => {
     ossHost: 'https://roboland-deliv.ubtrobot.com/',
     recognizeThreshold: 600,
     unConfigThreshold: 5,
+    commandThreshold: 3,
     deviceId: "wuhan01",
     api_text_recognize: "https://rvi.ubtrobot.com/aipocket_new/ocr/zh_en/recognition"
     // deviceId: "sz001"

@@ -161,16 +161,25 @@ export default {
     })
     this.ipc.onPlayControl((cmd) => {
       let video = document.getElementById("content_video");
-      switch (cmd) {
-        case "play":
-          if (video.paused) video.play();
-          break;
-        case "pause":
-          video.pause();
-          break;
-        case "x1.5":
-          video.playbackRate = 1.5;
-          break;
+      if (video) {
+        console.log('play control ', cmd);
+        switch (cmd) {
+          case "play":
+            if (video.paused) video.play();
+            break;
+          case "pause":
+            video.pause();
+            break;
+          case "x1.5":
+            video.playbackRate = 1.5;
+            if (video.paused) {
+              video.play();
+            }
+            break;
+          case "x1":
+            video.playbackRate = 1;
+            break;
+        }
       }
     })
   },

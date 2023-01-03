@@ -111,7 +111,7 @@ class IPC {
         this.ipc.send('sendPlayControl', cmd)
     }
     onPlayControl(callback) {
-        this.ipc.on('onPlayControl', (cmd) => {
+        this.ipc.on('onPlayControl', (e, cmd) => {
             callback(cmd)
         })
     }

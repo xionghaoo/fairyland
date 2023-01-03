@@ -95,6 +95,7 @@ export default {
       isShowError: false,
       errorMessage: '',
       user_id: null,
+      commandCount: 0
 		};
 	},
 
@@ -353,6 +354,8 @@ export default {
           setDelays()
           this.handleArucoCode(code)
         } else {
+          this.clearCommandCount()
+
           // 文字检测
           Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
               res => {
@@ -388,20 +391,30 @@ export default {
       console.log('find aruco code: ', code)
       switch (code) {
         case "10":
+          this.commandCount = Config.commandThreshold
           this.ipc.sendPlayControl("play")
-          break;
+          return;
         case "20":
+          this.commandCount = Config.commandThreshold
           this.ipc.sendPlayControl("pause")
-          break;
+          return;
         case "30":
+          this.commandCount = Config.commandThreshold
           this.ipc.sendPlayControl("x1.5")
+          return;
+        default:
+          this.clearCommandCount()
           break;
       }
-      // let sections = this.sections;
       this.handleTwoLineRecognizeText([
         {text: code}
       ])
-      // this.handleTextRecognize(code, sections);
+    },
+    clearCommandCount() {
+      this.commandCount --;
+      if (this.commandCount <= 0) {
+        this.ipc.sendPlayControl("x1")
+      }
     },
 		handleNewResult(data) {
       let sections = this.sections;
@@ -446,15 +459,6 @@ export default {
         }
       }
       this.handleSuccessCount(success);
-    },
-    matchOperationCard(data) {
-      // let operations = []
-      // for (let j = 0; j < data.length; j++) {
-      //   let line = data[j].text.toLowerCase();
-      //   switch (line) {
-      //     case "0":
-      //   }
-      // }
     },
     /**
      * 两行文本匹配，识别以章节标识为主要匹配顺序，卡片文本为次要匹配顺序
