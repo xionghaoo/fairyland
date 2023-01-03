@@ -386,6 +386,17 @@ export default {
     // Aruco码处理
     handleArucoCode(code) {
       console.log('find aruco code: ', code)
+      switch (code) {
+        case "10":
+          this.ipc.sendPlayControl("play")
+          break;
+        case "20":
+          this.ipc.sendPlayControl("pause")
+          break;
+        case "30":
+          this.ipc.sendPlayControl("x1.5")
+          break;
+      }
       // let sections = this.sections;
       this.handleTwoLineRecognizeText([
         {text: code}
@@ -435,6 +446,15 @@ export default {
         }
       }
       this.handleSuccessCount(success);
+    },
+    matchOperationCard(data) {
+      // let operations = []
+      // for (let j = 0; j < data.length; j++) {
+      //   let line = data[j].text.toLowerCase();
+      //   switch (line) {
+      //     case "0":
+      //   }
+      // }
     },
     /**
      * 两行文本匹配，识别以章节标识为主要匹配顺序，卡片文本为次要匹配顺序

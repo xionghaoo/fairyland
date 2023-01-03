@@ -107,6 +107,14 @@ class IPC {
             callback()
         })
     }
+    sendPlayControl(cmd) {
+        this.ipc.send('sendPlayControl', cmd)
+    }
+    onPlayControl(callback) {
+        this.ipc.on('onPlayControl', (cmd) => {
+            callback(cmd)
+        })
+    }
     onUpdaterDownloadStart(callback) {
         this.ipc.on('onUpdaterDownloadStart', () => {
             callback()
