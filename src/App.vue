@@ -478,6 +478,7 @@ export default {
         for (let j = 0; j < data.length; j++) {
           let line = data[j].text.toLowerCase();
           if (section.recognize_type === 0) {
+            // 文字识别
             // 精确匹配
             if (sectionTxt === line) {
               // 单行精确命中
@@ -501,6 +502,12 @@ export default {
                 return section;
               }
             }*/
+          } else if (section.recognize_type === 1) {
+            // Aruco码识别
+            if (sectionTxt === line) return section
+          } else if (section.recognize_type === 2) {
+            // Transland卡片识别
+            if (sectionTxt === line) return section
           }
         }
       }

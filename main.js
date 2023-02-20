@@ -353,36 +353,80 @@ const createMultiWindow = () => {
         let dw = display.bounds.width / 2
         let dh = display.bounds.height / 2
         displays = [];
-        for (let i = 0; i < 4; i++) {
-            let dx = 0;
-            let dy = 0;
-            switch (i) {
-                case 0:
-                    dx = 0;
-                    dy = 0;
-                    break;
-                case 1:
-                    dx = display.bounds.width / 2;
-                    dy = 0;
-                    break;
-                case 2:
-                    dx = 0;
-                    dy = display.bounds.height / 2;
-                    break;
-                case 3:
-                    dx = display.bounds.width / 2;
-                    dy = display.bounds.height / 2;
-                    break;
-            }
-            displays.push({
-                bounds: {
-                    x: dx,
-                    y: dy,
-                    width: dw,
-                    height: dh
-                }
-            })
-        }
+        // for (let i = 0; i < 4; i++) {
+        //     let dx = 0;
+        //     let dy = 0;
+        //     switch (i) {
+        //         case 0:
+        //             dx = 0;
+        //             dy = 0;
+        //             break;
+        //         case 1:
+        //             dx = display.bounds.width / 2;
+        //             dy = 0;
+        //             break;
+        //         case 2:
+        //             dx = 0;
+        //             dy = display.bounds.height / 2;
+        //             break;
+        //         case 3:
+        //             dx = display.bounds.width / 2;
+        //             dy = display.bounds.height / 2;
+        //             break;
+        //     }
+        //
+        //     displays.push({
+        //         bounds: {
+        //             x: dx,
+        //             y: dy,
+        //             width: dw,
+        //             height: dh
+        //         }
+        //     })
+        // }
+
+        screenWidth = 200;
+        screenHeight = 200;
+        displays.push({
+            bounds: {
+                x: 0,
+                y: 0,
+                width: 200,
+                height: 400
+            },
+        })
+        displays.push({
+            bounds: {
+                x: 200,
+                y: 10,
+                width: 100,
+                height: 100
+            },
+        })
+        displays.push({
+            bounds: {
+                x: 200,
+                y: 200,
+                width: 200,
+                height: 200
+            },
+        })
+        displays.push({
+            bounds: {
+                x: 400,
+                y: 0,
+                width: 200,
+                height: 200
+            },
+        })
+        displays.push({
+            bounds: {
+                x: 400,
+                y: 200,
+                width: 200,
+                height: 200
+            },
+        })
     }
     console.log(displays)
 
@@ -413,6 +457,83 @@ const createMultiWindow = () => {
         return a - b;
     })
 
+    // 标记行
+    let screens = [];
+    for (let i = 0; i < displays.length; i++) {
+        let d = displays[i]
+        d.row = -1
+        screens.push(d)
+    }
+    // 阈值
+    const THRESHOLD = 50
+    // 标记行数
+    let cursor = 0
+    let count = 0;
+    let isRun = true;
+    let rowSet = new Set();
+    for (let row = 0; isRun; row++) {
+        for (let i = 0; i < screens.length; i++) {
+            let display = screens[i];
+            if (display.row === -1) {
+                let y = display.bounds.y;
+                if (Math.abs(y - cursor) < THRESHOLD) {
+                    display.row = row
+                    rowSet.add(row)
+                    // 统计被标记的屏幕
+                    count += 1;
+                    if (count >= screens.length) {
+                        isRun = false;
+                        break;
+                    }
+                }
+            }
+        }
+        console.log('row = ' + row)
+        // 指针向下移动
+        cursor += THRESHOLD
+    }
+    // 行统计
+    let rowArr = Array.from(rowSet)
+    rowArr.sort((a, b) => {
+        return a - b;
+    })
+    // 行分类，排序
+    let screenArr = []
+    for (let r = 0; r < rowArr.length; r++) {
+        let screenRow = []
+        for (let i = 0; i < screens.length; i++) {
+            if (screens[i].row === rowArr[r]) {
+                screenRow.push(screens[i])
+            }
+        }
+        screenRow.sort((a, b) => {
+            return a.bounds.x - b.bounds.x;
+        })
+        screenArr.push(screenRow)
+    }
+    console.log('screenArr',screenArr)
+
+    for (let i = 0; i < displays.length; i++) {
+        let display = displays[i];
+        console.log(`sort display: ${display.row}, ${display.bounds.x}, ${display.bounds.y}, ${display.bounds.width}, ${display.bounds.height}`)
+    }
+
+    // for (let i = 0; i < displays.length; i++) {
+    //     let display = displays[i];
+    //     let x = display.bounds.x;
+    //     let y = display.bounds.y;
+    //     if (Math.abs(y - benchmark.y) < THRESHOLD) {
+    //         display.row = rowIndex
+    //     } else {
+    //         rowIndex ++
+    //         benchmark.y += rowHeight * rowIndex
+    //         if (Math.abs(y - (benchmark.y + rowHeight * rowIndex)) < THRESHOLD) {
+    //
+    //         }
+    //     }
+    //
+    // }
+
     log.info('xArr', xArr)
     log.info('yArr', yArr)
 
@@ -421,26 +542,71 @@ const createMultiWindow = () => {
     // (0, 0) (0, 1) (1, 0) (1, 1)
     // (0, 0) (0, 1) (0, 2) (1, ) (1, 0)
     // 先遍历行
-    for (let i = 0; i < yArr.length; i++) {
-        // 再遍历列
-        for (let j = 0; j < xArr.length; j++) {
-            for (let si = 0; si < displays.length; si++) {
-                let display = displays[si];
-                let x = display.bounds.x;
-                let y = display.bounds.y;
-                if (x === xArr[j] && y === yArr[i]) {
-                    log.info(`x = ${x}, y = ${y}`)
-                    log.info(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
-                    // 找到对应的原点坐标
-                    screenIndexes.push({
-                        x: x,
-                        y: y,
-                        index: s_index
-                    });
-                    s_index++;
-                }
-            }
+    // for (let i = 0; i < yArr.length; i++) {
+    //     // 再遍历列
+    //     for (let j = 0; j < xArr.length; j++) {
+    //         for (let si = 0; si < displays.length; si++) {
+    //             let display = displays[si];
+    //             let x = display.bounds.x;
+    //             let y = display.bounds.y;
+    //             if (x === xArr[j] && y === yArr[i]) {
+    //                 log.info(`x = ${x}, y = ${y}`)
+    //                 log.info(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
+    //                 // 找到对应的原点坐标
+    //                 screenIndexes.push({
+    //                     x: x,
+    //                     y: y,
+    //                     w: display.bounds.width,
+    //                     h: display.bounds.height,
+    //                     index: s_index
+    //                 });
+    //                 s_index++;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // 给所有屏幕排序
+    for (let r = 0; r < screenArr.length; r++) {
+        let screenRow = screenArr[r];
+        for (let i = 0; i < screenRow.length; i++) {
+            let display = screenRow[i]
+            let x = display.bounds.x;
+            let y = display.bounds.y;
+            // 找到对应的原点坐标
+            screenIndexes.push({
+                x: x,
+                y: y,
+                w: display.bounds.width,
+                h: display.bounds.height,
+                index: s_index
+            });
+            s_index++;
         }
+        // for (let i = 0; i < yArr.length; i++) {
+        //     // 再遍历列
+        //     for (let j = 0; j < xArr.length; j++) {
+        //         for (let si = 0; si < screens.length; si++) {
+        //             let display = screens[si];
+        //             let x = display.bounds.x;
+        //             let y = display.bounds.y;
+        //             let row = display.row;
+        //             if (x === xArr[j] && y === yArr[i] && row === k) {
+        //                 log.info(`x = ${x}, y = ${y}`)
+        //                 log.info(`xArr[${i}] = ${xArr[i]}, yArr[${j}] = ${yArr[j]}`)
+        //                 // 找到对应的原点坐标
+        //                 screenIndexes.push({
+        //                     x: x,
+        //                     y: y,
+        //                     w: display.bounds.width,
+        //                     h: display.bounds.height,
+        //                     index: s_index
+        //                 });
+        //                 s_index++;
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     log.info('找到屏幕：', screenIndexes)
@@ -454,8 +620,10 @@ const createMultiWindow = () => {
         let screen = screenIndexes[i];
 
         const win = new BrowserWindow({
-            width: screenWidth,
-            height: screenHeight,
+            // width: screenWidth,
+            // height: screenHeight,
+            width: screen.w,
+            height: screen.h,
             x: screen.x,
             y: screen.y,
             frame: false,
