@@ -431,7 +431,7 @@ const createMultiWindow = () => {
     console.log(displays)
 
     displays.find((display) => {
-        log.info(`find display id: ${display.id}, ${display.bounds.width} x ${display.bounds.height}`)
+        log.info(`find display id: ${display.id}, ${display.bounds.width} x ${display.bounds.height}, ${display.bounds.x}, ${display.bounds.y}`)
     })
     windowList = []
     let screenIndexes = [];
@@ -467,7 +467,7 @@ const createMultiWindow = () => {
     // 阈值
     const THRESHOLD = 50
     // 标记行数
-    let cursor = 0
+    let cursor = yArr[0]
     let count = 0;
     let isRun = true;
     let rowSet = new Set();
