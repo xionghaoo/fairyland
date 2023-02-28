@@ -114,12 +114,12 @@ export default {
 						} else {
 							file_uri = s.item_uri;
 						}
-            console.log('record data: ', s.id)
-            Request.requestPost(Config.api.record, {
-              section_id: s.id,
-              qrcode_type: 'active',
-              operator_time: formatDate(new Date()),
-            });
+						console.log('record data: ', s.id);
+						Request.requestPost(Config.api.record, {
+							section_id: s.id,
+							qrcode_type: 'active',
+							operator_time: formatDate(new Date()),
+						});
 						console.log('play content', s);
 						// 把uri赋值给组件
 						if (this.last_res_url !== file_uri) {
