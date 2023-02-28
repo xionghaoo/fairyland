@@ -4,12 +4,10 @@
 import { RequestHttpDev, RequestHttpPro } from '../../configBase';
 
 const Config = (() => {
-	let baseUrl = RequestHttpDev;
-	if (process.env.NODE_ENV === 'production') {
-		baseUrl = RequestHttpPro;
-	}
+	console.log('env: ', process.env.NODE_ENV);
+	const baseUrl = process.env.NODE_ENV === 'production' ? RequestHttpPro : RequestHttpDev;
 	// baseUrl = 'http://192.168.8.130:5002' // TODO 测试
-	let api = baseUrl + '/api';
+	const api = baseUrl + '/api';
 	console.log('host: ' + api);
 	return {
 		// ajax_http请求url
