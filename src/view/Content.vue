@@ -189,6 +189,9 @@ export default {
 		});
 	},
 	methods: {
+    /**
+     * 显示封面，如果后台没有设置封面，那么本地封面资源
+     */
 		showDefaultContent() {
 			let covers = JSON.parse(localStorage.getItem('covers'));
 			if (covers) {

@@ -206,7 +206,6 @@ export default {
 			console.log('checkVersionUpdate', local_version);
 			Request.requestGet(Config.api.versionUpdate, {
 				version: local_version,
-				// device_uuid: 'wuhan01'
 				company_id: company_id,
         user_id: user_id
 			}).then(res => {
@@ -300,21 +299,6 @@ export default {
 			let _this = this;
 			_this.ipc.setUpdateStatus(false);
       _this.tryStartCamera(50)
-			// setTimeout(() => {
-      //   _this.camera = new Camera(document.getElementById('video'));
-      //   _this.camera.open(
-			// 		() => {
-			// 			_this.startScan();
-			// 		},
-			// 		() => {
-			// 			_this.$message({
-			// 				type: 'error',
-			// 				message: '摄像头连接失败',
-			// 			});
-      //       _this.showErrorPage(true, '摄像头连接错误')
-			// 		},
-			// 	);
-			// }, 50);
 		},
     tryStartCamera(timeout) {
       let _this = this;
@@ -418,20 +402,6 @@ export default {
         this.ipc.sendPlayControl("x1")
       }
     },
-		handleNewResult(data) {
-      let sections = this.sections;
-
-			let txt = '';
-			for (let i = 0; i < data.length; i++) {
-				txt += data[i].text;
-			}
-			if (txt !== '') {
-				console.log('识别文本', txt);
-				this.handleTextRecognize(txt, sections);
-			} else {
-				this.handleSuccessCount(false);
-			}
-		},
     handleTwoLineRecognizeText(data) {
       console.log('待匹配文本', data)
       let success = false;
@@ -556,70 +526,6 @@ export default {
       }
       return null;
     },
-		// 文字识别
-		handleTextRecognize(recTxt, sections) {
-      if (sections === null) return
-			let success = false;
-			// 文字识别
-      let successSections = [];
-      let unConfigText = null;
-			for (let j = 0; j < sections.length; j++) {
-				let section = sections[j];
-				// 检查识别类型
-				if (
-					section.recognize_type === 0 &&
-					// 检查识别结果
-					recTxt.toLowerCase().includes(section.recognize_txt.toLowerCase())
-				) {
-          successSections.push(section)
-				} else if (section.recognize_type === 0) {
-					// 检查卡片列表中的其他文本
-					let cards = localStorage.getItem('card_list').split(',');
-					for (let k = 0; k < cards.length; k++) {
-						if (recTxt.toLowerCase() === cards[k].toLowerCase()) {
-              unConfigText = cards[k]
-							break;
-						}
-					}
-				}
-			}
-
-      // 检查识别结果
-      if (successSections.length > 0) {
-        // 找出最长的匹配文本
-        let section = null;
-        let txt = "";
-        for (let i = 0; i < successSections.length; i++) {
-          if (txt.length < successSections[i].recognize_txt.length) {
-            section = successSections[i];
-            txt = successSections[i].recognize_txt;
-          }
-        }
-        console.log('识别到文字：' + section.recognize_txt);
-        // 匹配到卡片
-        success = true;
-        // 匹配到直接把容忍值加满
-        this.successCount = Config.recognizeThreshold;
-        // 重置播放模式
-        this.play_mode = section.play_mode;
-        // 给页面添加自动播放模式
-        for (let i = 0; i < section.screens.length; i++) {
-          section.screens[i].auto_play = section.auto_play;
-        }
-        // 开始播放
-        this.ipc.playContent(section.screens, section.id, this.play_mode);
-      } else {
-        // 未匹配到
-        if (unConfigText !== null) {
-          // 匹配到未配置卡片
-          success = true;
-          this.successCount = Config.unConfigThreshold;
-          console.log("匹配到未配置卡片: " + unConfigText)
-          this.ipc.playContent(null, -1, 0);
-        }
-      }
-			this.handleSuccessCount(success);
-		},
 		handleSuccessCount(success) {
 			if (success) {
 				this.successCount++;
