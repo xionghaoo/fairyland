@@ -63,6 +63,7 @@ import Config from '@/utils/config';
 import Update from '@/view/Update';
 import Updater from '@/components/Updater';
 import ArucoDetector from '@/utils/arucoDetector';
+import {formatDate} from "@/utils/util";
 
 let timer;
 let delays = 1000;
@@ -95,7 +96,8 @@ export default {
       isShowError: false,
       errorMessage: '',
       user_id: null,
-      commandCount: 0
+      commandCount: 0,
+      last_section_id: 0
 		};
 	},
 
@@ -444,6 +446,15 @@ export default {
         // 给页面添加自动播放模式
         for (let i = 0; i < section.screens.length; i++) {
           section.screens[i].auto_play = section.auto_play;
+        }
+        if (this.last_section_id !== section.id) {
+          this.last_section_id = section.id;
+          console.log('record data: ', section.id);
+          Request.requestPost(Config.api.record, {
+            section_id: section.id,
+            qrcode_type: 'active',
+            operator_time: formatDate(new Date()),
+          });
         }
         // 开始播放
         this.ipc.playContent(section.screens, section.id, this.play_mode);
