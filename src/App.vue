@@ -298,7 +298,10 @@ export default {
 		startTextRecognize() {
 			let _this = this;
 			_this.ipc.setUpdateStatus(false);
-      _this.tryStartCamera(50)
+      // _this.tryStartCamera(50)
+      _this.handleTwoLineRecognizeText([
+        {text: "12"}
+      ]);
 		},
     tryStartCamera(timeout) {
       let _this = this;
