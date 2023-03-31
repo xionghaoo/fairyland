@@ -22,7 +22,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-*.lock
 
 /src/assets/fairyland/
 /src/assets/huashi/

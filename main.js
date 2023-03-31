@@ -353,7 +353,7 @@ const createMultiWindow = () => {
         let dw = display.bounds.width / 2
         let dh = display.bounds.height / 2
         displays = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 2; i++) {
             let dx = 0;
             let dy = 0;
             switch (i) {
