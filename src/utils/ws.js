@@ -43,10 +43,11 @@ class WebSocketManager {
 
     }
 
-    send(model, img) {
+    send(img) {
         if (this.hasReceivedResponse) {
             this.hasReceivedResponse = false;
-            this.ws.send(JSON.stringify({"model": model, "image": img}))
+            // this.ws.send(JSON.stringify({"model": model, "image": img}))
+            this.ws.send(img)
         }
     }
 }

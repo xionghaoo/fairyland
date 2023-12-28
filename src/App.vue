@@ -64,6 +64,7 @@ import Update from '@/view/Update';
 import Updater from '@/components/Updater';
 import ArucoDetector from '@/utils/arucoDetector';
 import {formatDate} from "@/utils/util";
+import WebSocketManager from "@/utils/ws";
 
 let timer;
 let delays = 1000;
@@ -97,7 +98,8 @@ export default {
       errorMessage: '',
       user_id: null,
       commandCount: 0,
-      last_section_id: 0
+      last_section_id: 0,
+      ws: null
 		};
 	},
 
@@ -327,6 +329,29 @@ export default {
 		startScan() {
 			console.log('开始识别');
 			let _this = this;
+      this.ws = new WebSocketManager(
+          "ws://localhost:8765",
+          res=> {
+            // setDelays();
+            console.log(res)
+            if (res.code === 100 && res.data) {
+              _this.handleTwoLineRecognizeText(res.data);
+            } else {
+              _this.handleSuccessCount(false);
+            }
+          },
+          err=>{
+            // setDelays();
+            console.log(err);
+            _this.$message({
+              type: 'error',
+              message: err,
+            });
+          },
+          () => {
+          }
+      )
+
       _this.requestTextRec();
 		},
 		requestTextRec() {
@@ -337,40 +362,41 @@ export default {
         let code = _this.detector ? _this.detector.detect(canvas) : null
         if (code > 0) {
           // 识别到aruco码
-          setDelays()
+          // setDelays()
           this.handleArucoCode(code)
         } else {
           this.clearCommandCount()
 
           // 文字检测
-          Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
-              res => {
-                setDelays();
-                if (res.code === 0 && res.data) {
-                  _this.handleTwoLineRecognizeText(res.data);
-                } else {
-                  _this.handleSuccessCount(false);
-                }
-              },
-              err => {
-                setDelays();
-                console.log(err);
-                _this.$message({
-                  type: 'error',
-                  message: err,
-                });
-              },
-          );
+          // Request.requestPost(Config.api_text_recognize, { image_base64: imgData }).then(
+          //     res => {
+          //       setDelays();
+          //       if (res.code === 0 && res.data) {
+          //         _this.handleTwoLineRecognizeText(res.data);
+          //       } else {
+          //         _this.handleSuccessCount(false);
+          //       }
+          //     },
+          //     err => {
+          //       setDelays();
+          //       console.log(err);
+          //       _this.$message({
+          //         type: 'error',
+          //         message: err,
+          //       });
+          //     },
+          // );
+          this.ws.send(imgData)
         }
 
-        function setDelays() {
-          const times = Date.now() - startTime;
-          console.log('Reply Time: ', times);
-          delays = times < 1000 ? 1000 : times;
-        }
+        // function setDelays() {
+        //   const times = Date.now() - startTime;
+        //   console.log('Reply Time: ', times);
+        //   delays = times < 1000 ? 1000 : times;
+        // }
       });
 
-			timer = setTimeout(_this.requestTextRec.bind(_this), delays);
+			timer = setTimeout(_this.requestTextRec.bind(_this), 2000);
 		},
     // Aruco码处理
     handleArucoCode(code) {
@@ -420,11 +446,12 @@ export default {
         if (this.last_section_id !== section.id) {
           this.last_section_id = section.id;
           console.log('record data: ', section.id);
-          Request.requestPost(Config.api.record, {
-            section_id: section.id,
-            qrcode_type: 'active',
-            operator_time: formatDate(new Date()),
-          });
+          // TODO 提交扫描记录
+          // Request.requestPost(Config.api.record, {
+          //   section_id: section.id,
+          //   qrcode_type: 'active',
+          //   operator_time: formatDate(new Date()),
+          // });
         }
         // 开始播放
         this.ipc.playContent(section.screens, section.id, this.play_mode);
