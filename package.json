@@ -1,6 +1,6 @@
 {
   "name": "fairyland",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "private": true,
   "main": "main.js",
   "author": {
@@ -17,6 +17,7 @@
     "lint": "vue-cli-service lint",
     "pack": "vue-cli-service build && electron-builder --dir",
     "publish": "electron-builder --p always",
+    "postinstall": "electron-builder install-app-deps",
     "dist": "vue-cli-service build && electron-builder"
   },
   "dependencies": {

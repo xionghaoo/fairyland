@@ -68,6 +68,7 @@ import WebSocketManager from "@/utils/ws";
 
 let timer;
 let delays = 1000;
+let startTime = 0;
 export default {
 	name: 'App',
 	components: {
@@ -332,7 +333,7 @@ export default {
       this.ws = new WebSocketManager(
           "ws://localhost:8765",
           res=> {
-            // setDelays();
+            this.setDelays();
             console.log(res)
             if (res.code === 100 && res.data) {
               _this.handleTwoLineRecognizeText(res.data);
@@ -341,7 +342,7 @@ export default {
             }
           },
           err=>{
-            // setDelays();
+            this.setDelays();
             console.log(err);
             _this.$message({
               type: 'error',
@@ -354,15 +355,20 @@ export default {
 
       _this.requestTextRec();
 		},
+    setDelays() {
+      const times = Date.now() - startTime;
+      console.log('Reply Time: ', times);
+      delays = times < 1000 ? 1000 : times;
+    },
 		requestTextRec() {
 			let _this = this;
       _this.camera.capture((imgData, canvas) => {
-        const startTime = Date.now();
+        startTime = Date.now();
         // aruco码检测
         let code = _this.detector ? _this.detector.detect(canvas) : null
         if (code > 0) {
           // 识别到aruco码
-          // setDelays()
+          _this.setDelays()
           this.handleArucoCode(code)
         } else {
           this.clearCommandCount()
@@ -388,15 +394,9 @@ export default {
           // );
           this.ws.send(imgData)
         }
-
-        // function setDelays() {
-        //   const times = Date.now() - startTime;
-        //   console.log('Reply Time: ', times);
-        //   delays = times < 1000 ? 1000 : times;
-        // }
       });
 
-			timer = setTimeout(_this.requestTextRec.bind(_this), 2000);
+			timer = setTimeout(_this.requestTextRec.bind(_this), delays);
 		},
     // Aruco码处理
     handleArucoCode(code) {
