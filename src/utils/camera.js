@@ -7,7 +7,7 @@ class Camera {
         // 照片的大小
         this.width = Config.imageWidth
         this.camera = element
-        this.isHide = false
+        this.isHide = true
     }
     open(complete, error) {
         let _this = this;
