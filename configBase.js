@@ -5,8 +5,8 @@
  */
 
 //测试环境api地址
-export const RequestHttpDev = 'http://rvi.ubtrobot.com:5009';
+export const RequestHttpDev = 'https://vision_xn.udicaria.com';
 
 //生产环境api地址
-export const RequestHttpPro = 'http://rvi.ubtrobot.com:5007';
+export const RequestHttpPro = 'https://vision_xn.udicaria.com';
 
