@@ -38,6 +38,7 @@ ipc.on('show-open-dialog', function () {
     dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']})
 })
 ipc.on('setInitStatus', function (e, args) {
+    console.log('windowList: ' + windowList.length)
     for (let i = 0; i < windowList.length; i++) {
         windowList[i].webContents.postMessage('onInitChange', args, [])
     }
@@ -353,7 +354,7 @@ const createMultiWindow = () => {
         let dw = display.bounds.width / 2
         let dh = display.bounds.height / 2
         displays = [];
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 4; i++) {
             let dx = 0;
             let dy = 0;
             switch (i) {

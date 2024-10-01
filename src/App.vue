@@ -120,22 +120,6 @@ export default {
       })
     }
 
-    if (this.company_id) {
-      if (window.currentIndex === 0) {
-        this.logoutListen();
-        console.log('has login');
-        // 已登录
-        this.getCardList(this.company_id);
-        this.checkVersionUpdate(this.company_id, this.user_id);
-        this.ipc.registerShortcutKey();
-      }
-    } else {
-      // 当前未登录
-      console.log('need login');
-      this.hasUpdate = false;
-      this.isInit = false;
-    }
-
 		this.ipc.onShowMessage(args => {
 			_this.$message(args);
 		});
@@ -149,6 +133,25 @@ export default {
 			// 更新下每个窗口的状态
 			_this.company_id = id;
 		});
+
+    if (this.company_id) {
+      if (window.currentIndex === 0) {
+        this.ipc.setCompanyId(this.company_id);
+
+        this.logoutListen();
+        console.log('has login');
+        // 已登录
+        this.getCardList(this.company_id);
+        this.checkVersionUpdate(this.company_id, this.user_id);
+        this.ipc.registerShortcutKey();
+      }
+    } else {
+      // 当前未登录
+      console.log('need login');
+      this.hasUpdate = false;
+    }
+    // TODO 咸宁场馆bug
+    this.isInit = false;
 	},
 	beforeUnmount() {
 		clearTimeout(timer);
