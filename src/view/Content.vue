@@ -1,14 +1,14 @@
 <template>
 	<div style="height: 100%">
-		<div v-if="file_type === 0">
+		<div class="fullscreen" v-if="file_type === 0">
 			<transition name="el-fade-in-linear">
-				<div v-show="!isShowNext">
-					<img :src="img_uri" width="100%" height="100%" />
+				<div class="fullscreen" v-show="!isShowNext">
+					<img id="img" :src="img_uri" />
 				</div>
 			</transition>
 			<transition name="el-fade-in-linear">
-				<div v-show="isShowNext">
-					<img :src="next_img_uri" width="100%" height="100%" />
+				<div class="fullscreen" v-show="isShowNext">
+					<img id="img" :src="next_img_uri" />
 				</div>
 			</transition>
 		</div>
@@ -30,8 +30,8 @@
 		>
 			<!-- 多余屏幕填充内容 -->
 		</div>
-		<div v-else-if="file_type === 3">
-			<img :src="img_no_bind_card" width="100%" height="100%" />
+		<div class="fullscreen" v-else-if="file_type === 3">
+			<img id="img" :src="img_no_bind_card" />
 		</div>
 	</div>
 </template>
@@ -335,4 +335,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+.fullscreen{
+  width: 100%;
+  height: 100%;
+}
+</style>

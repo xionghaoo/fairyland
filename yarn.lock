@@ -13257,8 +13257,6 @@ webpack-merge@^5.7.3:
     flat "^5.0.2"
     wildcard "^2.0.0"
 
-webpack-sources@*:
-
 webpack-sources@^1.1.0:
   version "1.4.3"
   resolved "https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.4.3.tgz"
