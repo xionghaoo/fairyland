@@ -5,8 +5,8 @@
  */
 
 //测试环境api地址
-export const RequestHttpDev = 'https://vision_xn.udicaria.com';
+export const RequestHttpDev = 'http://47.106.100.132:8004';
 
 //生产环境api地址
-export const RequestHttpPro = 'https://vision_xn.udicaria.com';
+export const RequestHttpPro = 'http://47.106.100.132:8004';
 
